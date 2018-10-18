@@ -15,7 +15,22 @@ class CreateLiquidacionsTable extends Migration
     {
         Schema::create('liquidacions', function (Blueprint $table) {
             $table->increments('id');
+
+            //$table->integer('idEstablecimiento')->unsigned();
+            //$table->integer('idFuncionario')->unsigned();
+            //$table->integer('idPeriodo')->unsigned();
+            
+            $table->date('fechaLiquidacion')->nullable();
+            $table->integer('diasTrabajados')->nullable();
+            $table->integer('horasContratoSep')->nullable();
+            $table->string('fechaInicioContratoSep',45)->nullable();
+            $table->boolean('estado')->default(1)->comment('0 .- Inactivo - 1 .- Activo');
+            
             $table->timestamps();
+
+            //$table->foreign('idEstablecimiento')->references('id')->on('establecimientos');
+            //$table->foreign('idFuncionario')->references('id')->on('funcionarios');
+            //$table->foreign('idPeriodo')->references('id')->on('periodos');            
         });
     }
 

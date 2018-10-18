@@ -11,6 +11,6 @@ class DocumentosTableSeeder extends Seeder
      */
     public function run()
     {
-        //
+        factory(App\Documento::class, 1)->create();
     }
 }

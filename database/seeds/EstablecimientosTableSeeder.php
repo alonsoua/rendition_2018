@@ -11,6 +11,6 @@ class EstablecimientosTableSeeder extends Seeder
      */
     public function run()
     {
-        //
+        factory(App\Establecimiento::class, 1)->create();
     }
 }

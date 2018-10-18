@@ -11,6 +11,6 @@ class FuncionariosTableSeeder extends Seeder
      */
     public function run()
     {
-        //
+        factory(App\Funcionario::class, 1)->create();
     }
 }

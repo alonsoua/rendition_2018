@@ -15,6 +15,12 @@ class CreateDocumentosTable extends Migration
     {
         Schema::create('documentos', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('codigo', 10)->nullable();
+            $table->string('nombre', 100)->nullable();
+            $table->text('descripcion')->nullable();
+            $table->boolean('exento')->nullable()->default(0);
+            $table->boolean('estado')->default(1)->comment('0 .- Inactivo - 1 .- Activo');
+
             $table->timestamps();
         });
     }

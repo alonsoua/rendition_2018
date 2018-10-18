@@ -11,6 +11,6 @@ class LiquidacionsTableSeeder extends Seeder
      */
     public function run()
     {
-        //
+        factory(App\Liquidacion::class, 1)->create();
     }
 }

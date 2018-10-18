@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateFuncionsTable extends Migration
+class CreateTipoDependenciaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateFuncionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('funcions', function (Blueprint $table) {
+        Schema::create('tipo_dependencia', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->string('codigo', 10)->nullable();
-            $table->string('nombre', 100)->nullable();
-            $table->text('descripcion')->nullable();
+            $table->string('nombre', 50);
             $table->boolean('estado')->default(1)->comment('0 .- Inactivo - 1 .- Activo');
 
             $table->timestamps();
@@ -32,6 +30,6 @@ class CreateFuncionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('funcions');
+        Schema::dropIfExists('tipo_dependencia');
     }
 }

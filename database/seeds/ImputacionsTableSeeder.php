@@ -11,6 +11,6 @@ class ImputacionsTableSeeder extends Seeder
      */
     public function run()
     {
-        //
+        factory(App\Imputacion::class, 1)->create();
     }
 }

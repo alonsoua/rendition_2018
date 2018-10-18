@@ -11,6 +11,6 @@ class LeysTableSeeder extends Seeder
      */
     public function run()
     {
-        //
+        factory(App\Ley::class, 1)->create();
     }
 }

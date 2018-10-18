@@ -15,7 +15,16 @@ class CreateCargaMensualsTable extends Migration
     {
         Schema::create('carga_mensuals', function (Blueprint $table) {
             $table->increments('id');
+
+            //$table->integer('idPeriodo')->unsigned()->nullable();
+            //$table->integer('idEstablecimiento')->unsigned()->nullable();
+
+            $table->boolean('estado')->default(1)->comment('0 .- Inactivo - 1 .- Activo');
+
             $table->timestamps();
+
+            //$table->foreign('idPeriodo')->references('id')->on('periodos');
+            //$table->foreign('idEstablecimiento')->references('id')->on('subvencions');
         });
     }
 

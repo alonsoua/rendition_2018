@@ -11,6 +11,6 @@ class SubvencionsTableSeeder extends Seeder
      */
     public function run()
     {
-        //
+        factory(App\Subvencion::class, 1)->create();
     }
 }

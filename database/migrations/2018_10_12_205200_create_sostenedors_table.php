@@ -14,24 +14,24 @@ class CreateSostenedorsTable extends Migration
     public function up()
     {
         Schema::create('sostenedors', function (Blueprint $table) {
-            $table->increments('id')->;
-            $table->string('rut', 20);
-            $table->string('nombre', 200);
-            $table->string('apellidoPaterno', 150);
-            $table->string('apellidoMaterno', 150);
+            $table->increments('id');
+            $table->string('rut', 20)->nullable();
+            $table->string('nombre', 200)->nullable();
+            $table->string('apellidoPaterno', 150)->nullable();
+            $table->string('apellidoMaterno', 150)->nullable();
             
-            $table->integer('idComuna')->unsigned();
+            //$table->integer('idComuna')->unsigned()->nullable();
             
-            $table->text('direccion');
+            $table->text('direccion')->nullable();
             $table->string('fono', 45)->nullable();
             $table->string('correo', 150)->nullable();
-            $table->boolean('estado')->default(1);
+            $table->boolean('estado')->default(1)->comment('0 .- Inactivo - 1 .- Activo');
             
             $table->timestamps();
 
             
 
-            $table->foreign('idComuna')->references('id')->on('comunas');
+            //$table->foreign('idComuna')->references('id')->on('comunas');
 
         });
     }

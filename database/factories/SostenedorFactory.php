@@ -9,7 +9,7 @@ $factory->define(App\Sostenedor::class, function (Faker $faker) {
         'apellidoPaterno' 	=> 'Apellido Paterno',
         'apellidoMaterno' 	=> 'Apellido Materno',
 
-        'idComuna' 		=> rand(1,2),
+        //'idComuna' 		=> rand(1,2),
         'direccion' 	=> $faker->address,
         'fono' 			=> rand(8,9),
         'correo' 		=> $faker->unique()->safeEmail,
