@@ -14,3 +14,27 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Auth::routes();
+
+// Route::get('/home', 'HomeController@index')->name('home');
+
+//RUTAS
+Route::middleware(['auth'])->group( function () {
+
+    Route::get('/', function () {
+        return view('main');
+    });
+
+    Route::group(['prefix' => 'admin'], function () {
+        //Usuarios
+        Route::resource('users', 'UserController');
+        //Roles
+      	//Route::resource('roles', 'RolController');
+   	});
+
+   	Route::group(['prefix' => 'mantenedores'], function () {
+    	//Sostenedores
+      	Route::resource('sostenedores', 'SostenedorController');
+   	});
+});
