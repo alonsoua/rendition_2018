@@ -1,0 +1,23 @@
+[33mcommit bc45ed6b7b8ea4bed3e0883e076747857d63c688[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Author: AUgarte <a.ugarte.zk@gmail.com>
+Date:   Fri Oct 19 18:59:17 2018 -0300
+
+    Agregamos blade + css y js en public... dataTables malo
+
+[33mcommit 001c6f0d93dd33a107e3a6b91d59c577928b68f0[m
+Author: AUgarte <a.ugarte.zk@gmail.com>
+Date:   Fri Oct 19 17:09:31 2018 -0300
+
+    Migramos relaciones en tablas
+
+[33mcommit 6d768ca3d7483831ee4a14deac1dcf6c43057472[m
+Author: AUgarte <a.ugarte.zk@gmail.com>
+Date:   Thu Oct 18 20:40:26 2018 -0300
+
+    Creamos migraciones sin relaciones y con algunos datos semilla -Falta agregar datos en tablas prioritarias (region, comuna tipoDependencia)
+
+[33mcommit 719e64438acc743d0936de7b401b667ac5508692[m
+Author: AUgarte <a.ugarte.zk@gmail.com>
+Date:   Thu Oct 18 16:46:46 2018 -0300
+
+    Primer commit de rendiciones

@@ -28,7 +28,7 @@
                <tr>
                   <th scope="col" width="15%">Rut</th>
                   <th scope="col" width="20%">Nombre</th>
-                  <th scope="col" width="20%">Apellido</th>
+                  {{-- <th scope="col" width="20%">Apellido</th> --}}
                   {{-- <th scope="col" width="15%">Perfil</th> --}}
                   <th scope="col" width="15%">Correo</th>
                   <th scope="col" width="10%" class="text-center">{{-- &nbsp; --}}opciones</th>

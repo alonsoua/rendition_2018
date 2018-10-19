@@ -3,15 +3,14 @@
 namespace App;
 
 use Caffeinated\Shinobi\Traits\ShinobiTrait;
-
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
     use Notifiable, ShinobiTrait;
     protected $table = 'users';
-
 
     /**
      * The attributes that are mass assignable.
@@ -21,11 +20,13 @@ class User extends Authenticatable
     protected $fillable = [
         'sostenedor'
       , 'rut'
-      , 'password'
       , 'name'
       , 'apellidoPaterno'
+      , 'apellidoMaterno'
       , 'direccion'
       , 'email'
+      , 'password'
+      , 'estado'
       , 'remember_token'
       ,
     ];

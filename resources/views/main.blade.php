@@ -48,8 +48,8 @@
 
 		<!-- JAVASCRIPT -->
       	<!-- Jquery -->
-		{{-- <script src="{{ asset('js/jquery-3.3.1.slim.min.js') }}"></script> --}}
-		<script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+		<script src="{{ asset('js/jquery-3.3.1.slim.min.js') }}"></script>
+		{{-- <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> --}}
 
       	<!-- Data Tables Jquery y Bootstrap 4 -->
       	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>

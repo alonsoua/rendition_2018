@@ -19,7 +19,7 @@
          </li>
       @else
    	    <li class="nav-item dropdown">
-   		    <a class="dropdown-toggle font-weight-light text-dark" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{{ Auth::user()->name }} </a>
+   		    <a class="dropdown-toggle font-weight-light text-dark" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{{ Auth::user()->name }} {{ Auth::user()->apellidoPaterno }} </a>
 
             <div class="dropdown-menu dropdown-menu-right" >
    	        	<a class="dropdown-item" href="{{ route('logout') }}"

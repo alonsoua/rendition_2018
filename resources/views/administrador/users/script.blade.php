@@ -38,7 +38,7 @@ $(document).ready(function(){
       "columns"   : [
          {data: 'rut'},
          {data: 'name'},
-         {data: 'apellidoPaterno'},
+         // {data: 'apellidoPaterno'},
          {data: 'email'},
          {data: 'opciones'},
       ],

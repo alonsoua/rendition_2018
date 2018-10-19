@@ -16,7 +16,7 @@ use App\Helpers\Helper;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 Auth::routes();
@@ -47,7 +47,7 @@ Route::middleware(['auth'])->group( function () {
 Route::get('usersPermisos', function(){
 
    return datatables()
-   ->eloquent(User::query()->where('activo', 1)->orderBy('name'))
+   ->eloquent(User::query()->where('estado', 1)->orderBy('name'))
    ->addColumn('opciones', 'administrador.users.partials.opciones')
    ->rawColumns(['opciones'])
    ->toJson();

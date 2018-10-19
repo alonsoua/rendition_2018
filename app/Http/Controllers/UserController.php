@@ -44,7 +44,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         if ($request->ajax()) {
-            Usuario::create([
+            User::create([
                 'sostenedor'=> $request['sostenedor'],
                 'rut'       => $request['rut'],
                 'password'  => encrypt($request['password']),
@@ -68,7 +68,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $usuarios = Usuario::find($id);
+        $usuarios = User::find($id);
         return view('administrador.users.edit');
     }
 
@@ -80,7 +80,7 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $usuario = Usuario::findOrFail($id);
+        $usuario = User::findOrFail($id);
         return view('administrador.users.edit')->with('usuario', $usuario);
     }
 
@@ -101,7 +101,7 @@ class UserController extends Controller
             'correo'    => 'required|max:150|email'
           ]);
 
-         $usuario = Usuario::findOrFail($id);
+         $usuario = User::findOrFail($id);
          $usuario->sostenedor = $request->sostenedor;
          $usuario->rut        = $request->rut;
          $usuario->pass       = encrypt($request->pass);
