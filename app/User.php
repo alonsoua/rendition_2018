@@ -2,12 +2,16 @@
 
 namespace App;
 
+use Caffeinated\Shinobi\Traits\ShinobiTrait;
+
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, ShinobiTrait;
+    protected $table = 'users';
+
 
     /**
      * The attributes that are mass assignable.
@@ -15,7 +19,15 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'sostenedor'
+      , 'rut'
+      , 'password'
+      , 'name'
+      , 'apellidoPaterno'
+      , 'direccion'
+      , 'email'
+      , 'remember_token'
+      ,
     ];
 
     /**
@@ -26,4 +38,17 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function setPasswordAttribute($value)
+    {
+        if(!empty($value))
+        {
+            $this->attributes['password'] = encrypt($value);
+        }
+    }
+
+    public function setSostenedorAttribute($value)
+    {
+        $this->attributes['sostenedor'] = ($value == 'on') ? '1' : '0';
+    }
 }

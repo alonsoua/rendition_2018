@@ -1,5 +1,9 @@
 <?php
 
+use Illuminate\Http\Request;
+use App\User;
+use App\Helpers\Helper;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -37,4 +41,15 @@ Route::middleware(['auth'])->group( function () {
     	//Sostenedores
       	Route::resource('sostenedores', 'SostenedorController');
    	});
+});
+
+//Users permisos
+Route::get('usersPermisos', function(){
+
+   return datatables()
+   ->eloquent(User::query()->where('activo', 1)->orderBy('name'))
+   ->addColumn('opciones', 'administrador.users.partials.opciones')
+   ->rawColumns(['opciones'])
+   ->toJson();
+
 });

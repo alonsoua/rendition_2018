@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Http\Request;
-
+use App\Usuario;
+use App\User;
+use App\Helpers\Helper;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,6 +15,17 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('users', function(){
+
+   return datatables()
+   ->eloquent(User::query()->where('activo', 1)->orderBy('name'))
+   ->addColumn('opciones', 'administrador.users.partials.opciones')
+   ->rawColumns(['opciones'])
+   ->toJson();
+
 });
+
+
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });

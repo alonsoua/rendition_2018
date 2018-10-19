@@ -22,7 +22,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        return view('administrador.users.index');
     }
 
     /**
@@ -32,7 +32,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view('administrador.users.create');
     }
 
     /**
@@ -43,7 +43,21 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if ($request->ajax()) {
+            Usuario::create([
+                'sostenedor'=> $request['sostenedor'],
+                'rut'       => $request['rut'],
+                'password'  => encrypt($request['password']),
+                'name'      => $request['name'],
+                'direccion' => $request['direccion'],
+                'email'     => $request['email']
+            ]);
+
+            $mensaje = 'El usuario con rut <b>'.Helper::rut($request['rut']).'</b> ha sido agregado correctamente';
+            return response()->json([
+                "message" => $mensaje
+            ]);
+        }
     }
 
     /**
@@ -54,7 +68,8 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+        $usuarios = Usuario::find($id);
+        return view('administrador.users.edit');
     }
 
     /**
@@ -65,7 +80,8 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        //
+        $usuario = Usuario::findOrFail($id);
+        return view('administrador.users.edit')->with('usuario', $usuario);
     }
 
     /**
@@ -77,7 +93,30 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        request()->validate([
+            'rut'       => 'required|numeric|unique:users,rut,'.$id.',id' ,
+            'pass'      => 'max:50',
+            'nombre'    => 'required|max:60',
+            'direccion' => 'max:200',
+            'correo'    => 'required|max:150|email'
+          ]);
+
+         $usuario = Usuario::findOrFail($id);
+         $usuario->sostenedor = $request->sostenedor;
+         $usuario->rut        = $request->rut;
+         $usuario->pass       = encrypt($request->pass);
+         $usuario->nombre     = $request->nombre;
+         $usuario->direccion  = $request->direccion;
+         $usuario->correo     = $request->correo;
+
+         $mensaje = 'El usuario con rut <b>'.Helper::rut($usuario['rut']).'</b> ha sido editado correctamente';
+
+         if ($request->ajax()) {
+            $usuario->save();
+            return response()->json([
+                "message" => $mensaje
+            ]);
+         }
     }
 
     /**
@@ -88,6 +127,14 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $rut = DB::table('users')->where('id', $id)->value('rut');
+         DB::table('users')->where('id', $id)->update(['activo' => 0]);
+         $message = 'El usuario con rut <b>'.Helper::rut($request['rut']).'</b>  fue eliminado correctamente';
+         if ($request->ajax()) {
+            return response()->json([
+               'id'        => $id,
+               'message'   => $message
+            ]);
+         }
     }
 }
