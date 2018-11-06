@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Http\Request;
-use App\Usuario;
-use App\User;
 use App\Helpers\Helper;
+use App\User;
+use App\Funcionario;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -24,6 +24,7 @@ Route::get('users', function(){
    ->toJson();
 
 });
+
 
 
 // Route::middleware('auth:api')->get('/user', function (Request $request) {

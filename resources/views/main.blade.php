@@ -10,8 +10,6 @@
       	<meta name="csrf-token" content="{{ csrf_token() }}">
 
 		<!-- BootstrapCDN + DataTables CSS -->
-		{{-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
- --}}
       	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.css">
       	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
 
@@ -22,52 +20,69 @@
 	<body style="background-color: #eeeeee;">
 
 		<!-- NAVBAR PRINCIPAL -->
-		@include('estructura.navbar')
-      	<!-- FIN -->
+			@include('estructura.navbar')
+      	<!-- FIN NAVBAR PRINCIPAL -->
 
       	@guest
       	@else
+   			
    			<!-- MENÚ -->
-   			@include('estructura.menu')
+   				@include('estructura.menu')
+			<!-- FIN MENÚ -->
 
    			<!-- BREADCRUMB -->
-   			@include('estructura.breadcrumb')
+   				@include('estructura.breadcrumb')
+   			<!-- FIN BREADCRUMB -->
+
       	@endguest
 
 
    		<!-- CONTENIDO -->
-   		@yield('content')
+   			@yield('content')
+		<!-- FIN CONTENIDO -->
 
-      	{{-- Br para separar de  --}}
-      	<br></br>
-      	<br>
+
+      	{{-- Br para separar de Footer --}}
+	      	<br></br>
+	      	<br>
+		{{-- Fin Br para separar de Footer --}}
+
 
 		<!-- FOOTER -->
-	   	{{-- @include('estructura.footer') --}}
+	   		{{-- @include('estructura.footer') --}}
+		<!-- FIN FOOTER -->
+
 
 
 		<!-- JAVASCRIPT -->
-      	<!-- Jquery -->
-		<script src="{{ asset('js/jquery-3.3.1.slim.min.js') }}"></script>
-		{{-- <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> --}}
+		
+	      	<!-- Jquery -->
+			<script src="{{ asset('js/jquery-3.3.1.slim.min.js') }}"></script>
+			{{-- <script src="https://code.jquery.com/jquery-3.3.1.js" 
+			integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" 
+			crossorigin="anonymous"></script> --}}
 
-      	<!-- Data Tables Jquery y Bootstrap 4 -->
-      	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-      	<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+	      	<!-- Data Tables Jquery -->
+	      	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+	      	<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 
+			<!-- Bootstrap 4 Jquery -->
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" 
+			integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" 
+			crossorigin="anonymous"></script>
+			<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" 
+			integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" 
+			crossorigin="anonymous"></script>
 
-
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-
-      	<!-- Jquery Alert Message -->
-		{!! Html::style('css/alert/jquery.alertable.css') !!}
-		{!! Html::script('js/alert/jquery.alertable.js') !!}
-
-      	<!-- Script del contenido -->
-		@yield('contentScript')
-
+	      	<!-- Jquery Alert Message -->
+			{!! Html::style('css/alert/jquery.alertable.css') !!}
+			{!! Html::script('js/alert/jquery.alertable.js') !!}
+				
+	      	<!-- Script del contenido -->
+				@yield('contentScript')
+			<!-- Fin Script del contenido -->
+			
 		<!-- FIN JAVASCRIPT -->
+
 	</body>
 </html>

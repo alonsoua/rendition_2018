@@ -7,6 +7,14 @@ use Illuminate\Http\Request;
 
 class FuncionarioController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:funcionarios.create')->only(['create', 'store']);
+        $this->middleware('permission:funcionarios.index')->only(['index']);
+        $this->middleware('permission:funcionarios.edit')->only(['edit', 'update']);
+        $this->middleware('permission:funcionarios.show')->only(['show']);
+        $this->middleware('permission:funcionarios.destroy')->only(['destroy']);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +22,7 @@ class FuncionarioController extends Controller
      */
     public function index()
     {
-        //
+        return view('mantenedor.rrhhFuncionarios.index');
     }
 
     /**

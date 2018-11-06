@@ -2,11 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Sostenedor;
+use App\Http\Requests\SostenedorRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Helpers\Helper;
+
+use App\Sostenedor;
+use App\Region;
+use App\Provincia;
+use App\Comuna;
 
 class SostenedorController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:sostenedores.create')->only(['create', 'store']);
+        $this->middleware('permission:sostenedores.index')->only(['index']);
+        $this->middleware('permission:sostenedores.edit')->only(['edit', 'update']);
+        $this->middleware('permission:sostenedores.show')->only(['show']);
+        $this->middleware('permission:sostenedores.destroy')->only(['destroy']);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +29,7 @@ class SostenedorController extends Controller
      */
     public function index()
     {
-        //
+        return view('mantenedor.sostenedores.index');
     }
 
     /**
@@ -24,7 +39,18 @@ class SostenedorController extends Controller
      */
     public function create()
     {
-        //
+        
+        // $com = DB::table('comunas')                
+
+        //     ->leftJoin('provincias', 'provincias.id', '=', 'comunas.idProvincia')
+        //     ->leftJoin('regiones', 'regiones.id', '=', 'provincias.idRegion')
+        //     //->where('comunas.estado', 1)
+        //     ->orderBy('regiones.id')
+        //     ->select(DB::raw('regiones.nombre as nombreRegion, comunas.nombre as nombreComuna, comunas.id as idComuna'))->distinct()->get();
+
+        $comunas = Comuna::pluck('nombre', 'id');
+                
+        return view('mantenedor.sostenedores.create', compact('comunas'));
     }
 
     /**
@@ -33,9 +59,29 @@ class SostenedorController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(SostenedorRequest $request)
     {
-        //
+
+        if ($request->ajax()) {
+            Sostenedor::create([
+                'rut'               => $request->rut,
+                'nombre'            => $request->nombre,
+                'apellidoPaterno'   => $request->apellidoPaterno,
+                'apellidoMaterno'   => $request->apellidoMaterno,
+                'idComuna'          => $request->comuna,
+                'direccion'         => $request->direccion,
+                'fono'              => $request->fono,
+                'correo'            => $request->correo
+                
+            ]);
+
+            //MENSAJE
+            $mensaje = 'El sostenedor con rut <b>'.$request['rut'].'</b> ha sido agregado correctamente';
+
+            return response()->json([
+                "message" => $mensaje
+            ]);
+        }
     }
 
     /**
@@ -44,9 +90,11 @@ class SostenedorController extends Controller
      * @param  \App\Sostenedor  $sostenedor
      * @return \Illuminate\Http\Response
      */
-    public function show(Sostenedor $sostenedor)
+    public function show($id)
     {
-        //
+        // $sostenedor = Sostenedor::find($id);
+
+        // return view('mantenedor.sostenedores.edit');
     }
 
     /**
@@ -55,9 +103,13 @@ class SostenedorController extends Controller
      * @param  \App\Sostenedor  $sostenedor
      * @return \Illuminate\Http\Response
      */
-    public function edit(Sostenedor $sostenedor)
+    public function edit($id)
     {
-        //
+        $sostenedor = Sostenedor::findOrFail($id);
+
+        $comunas = Comuna::pluck('nombre', 'id');
+
+        return view('mantenedor.sostenedores.edit', compact('sostenedor', 'comunas'));
     }
 
     /**
@@ -67,9 +119,38 @@ class SostenedorController extends Controller
      * @param  \App\Sostenedor  $sostenedor
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Sostenedor $sostenedor)
+    public function update(Request $request, $id)
     {
-        //
+
+        Request()->validate([
+            'rut'               => 'required|numeric|unique:sostenedors,rut,'.$id.',id' ,
+            'nombre'            => 'required|max:200',
+            'apellidoPaterno'   => 'required|max:150',
+            'apellidoMaterno'   => 'required|max:150',
+            'comuna'            => 'required',
+            'direccion'         => 'max:250',
+            'fono'              => 'max:45',
+            'correo'            => 'max:150|email'
+          ]);
+
+         $sostenedor = Sostenedor::findOrFail($id);        
+         $sostenedor->rut               = $request->rut;
+         $sostenedor->nombre            = $request->nombre;
+         $sostenedor->apellidoPaterno   = $request->apellidoPaterno;
+         $sostenedor->apellidoMaterno   = $request->apellidoMaterno;
+         $sostenedor->idComuna          = $request->comuna;
+         $sostenedor->direccion         = $request->direccion;
+         $sostenedor->fono              = $request->fono;
+         $sostenedor->correo            = $request->correo;
+
+         $mensaje = 'El sostenedor con rut <b>'.Helper::rut($sostenedor['rut']).'</b> ha sido editado correctamente';
+
+         if ($request->ajax()) {
+            $sostenedor->save();
+            return response()->json([
+                "message" => $mensaje
+            ]);
+         }
     }
 
     /**
@@ -78,8 +159,17 @@ class SostenedorController extends Controller
      * @param  \App\Sostenedor  $sostenedor
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Sostenedor $sostenedor)
+    public function destroy(Request $request, $id)
     {
-        //
+        $rut = DB::table('sostenedors')->where('id', $id)->value('rut');
+        DB::table('sostenedors')->where('id', $id)->update(['estado' => 0]);
+        $message = 'El sostenedor con rut <b>'.$request['rut'].'</b>  fue eliminado correctamente';
+        if ($request->ajax()) {
+            return response()->json([
+               'id'        => $id,
+               'message'   => $message
+            ]);
+        }
     }
 }
+

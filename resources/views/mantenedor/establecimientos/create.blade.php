@@ -1,8 +1,8 @@
 @extends('main')
 
-@section('title', 'Agregar Usuario')
+@section('title', 'Agregar Establecimiento')
 
-@section('breadcrumb', 'Usuarios')
+@section('breadcrumb', 'Establecimientos')
 
 @section('content')
 
@@ -13,21 +13,21 @@
 <div class="card">
 
 <div class="card-header">
-	<h4 class="my-0 font-weight-light text-sm-center">Agregar Usuario</h4>
+	<h4 class="my-0 font-weight-light text-sm-center">Agregar Establecimiento</h4>
 </div>
 
 <div class="card-body">
 
-   @include('administrador.usuarios.partials.validaciones')
+   @include('mantenedor.establecimientos.partials.validaciones')
 
-   {!! Form::open(['route' => ['usuarios.store'], 'method' => 'STORE', 'id' => 'form-agregar']) !!}
+   {!! Form::open(['route' => ['establecimientos.store'], 'method' => 'STORE', 'id' => 'form-agregar']) !!}
 
-      @include('administrador.usuarios.partials.fields')
+      @include('mantenedor.establecimientos.partials.fields')
 
       {{-- Botones --}}
       <div class="form-group row">
          <div class="col-sm-3">
-            {!! link_to_route('usuarios.index', $title='Volver', $parameters = [] ,$attributes = [
+            {!! link_to_route('establecimientos.index', $title='Volver', $parameters = [] ,$attributes = [
                'id'     => 'cancelar',
                'class'  => 'btn btn-info float-right'
             ]) !!}
@@ -54,6 +54,6 @@
 
 @section('contentScript')
    <script type="text/javascript">
-      @include("administrador.usuarios.script")
+      @include("mantenedor.establecimientos.script")
    </script>
 @endsection

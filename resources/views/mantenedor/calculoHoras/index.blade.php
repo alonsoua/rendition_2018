@@ -12,22 +12,23 @@
 
    <div class="card-header">
       <h5 class="font-weight-light mt-2 text-sm-left float-left">Listado de Usuarios</h5>
-
-      {!! link_to_route('usuarios.create', $title='Agregar Usuarios', $parameters = [] ,$attributes = [
-         'id'     => 'agregarUsuario',
-         'class'  => 'btn btn-success mt-1 float-right btn-sm'
-      ]) !!}
-
+      @can('users.create')
+         {!! link_to_route('users.create', $title='Agregar Usuarios', $parameters = [] ,$attributes = [
+            'id'     => 'agregarUsuario',
+            'class'  => 'btn btn-success mt-1 float-right btn-sm'
+         ]) !!}
+      @endcan
    </div>
    <div class="card-body">
 
       <div id="alert" class="alert alert-info mt-2" style="display:none;"></div>
       <div class="table-responsive-xl">
-         <table id="dataTable-usuarios" class="table table-striped table-bordered table-sm">
+         <table id="dataTable-users" class="table table-striped table-bordered table-sm">
             <thead>
                <tr>
                   <th scope="col" width="15%">Rut</th>
-                  <th scope="col" width="40%">Nombre</th>
+                  <th scope="col" width="20%">Nombre</th>
+                  {{-- <th scope="col" width="20%">Apellido</th> --}}
                   {{-- <th scope="col" width="15%">Perfil</th> --}}
                   <th scope="col" width="15%">Correo</th>
                   <th scope="col" width="10%" class="text-center">{{-- &nbsp; --}}opciones</th>
@@ -41,13 +42,13 @@
 </div>
 </main>
 
-{!! Form::open(['route' => ['usuarios.destroy', ':USER_ID'], 'method' => 'DELETE', 'id' => 'form-delete']) !!}
+{!! Form::open(['route' => ['users.destroy', ':USER_ID'], 'method' => 'DELETE', 'id' => 'form-delete']) !!}
 {!! Form::close() !!}
 
 @endsection
 
 @section('contentScript')
    <script type="text/javascript">
-      @include("administrador.usuarios.script")
+      @include("administrador.users.script")
    </script>
 @endsection

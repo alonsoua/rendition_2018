@@ -1,8 +1,8 @@
 @extends('main')
 
-@section('title', 'Editar Usuario')
+@section('title', 'Editar Sostenedor')
 
-@section('breadcrumb', 'Usuarios')
+@section('breadcrumb', 'Sostenedor')
 
 @section('content')
 
@@ -13,25 +13,25 @@
 <div class="card">
 
 <div class="card-header">
-   <h4 class="my-0 font-weight-light text-sm-center">Editar Usuario: {{ $usuario->nombre }}</h4>
+   <h4 class="my-0 font-weight-light text-sm-center">Editar Sostenedor: {{ $sostenedor->nombre }} {{ $sostenedor->apellidoPaterno }}</h4>
 </div>
 
 <div class="card-body">
 
-   @include('administrador.usuarios.partials.validaciones')
+   @include('mantenedor.sostenedores.partials.validaciones')
 
-   {!! Form::model($usuario,
-      ['route'   => ['usuarios.update', $usuario]
+   {!! Form::model($sostenedor,
+      ['route'   => ['sostenedores.update', $sostenedor]
       , 'method' => 'PUT'
       , 'id'     => 'form-editar'])
    !!}
 
-      @include('administrador.usuarios.partials.fields')
+      @include('mantenedor.sostenedores.partials.fields')
 
       {{-- Acciones Btn --}}
       <div class="form-group row">
          <div class="col-sm-3">
-            {!! link_to_route('usuarios.index', $title='Volver', $parameters = [] ,$attributes = [
+            {!! link_to_route('sostenedores.index', $title='Volver', $parameters = [] ,$attributes = [
                'id'     => 'cancelar',
                'class'  => 'btn btn-info float-right'
             ]) !!}
@@ -60,6 +60,6 @@
 
 @section('contentScript')
    <script type="text/javascript">
-      @include("administrador.usuarios.script")
+      @include("mantenedor.sostenedores.script")
    </script>
 @endsection

@@ -11,34 +11,37 @@ $(document).ready(function(){
    |
    */
    $.fn.dataTable.ext.classes.sPagination = 'pagination pagination-sm';
-   $('#dataTable-usuarios').DataTable({
+   $('#dataTable-funcionarios').DataTable({
 
       "oLanguage" : {
          "sProcessing"        : "Procesando...",
          "sLengthMenu"        : "Mostrar _MENU_ registros por página",
-         "sZeroRecords"       : "<h5 class='font-weight-light mt-5 mb-5'>No encontramos ningún usuario con esas características</h5>",
-         "sEmptyTable"        : "<h5 class='font-weight-light mt-5 mb-5'>No existen usuarios registrados</h5>",
+         "sZeroRecords"       : "<h5 class='font-weight-light mt-5 mb-5'>No encontramos ningún funcionario con esas características</h5>",
+         "sEmptyTable"        : "<h5 class='font-weight-light mt-5 mb-5'>No existen funcionarios registrados</h5>",
          "sLoadingRecords"    : "Cargando...",
          "sInfo"              : "Mostrando _START_ a _END_ de _TOTAL_ registros",
-         "sInfoEmpty"         : "Mostrando 0 a 0 de 0 usuarios",
-         "sInfoFiltered"      : "<br>(filtro aplicado en _MAX_ usuarios)",
+         "sInfoEmpty"         : "Mostrando 0 a 0 de 0 funcionarios",
+         "sInfoFiltered"      : "<br>(filtro aplicado en _MAX_ funcionarios)",
          "sInfoPostFix"       : "",
          "sInfoThousands"     : ".",
          "sSearch"            : "Buscar:",
          "sUrl"               : "",
             "oPaginate"       : {
-               "sFirst"    : "Primera",
-               "sPrevious" : "Anterior",
-               "sNext"     : "Siguiente",
-               "sLast"     : "Última",
+                  "sFirst"       : "Primera",
+                  "sPrevious"    : "Anterior",
+                  "sNext"        : "Siguiente",
+                  "sLast"        : "Última",
             },
       },
       "serverSide": true,
-      "ajax"      : "{{ url('api/usuarios') }}",
+      "ajax"      : "{{ url('funcionariosTable') }}",
       "columns"   : [
-         {data: 'rut'},
-         {data: 'nombre'},
-         {data: 'correo'},
+         
+         {data: 'establecimiento.nombre',    name: 'establecimiento.nombre'},
+         {data: 'rut',                       name: 'funcionarios.rut'},
+         {data: 'nombre',                    name: 'funcionarios.nombre'},
+         {data: 'tipo_contrato.tipoContrato',name: 'tipo_contrato.tipoContrato'},
+         {data: 'funcion.nombre',            name: 'funcion.nombre'},
          {data: 'opciones'},
       ],
       "drawCallback": function () {
@@ -47,8 +50,6 @@ $(document).ready(function(){
    });
 
    if ($("#form-agregar").length) {
-      //debugger;
-      //$('#vPass').addClass('valid-feedback');
       $('#msgVacio').remove();
    }
 
