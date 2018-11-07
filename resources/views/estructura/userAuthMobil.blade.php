@@ -22,7 +22,7 @@
             Cerrar Sesi&oacute;n
         </a>
 
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        <form id="form-logout" action="{{ route('logout') }}" method="POST" style="display: none;">
             {{ csrf_field() }}
         </form>
     </div>
@@ -31,6 +31,6 @@
 <script>
     function LogOut(event) {
         event.preventDefault();
-        document.getElementById('logout-form').submit();
+        document.getElementById('form-logout').submit();
     }
 </script>

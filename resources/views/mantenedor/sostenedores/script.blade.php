@@ -57,9 +57,11 @@ $(document).ready(function(){
 
 function MensajeEliminar(e, i) {
    e.preventDefault();
-   var rut = $(i).attr('data-rut');
+   var rut    = $(i).attr('data-rut');
+   var nombre = $(i).attr('data-nombre');
 
-   $.alertable.confirm('<p class="text-center">¿Está seguro de eliminar el sostenedor con rut '+rut+'?</p>', {
+   var texto = '¿Está seguro de eliminar el sostenedor <b>'+rut+' - '+nombre+'</b>?';
+   $.alertable.confirm('<p class="text-center">'+texto+'</p>', {
       html: true
    }).then(function() {
       Eliminar(i);
@@ -81,8 +83,10 @@ function Eliminar(i) {
       url,
       data,
       function (result) {
-         row.fadeOut(); //Quitamos la fila
-         $.alertable.alert(result.message).always(function(){});
+         row.fadeOut(); //Quita la fila del dato a eliminar
+         $.alertable.alert('<p class="text-center">'+result.message+'</p>', {
+            html: true
+         }).always(function(){});
    }).fail(function(data){
        console.log(data);
    });
@@ -90,14 +94,10 @@ function Eliminar(i) {
 
 $('#guardar').click(function(){
 
-   // console.log();
-   // debugger;
    var idFm = $(this).attr('data-form');
    var form = $('#'+idFm);
    var url  = form.attr('action');
-//   var data = form.serialize();
    var dataArray = form.serializeArray();
-
 
    $.ajax({
       url: url,
@@ -108,16 +108,16 @@ $('#guardar').click(function(){
       dataType: 'json',
       data: dataArray,
       success: function(result){      
-         $.alertable.alert('<p class="text-center">'+result.message+'</p>', {html : true}).always(function(){
+         $.alertable.alert('<p class="text-center">'+result.message+'</p>', {
+            html : true
+         }).always(function(){
             location.reload();
          });
       
       }, error: function(data) {
-      // console.log(data);
-      // console.log(1,data.responseJSON.message);
-      //console.log(2,data.responseJSON.exception);
-      // debugger;
-
+         
+         console.log(data);
+         //debugger;
 
          /* VALIDACIONES */
          //rut      
@@ -209,6 +209,11 @@ $('#guardar').click(function(){
          }
       }
    });
+});
+
+
+
+
 
    //$.post( url, data, function(result) {
    //       $.alertable.alert(result.message, {html : true}).always(function(){
@@ -287,10 +292,3 @@ $('#guardar').click(function(){
    //       $('#vCorreo').css('display', 'none');
    //    }
    // });
-
-
- 
-
-
-});
-

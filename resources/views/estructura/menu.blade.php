@@ -6,7 +6,7 @@
 </button>
 
 <ul class="nav nav-pills d-lg-none" style="z-index:10000;">
-    @include('estructura.userAuth')
+    @include('estructura.userAuthMobil')
 </ul>
 
 <div class="collapse navbar-collapse" id="navbarSupportedContent">

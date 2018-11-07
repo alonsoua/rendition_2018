@@ -55,9 +55,10 @@ $(document).ready(function(){
 
 function MensajeEliminar(e, i) {
    e.preventDefault();
-   var rut = $(i).attr('data-rut');
+   var rut    = $(i).attr('data-rut');
+   var nombre = $(i).attr('data-nombre');
 
-   $.alertable.confirm('<p class="text-center">¿Está seguro de eliminar el usuario con rut '+rut+'?</p>', {
+   $.alertable.confirm('<p class="text-center">¿Está seguro de eliminar el usuario <b>'+rut+' - '+nombre+'</b>?</p>', {
       html: true
    }).then(function() {
       Eliminar(i);
@@ -79,88 +80,116 @@ function Eliminar(i) {
       data,
       function (result) {
          row.fadeOut(); //Quitamos la fila
-         $.alertable.alert(result.message).always(function(){});
+         $.alertable.alert('<p class="text-center">'+result.message+'</p>', {
+            html: true
+         }).always(function(){});
    }).fail(function(data){
       // console(data);
    });
 }
-
 $('#guardar').click(function(){
 
-   // console.log();
-   // debugger;
    var idFm = $(this).attr('data-form');
    var form = $('#'+idFm);
    var url  = form.attr('action');
-   var data = form.serialize();
+   var dataArray = form.serializeArray();
 
-   $.post(
-      url,
-      data,
-      function (result) {
-         $.alertable.alert(result.message, {html : true}).always(function(){
+
+   $.ajax({
+      url: url,
+      method: 'POST',
+      headers: {
+         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      dataType: 'json',
+      data: dataArray,
+      success: function(result){      
+         $.alertable.alert('<p class="text-center">'+result.message+'</p>', {html : true}).always(function(){
             location.reload();
          });
-   }).fail(function(data){
+      
+      }, error: function(data) {
+      
+         console.log(data); 
+         // debugger;
 
-      //debugger;
-      console.log(data);
+         /* VALIDACIONES */
+         //rut      
+         if (data.responseJSON.errors.rut != undefined) {
+            $('#txtRut').addClass('is-invalid');
+            $('#vRut').addClass('invalid-feedback');
+            $('#msgRut').html(data.responseJSON.errors.rut);
+         } else {
+            $('#txtRut').removeClass('is-invalid');
+            $('#txtRut').addClass('is-valid');
+            $('#vRut').css('display', 'none');
+         }
 
-      /* VALIDACIONES */
-      //rut
-      if (data.responseJSON.errors.rut != undefined) {
-         $('#txtRut').addClass('is-invalid');
-         $('#vRut').addClass('invalid-feedback');
-         $('#msgRut').html(data.responseJSON.errors.rut);
-      } else {
-         $('#txtRut').removeClass('is-invalid');
-         $('#txtRut').addClass('is-valid');
-         $('#vRut').css('display', 'none');
-      }
+         //contraseña
+         if (data.responseJSON.errors.password != undefined) {
+            $('#txtPass').addClass('is-invalid');
+            $('#vPass').addClass('invalid-feedback');
+            $('#msgPass').html(data.responseJSON.errors.password);
+         } else {
+            $('#txtPass').removeClass('is-invalid');
+            $('#txtPass').addClass('is-valid');
+            $('#vPass').css('display', 'none');
+         }
 
-      //pass
-      if (data.responseJSON.errors.pass != undefined) {
-         $('#txtPass').addClass('is-invalid');
-         $('#vPass').addClass('invalid-feedback');
-         $('#msgPass').html(data.responseJSON.errors.pass);
-      } else {
-         $('#txtPass').removeClass('is-invalid');
-         $('#txtPass').addClass('is-valid');
-         $('#vPass').css('display', 'none');
-      }
+         //nombre
+         if (data.responseJSON.errors.nombre != undefined) {
+            $('#txtNombre').addClass('is-invalid');
+            $('#vNombre').addClass('invalid-feedback');
+            $('#msgNombre').html(data.responseJSON.errors.nombre);
+         } else {
+            $('#txtNombre').removeClass('is-invalid');
+            $('#txtNombre').addClass('is-valid');
+            $('#vNombre').css('display', 'none');
+         }
 
-      //nombre
-      if (data.responseJSON.errors.nombre != undefined) {
-         $('#txtNombre').addClass('is-invalid');
-         $('#vNombre').addClass('invalid-feedback');
-         $('#msgNombre').html(data.responseJSON.errors.nombre);
-      } else {
-         $('#txtNombre').removeClass('is-invalid');
-         $('#txtNombre').addClass('is-valid');
-         $('#vNombre').css('display', 'none');
-      }
+         //apellidoPaterno
+         if (data.responseJSON.errors.apellidoPaterno != undefined) {
+            $('#txtApellidoPaterno').addClass('is-invalid');
+            $('#vApellidoPaterno').addClass('invalid-feedback');
+            $('#msgApellidoPaterno').html(data.responseJSON.errors.apellidoPaterno);
+         } else {
+            $('#txtApellidoPaterno').removeClass('is-invalid');
+            $('#txtApellidoPaterno').addClass('is-valid');
+            $('#vApellidoPaterno').css('display', 'none');
+         }
 
-      //direccion
-      if (data.responseJSON.errors.direccion != undefined) {
-         $('#txtDireccion').addClass('is-invalid');
-         $('#vDireccion').addClass('invalid-feedback');
-         $('#msgDireccion').html(data.responseJSON.errors.direccion);
-      } else {
-         $('#txtDireccion').removeClass('is-invalid');
-         //$('#txtDireccion').addClass('is-valid');
-         $('#vDireccion').css('display', 'none');
-      }
+         //apellidoMaterno
+         if (data.responseJSON.errors.apellidoMaterno != undefined) {
+            $('#txtApellidoMaterno').addClass('is-invalid');
+            $('#vApellidoMaterno').addClass('invalid-feedback');
+            $('#msgApellidoMaterno').html(data.responseJSON.errors.apellidoMaterno);
+         } else {
+            $('#txtApellidoMaterno').removeClass('is-invalid');
+            //$('#txtApellidoMaterno').addClass('is-valid');
+            $('#vApellidoMaterno').css('display', 'none');
+         }          
 
-      //correo
-      if (data.responseJSON.errors.correo != undefined) {
-         $('#txtCorreo').addClass('is-invalid');
-         $('#vCorreo').addClass('invalid-feedback');
-         $('#msgCorreo').html(data.responseJSON.errors.correo);
-         console.log(data.responseJSON.errors.correo);
-      } else {
-         $('#txtCorreo').removeClass('is-invalid');
-         $('#txtCorreo').addClass('is-valid');
-         $('#vCorreo').css('display', 'none');
+         //direccion
+         if (data.responseJSON.errors.direccion != undefined) {
+            $('#txtDireccion').addClass('is-invalid');
+            $('#vDireccion').addClass('invalid-feedback');
+            $('#msgDireccion').html(data.responseJSON.errors.direccion);
+         } else {
+            $('#txtDireccion').removeClass('is-invalid');
+            //$('#txtDireccion').addClass('is-valid');
+            $('#vDireccion').css('display', 'none');
+         }
+
+         //correo
+         if (data.responseJSON.errors.correo != undefined) {
+            $('#txtCorreo').addClass('is-invalid');
+            $('#vCorreo').addClass('invalid-feedback');
+            $('#msgCorreo').html(data.responseJSON.errors.correo);
+         } else {
+            $('#txtCorreo').removeClass('is-invalid');
+            $('#txtCorreo').addClass('is-valid');
+            $('#vCorreo').css('display', 'none');
+         }
       }
    });
 });

@@ -105,7 +105,7 @@
 <hr></hr>
 <div class="form-group row">
    
-   {!! Form::label('NN', 'NN', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   {!! Form::label('Detalle', 'Detalle', ['class' => 'col-sm-3 col-form-label text-right']) !!}
    
 
    {{-- IMPONIBLE --}}

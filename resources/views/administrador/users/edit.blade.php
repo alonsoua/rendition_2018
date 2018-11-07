@@ -13,7 +13,7 @@
 <div class="card">
 
 <div class="card-header">
-   <h4 class="my-0 font-weight-light text-sm-center">Editar Usuario: {{ $usuario->nombre }}</h4>
+   <h4 class="my-0 font-weight-light text-sm-center">Editar Usuario: {{ $usuario->rut }} - {{ $usuario->name }}</h4>
 </div>
 
 <div class="card-body">
@@ -23,7 +23,8 @@
    {!! Form::model($usuario,
       ['route'   => ['users.update', $usuario]
       , 'method' => 'PUT'
-      , 'id'     => 'form-editar'])
+      , 'id'     => 'form-editar'
+      , 'autocomplete' => 'off'])
    !!}
 
       @include('administrador.users.partials.fields')
@@ -61,5 +62,11 @@
 @section('contentScript')
    <script type="text/javascript">
       @include("administrador.users.script")
+   </script>
+
+   <script>
+      $(document).ready(function(){
+         $('#msgVacio').css('display', 'block');
+      });
    </script>
 @endsection

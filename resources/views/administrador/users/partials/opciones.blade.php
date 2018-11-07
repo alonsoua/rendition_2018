@@ -9,7 +9,7 @@
    @endcan
 
    @can('users.destroy')
-      <a href="#!" id="{{ $id }}" data-rut="{{ $rut }}" onclick=" MensajeEliminar(event, this) ">
+      <a href="#!" id="{{ $id }}" data-rut="{{ $rut }}" data-nombre="{{ $name }}" onclick=" MensajeEliminar(event, this) ">
          <button type="button" class="btn btn-outline-danger btn-sm">Eliminar</button>
       </a>
    @endcan

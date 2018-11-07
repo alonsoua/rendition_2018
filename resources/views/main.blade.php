@@ -20,36 +20,36 @@
 	<body style="background-color: #eeeeee;">
 
 		<!-- NAVBAR PRINCIPAL -->
-			@include('estructura.navbar')
+		@include('estructura.navbar')
       	<!-- FIN NAVBAR PRINCIPAL -->
 
       	@guest
       	@else
    			
    			<!-- MENÚ -->
-   				@include('estructura.menu')
+   			@include('estructura.menu')
 			<!-- FIN MENÚ -->
 
    			<!-- BREADCRUMB -->
-   				@include('estructura.breadcrumb')
+   			@include('estructura.breadcrumb')
    			<!-- FIN BREADCRUMB -->
 
       	@endguest
 
 
    		<!-- CONTENIDO -->
-   			@yield('content')
+   		@yield('content')
 		<!-- FIN CONTENIDO -->
 
 
       	{{-- Br para separar de Footer --}}
-	      	<br></br>
-	      	<br>
+	    <br></br>
+	    <br>
 		{{-- Fin Br para separar de Footer --}}
 
 
 		<!-- FOOTER -->
-	   		{{-- @include('estructura.footer') --}}
+	   	@include('estructura.footer')
 		<!-- FIN FOOTER -->
 
 
@@ -79,7 +79,7 @@
 			{!! Html::script('js/alert/jquery.alertable.js') !!}
 				
 	      	<!-- Script del contenido -->
-				@yield('contentScript')
+			@yield('contentScript')
 			<!-- Fin Script del contenido -->
 			
 		<!-- FIN JAVASCRIPT -->

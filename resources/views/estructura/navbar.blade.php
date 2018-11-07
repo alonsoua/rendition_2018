@@ -16,7 +16,7 @@
         
         @guest
 
-            {{-- <li class="nav-item">
+            <li class="nav-item">
             
                 <a class="dropdown-item" href="{{ route('login') }}">{{ __('Ingresar') }}</a>
             
@@ -30,7 +30,7 @@
                 
                 @endif
             
-            </li> --}}
+            </li>
 
         @else
 

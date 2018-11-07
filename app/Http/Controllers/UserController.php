@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\User;
 use App\Helpers\Helper;
+
+use App\User;
+use App\Rol;
+
 
 
 //use App\Http\Requests\UsuarioRequest;
@@ -38,7 +42,10 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('administrador.users.create');
+        $pass   = null;
+        $nombre = null;
+        $correo = null;
+        return view('administrador.users.create', compact('pass', 'nombre', 'correo'));
     }
 
     /**
@@ -47,19 +54,21 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
         if ($request->ajax()) {
             User::create([
-                'sostenedor'=> $request['sostenedor'],
-                'rut'       => $request['rut'],
-                'password'  => encrypt($request['password']),
-                'name'      => $request['name'],
-                'direccion' => $request['direccion'],
-                'email'     => $request['email']
+                'sostenedor'      => $request['sostenedor'],
+                'rut'             => $request['rut'],
+                'password'        => bcrypt($request->password),
+                'name'            => $request['nombre'],
+                'apellidoPaterno' => $request['apellidoPaterno'],
+                'apellidoMaterno' => $request['apellidoMaterno'],                
+                'direccion'       => $request['direccion'],
+                'email'           => $request['correo']
             ]);
 
-            $mensaje = 'El usuario con rut <b>'.Helper::rut($request['rut']).'</b> ha sido agregado correctamente';
+            $mensaje = 'El usuario <b>'.Helper::rut($request['rut']).' - '.$request['nombre'].'</b> ha sido agregado correctamente';
             return response()->json([
                 "message" => $mensaje
             ]);
@@ -74,8 +83,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $usuarios = User::find($id);
-        return view('administrador.users.edit');
+        //
     }
 
     /**
@@ -87,7 +95,10 @@ class UserController extends Controller
     public function edit($id)
     {
         $usuario = User::findOrFail($id);
-        return view('administrador.users.edit')->with('usuario', $usuario);
+        $pass   = $usuario->pass;
+        $nombre = $usuario->name;
+        $correo = $usuario->email;
+        return view('administrador.users.edit', compact('pass', 'nombre', 'correo', 'usuario'));
     }
 
     /**
@@ -100,29 +111,34 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         request()->validate([
-            'rut'       => 'required|numeric|unique:users,rut,'.$id.',id' ,
-            'pass'      => 'max:50',
-            'nombre'    => 'required|max:60',
-            'direccion' => 'max:200',
-            'correo'    => 'required|max:150|email'
+            'rut'               => 'required|numeric|unique:users,rut,'.$id.',id' ,
+            'password'          => 'required|max:50',
+            'nombre'            => 'required|max:200',
+            'apellidoPaterno'   => 'required|max:150',
+            'apellidoMaterno'   => 'max:150',
+            'direccion'         => 'max:200',
+            'correo'            => 'required|max:150|email'
           ]);
 
-         $usuario = User::findOrFail($id);
-         $usuario->sostenedor = $request->sostenedor;
-         $usuario->rut        = $request->rut;
-         $usuario->pass       = encrypt($request->pass);
-         $usuario->nombre     = $request->nombre;
-         $usuario->direccion  = $request->direccion;
-         $usuario->correo     = $request->correo;
+        $usuario = User::findOrFail($id);
+        $usuario->sostenedor      = $request->sostenedor;
+        $usuario->rut             = $request->rut;
+        $usuario->password        = bcrypt($request->password);
+        $usuario->name            = $request->nombre;
+        $usuario->apellidoPaterno = $request->apellidoPaterno;
+        $usuario->apellidoMaterno = $request->apellidoMaterno;
+        $usuario->direccion       = $request->direccion;
+        $usuario->email           = $request->correo;
 
-         $mensaje = 'El usuario con rut <b>'.Helper::rut($usuario['rut']).'</b> ha sido editado correctamente';
+        $mensaje = 'El usuario <b>'.Helper::rut($usuario['rut']).' - '.$request['nombre'].'</b>';
+        $mensaje .= ' ha sido editado correctamente';
 
-         if ($request->ajax()) {
+        if ($request->ajax()) {
             $usuario->save();
             return response()->json([
                 "message" => $mensaje
             ]);
-         }
+        }
     }
 
     /**
@@ -133,14 +149,15 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $rut = DB::table('users')->where('id', $id)->value('rut');
-         DB::table('users')->where('id', $id)->update(['activo' => 0]);
-         $message = 'El usuario con rut <b>'.Helper::rut($request['rut']).'</b>  fue eliminado correctamente';
-         if ($request->ajax()) {
+        $rut    = DB::table('users')->where('id', $id)->value('rut');
+        $nombre = DB::table('users')->where('id', $id)->value('name');
+        DB::table('users')->where('id', $id)->update(['activo' => 0]);
+        $message = 'El usuario con <b>'.Helper::rut($rut).' - '.$nombre.'</b> fue eliminado correctamente';
+        if ($request->ajax()) {
             return response()->json([
                'id'        => $id,
                'message'   => $message
             ]);
-         }
+        }
     }
 }

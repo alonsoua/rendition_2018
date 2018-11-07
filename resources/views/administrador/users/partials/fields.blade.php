@@ -1,95 +1,120 @@
-      <div class="form-group row">
-         {!! Form::label('Sostenedor', 'Es Sostenedor', ['class' => 'col-sm-3 col-form-label text-right']) !!}
 
-         <div class="col-sm-9">
-            <div class="mt-2">
-               {{ Form::checkbox('sostenedor'), 0 }}
-            </div>
-         </div>
+{{-- CHECKBOX SOSTENEDOR --}}
+<div class="form-group row">
+   {!! Form::label('Sostenedor', 'Es Sostenedor', ['class' => 'col-sm-3 col-form-label text-right']) !!}
 
+   <div class="col-sm-9">
+      <div class="mt-2">
+         {{ Form::checkbox('sostenedor'), 0 }}
       </div>
-{{--
-      <div class="form-group row">
-         {!! Form::label('Perfil', 'Perfil', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   </div>
 
-         <div class="col-sm-9">
-            {{ Form::select('size',
-               [
-                  '2' => 'Dev',
-                  '1' => 'Admin'
-               ], null,
-               [
-                  'id'           => 'lstPerfil',
-                  'placeholder'  => 'Seleccione Perfil...',
-                  'class'        => 'form-control'
-               ])
-            }}
-         </div>
+</div>
 
-      </div> --}}
 
-      <div class="form-group row">
-         {!! Form::label('Rut', 'Rut', ['class' => 'col-sm-3 col-form-label text-right']) !!}
-         <div class="col-sm-9">
+{{-- RUT --}}
+<div class="form-group row">
+   {!! Form::label('Rut', 'Rut', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   <div class="col-sm-9">
 
-            {!! Form::text('rut', null,
-               ['id'          => 'txtRut',
-               'class'        => 'form-control',
-               'placeholder'  => ''])
-            !!}
-            <div id="vRut"><span id="msgRut" class="validacion"></span></div> {{-- Div de Validación --}}
-         </div>
-      </div>
+      {!! Form::text('rut', null,
+         ['id'          => 'txtRut',
+         'class'        => 'form-control',
+         'placeholder'  => 'Rut'])
+      !!}
+      <div id="vRut"><span id="msgRut" class="validacion"></span></div> {{-- Div de Validación --}}
+   </div>
+</div>
 
-      <div class="form-group row">
-         {!! Form::label('Contraseña', 'Contraseña', ['class' => 'col-sm-3 col-form-label text-right']) !!}
-         <div class="col-sm-9">
 
-            {!! Form::password('pass',
-               ['id'          => 'txtPass',
-               'class'        => 'form-control',
-               'placeholder'  => ''])
-            !!}
-            <div id="vPass"><span id="msgPass" class="validacion"></span></div>
-            <span id="msgVacio" class="validacion">Deje el campo en blanco para no cambiar la contraseña actual</span>
-         </div>
-      </div>
+{{-- CONTRASEÑA --}}
+<div class="form-group row">
+   {!! Form::label('Contraseña', 'Contraseña', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   <div class="col-sm-9">
 
-      <div class="form-group row">
-         {!! Form::label('Nombre', 'Nombre', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+      {!! Form::password('password', 
+         ['id'          => 'txtPass',
+         'class'        => 'form-control',
+         'placeholder'  => 'Contraseña',
+         'autocomplete' => 'off'])
+      !!}
+      <div id="vPass"><span id="msgPass" class="validacion"></span></div>
+      <span id="msgVacio" class="validacion" style="display:none;">Deje el campo en blanco para no cambiar la contraseña actual</span>
+   </div>
+</div>
 
-         <div class="col-sm-9">
-            {!! Form::text('nombre', null,
-               ['id'          => 'txtNombre',
-               'class'        => 'form-control',
-               'placeholder'  => ''])
-            !!}
-            <div id="vNombre"><span id="msgNombre" class="validacion"></span></div>
-         </div>
-      </div>
 
-      <div class="form-group row">
-         {!! Form::label('Direccion', 'Dirección', ['class' => 'col-sm-3 col-form-label text-right']) !!}
-         <div class="col-sm-9">
+{{-- NOMBRE --}}
+<div class="form-group row">
+   {!! Form::label('Nombre', 'Nombre', ['class' => 'col-sm-3 col-form-label text-right']) !!}
 
-            {!! Form::text('direccion', null,
-               ['id'          => 'txtDireccion',
-               'class'        => 'form-control',
-               'placeholder'  => ''])
-            !!}
-            <div id="vDireccion"><span id="msgDireccion" class="validacion"></span></div>
-         </div>
-      </div>
+   <div class="col-sm-9">
+      {!! Form::text('nombre', $nombre,
+         ['id'          => 'txtNombre',
+         'class'        => 'form-control',
+         'placeholder'  => 'Nombre'])
+      !!}
+      <div id="vNombre"><span id="msgNombre" class="validacion"></span></div>
+   </div>
+</div>
 
-      <div class="form-group row">
-         {!! Form::label('Correo', 'Correo', ['class' => 'col-sm-3 col-form-label text-right']) !!}
-         <div class="col-sm-9">
 
-            {!! Form::text('correo', null,
-               ['id'          => 'txtCorreo',
-               'class'        => 'form-control',
-               'placeholder'  => 'ejemplo@gmail.com'])
-            !!}
-            <div id="vCorreo"><span id="msgCorreo" class="validacion"></span></div>
-         </div>
-      </div>
+{{-- APELLIDOPATERNO --}}
+<div class="form-group row">
+   {!! Form::label('Apellido Paterno', 'Apellido Paterno', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+
+   <div class="col-sm-9">
+      {!! Form::text('apellidoPaterno', null,
+         ['id'          => 'txtApellidoPaterno',
+         'class'        => 'form-control',
+         'placeholder'  => 'Apellido Paterno'])
+      !!}
+      <div id="vApellidoPaterno"><span id="msgApellidoPaterno" class="validacion"></span></div>
+   </div>
+</div>
+
+
+{{-- APELLIDOMATERNO --}}
+<div class="form-group row">
+   {!! Form::label('Apellido Materno', 'Apellido Materno', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+
+   <div class="col-sm-9">
+      {!! Form::text('apellidoMaterno', null,
+         ['id'          => 'txtApellidoMaterno',
+         'class'        => 'form-control',
+         'placeholder'  => 'Apellido Materno'])
+      !!}
+      <div id="vApellidoMaterno"><span id="msgApellidoMaterno" class="validacion"></span></div>
+   </div>
+</div>
+
+
+{{-- DIRECCIÓN --}}
+<div class="form-group row">
+   {!! Form::label('Direccion', 'Dirección', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   <div class="col-sm-9">
+
+      {!! Form::text('direccion', null,
+         ['id'          => 'txtDireccion',
+         'class'        => 'form-control',
+         'placeholder'  => 'Dirección'])
+      !!}
+      <div id="vDireccion"><span id="msgDireccion" class="validacion"></span></div>
+   </div>
+</div>
+
+
+{{-- CORREO --}}
+<div class="form-group row">
+   {!! Form::label('Correo', 'Correo', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   <div class="col-sm-9">
+
+      {!! Form::text('correo', null,
+         ['id'          => 'txtCorreo',
+         'class'        => 'form-control',
+         'placeholder'  => 'ejemplo@gmail.com',
+         'autocomplete' => 'off'])
+      !!}
+      <div id="vCorreo"><span id="msgCorreo" class="validacion"></span></div>
+   </div>
+</div>

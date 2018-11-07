@@ -76,7 +76,8 @@ class SostenedorController extends Controller
             ]);
 
             //MENSAJE
-            $mensaje = 'El sostenedor con rut <b>'.$request['rut'].'</b> ha sido agregado correctamente';
+            $mensaje = 'El sostenedor <b>'.$request['rut'].' - '.$request['nombre'].'</b>';
+            $mensaje .= ' ha sido agregado correctamente';
 
             return response()->json([
                 "message" => $mensaje
@@ -143,7 +144,8 @@ class SostenedorController extends Controller
          $sostenedor->fono              = $request->fono;
          $sostenedor->correo            = $request->correo;
 
-         $mensaje = 'El sostenedor con rut <b>'.Helper::rut($sostenedor['rut']).'</b> ha sido editado correctamente';
+         $mensaje = 'El sostenedor <b>'.Helper::rut($sostenedor['rut']).' - '.$sostenedor['nombre'].'</b>';
+         $mensaje .= ' ha sido editado correctamente';
 
          if ($request->ajax()) {
             $sostenedor->save();
@@ -161,9 +163,13 @@ class SostenedorController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $rut = DB::table('sostenedors')->where('id', $id)->value('rut');
+        $rut    = DB::table('sostenedors')->where('id', $id)->value('rut');
+        $nombre = DB::table('sostenedors')->where('id', $id)->value('nombre');
+
         DB::table('sostenedors')->where('id', $id)->update(['estado' => 0]);
-        $message = 'El sostenedor con rut <b>'.$request['rut'].'</b>  fue eliminado correctamente';
+
+        $message = 'El sostenedor <b>'.$rut.' - '.$nombre.'</b> fue eliminado correctamente';
+
         if ($request->ajax()) {
             return response()->json([
                'id'        => $id,
