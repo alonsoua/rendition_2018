@@ -24,16 +24,16 @@ class EstablecimientoRequest extends FormRequest
     public function rules()
     {
         return [
-            'nombre'            => 'required|max:200|unique:establecimientos',
-            'rbd'               => 'required|max:20',
-            'razonSocial'       => 'required|max:150',
-            'rut'               => 'required|numeric|unique:establecimientos',
-            'tipoDependencia'   => 'required',
-            'sostenedor'        => 'required',
-            'comuna'            => 'required',
-            'direccion'         => 'required|max:250',
-            'fono'              => 'required|max:45',
-            'correo'            => 'max:150|email'
+            'rbd'             => 'required|unique:establecimientos',
+            'nombre'          => 'required|max:200',
+            'razonSocial'     => 'required|max:150',
+            'rut'             => 'required|numeric|unique:establecimientos',
+            'tipoDependencia' => 'required',
+            'sostenedor'      => 'required',
+            'comuna'          => 'required',
+            'direccion'       => 'required|max:250',
+            'fono'            => 'required|numeric|max:9999999999',
+            'correo'          => 'max:150|email'
         ];
     }
 }

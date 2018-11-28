@@ -52,4 +52,6 @@ class User extends Authenticatable
     {
         $this->attributes['sostenedor'] = ($value == 'on') ? '1' : '0';
     }
+
+    
 }

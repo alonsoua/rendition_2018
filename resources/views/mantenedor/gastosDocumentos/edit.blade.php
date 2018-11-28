@@ -30,18 +30,19 @@
 
       @include('mantenedor.gastosDocumentos.partials.fields')
 
+      <hr>
       {{-- Acciones Btn --}}
       <div class="form-group row">
          <div class="col-sm-3">
             {!! link_to_route('documentos.index', $title='Volver', $parameters = [] ,$attributes = [
                'id'     => 'cancelar',
-               'class'  => 'btn btn-info float-right'
+               'class'  => 'btn btn-light float-left'
             ]) !!}
          </div>
          <div class="col-sm-9">
             {!! link_to('#!', $title='Editar', $attributes = [
                'id'        => 'guardar',
-               'class'     => 'btn btn-success float-left',
+               'class'  => 'btn btn-primary float-right',
                'data-form' => 'form-editar'
             ], $secure = null) !!}
          </div>

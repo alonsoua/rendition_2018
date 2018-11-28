@@ -37,11 +37,11 @@ class ProveedorController extends Controller
      */
     public function create()
     {
-        
+        $editar = 0;
         $comunas = Comuna::pluck('nombre', 'id');
         $telefono = '';
         
-        return view('mantenedor.gastosProveedores.create', compact('comunas', 'telefono'));
+        return view('mantenedor.gastosProveedores.create', compact('comunas', 'telefono', 'editar'));
     }
 
     /**
@@ -93,6 +93,7 @@ class ProveedorController extends Controller
      */
     public function edit($id)
     {
+        $editar = 1;
         $proveedor = Proveedor::findOrFail($id);
         $telefono = $proveedor->fono;
         // $subRaw       = Subvencion::selectRaw('CONCAT(porcentajeMax, "% - " , nombre) as nombre, id')
@@ -101,7 +102,7 @@ class ProveedorController extends Controller
 
         $comunas = Comuna::pluck('nombre', 'id');
 
-        return view('mantenedor.gastosProveedores.edit', compact('proveedor', 'comunas', 'telefono'));
+        return view('mantenedor.gastosProveedores.edit', compact('proveedor', 'comunas', 'telefono', 'editar'));
     }
 
     /**
@@ -116,7 +117,7 @@ class ProveedorController extends Controller
         Request()->validate([
             'tipoPersona'   => 'required',
             'rut'           => 'required|unique:proveedors,rut,'.$id.',id' ,
-            'razonSocial'   => 'required',
+            'razonSocial'   => 'required|max:100',
             'giro'          => 'max:45',
             'comuna'        => 'required',
             'direccion'     => 'required|max:250',

@@ -1,6 +1,29 @@
 $(document).ready(function(){
 
-   //alert('Prueba');
+   /*
+   |--------------------------------------------------------------------------
+   | Chosen Select de JQuery
+   |--------------------------------------------------------------------------
+   | link: https://harvesthq.github.io/chosen/
+   | documentación: https://harvesthq.github.io/chosen/options.html
+   |
+   */
+
+   $('.select-establecimiento').chosen({
+     
+      no_results_text: 'No se encontró el Establecimiento',
+      width : '35%'
+
+   });
+
+   $('.select-periodo').chosen({
+      placeholder_text_single: 'Seleccione Periodo',
+      no_results_text: 'No se encontró el Periodo',
+      width : '35%'
+
+   });
+
+
   /*
    |--------------------------------------------------------------------------
    | DataTable
@@ -53,114 +76,187 @@ $(document).ready(function(){
 
 });
 
-function MensajeEliminar(e, i) {
-   e.preventDefault();
-   var rut = $(i).attr('data-rut');
+$('#lstEstablecimiento').on('change', function(e){
+   
+   var idEstablecimiento = e.target.value;
+   
+   $('#idEstablecimiento').val(idEstablecimiento);
 
-   $.alertable.confirm('<p class="text-center">¿Está seguro de eliminar el usuario con rut '+rut+'?</p>', {
-      html: true
-   }).then(function() {
-      Eliminar(i);
-   }, function() {
-      return false;
+   $.get('lst-periodos?idEstablecimiento='+ idEstablecimiento,function(data) {
+      
+      $('#lstPeriodo').empty();
+
+      //Carga info en select
+      $('#lstPeriodo').append('<option value="0" disable="true" selected="true">Seleccione Periodo</option>');
+      $.each(data, function(index, periodos){
+         $('#lstPeriodo').append('<option value="'+periodos.id+'">'+periodos.periodo+'</option>');
+      });
+
+      //Actualiza Select
+      $("#lstPeriodo").trigger("chosen:updated");
+      
+      $('#row-Periodo').css('display', 'block');
    });
-}
+});
 
-function Eliminar(i) {
 
-   var row  = $(i).parents('tr');
-   var id   = $(i).attr('id');
-   var form = $('#form-delete');
-   var url  = form.attr('action').replace(':USER_ID', id);
-   var data = form.serialize();
 
-   $.post(
-      url,
-      data,
-      function (result) {
-         row.fadeOut(); //Quitamos la fila
-         $.alertable.alert(result.message).always(function(){});
-   }).fail(function(data){
-      // console(data);
+// LST-GUARDAR
+$('#lstPeriodo').on('change', function(e){
+
+   var idPeriodo = e.target.value;
+   $('#idPeriodo').val(idPeriodo);
+   var idEstablecimiento = $('#idEstablecimiento').val();
+   
+   var url = 'lst-cargaLeyes?idPeriodo='+idPeriodo+'&idEstablecimiento='+idEstablecimiento;
+   var row = '';
+
+   $.get(url,function(data) {
+      
+      $.each(data, function(index, subvencion){         
+         
+         row += 
+         '<div class="col-sm-12 rowEliminar" >'
+         +'<br>'
+         +'<div class="col-sm-12">'
+            +'<h6 class="f mt-2 text-sm-left float-left">'+subvencion['subvencion']+'</h6>'
+         +'</div>'
+         
+         +'<div class="col-sm-12">'
+            +'<div class="mt-2">'
+               +'<table class="table table-hover table-sm table-responsive-sm">'
+                  +'<thead>'
+                     +'<tr>'
+                        +'<th scope="col" width="5%">Código</th>'
+                        +'<th scope="col" width="65%">Nombre</th>'
+                        +'<th scope="col" width="10%">Carga Periodo</th>'
+                        +'<th scope="col" width="10%">Cant. Horas</th>'
+                        +'<th scope="col" width="10%">Valor Hora</th>'
+                     +'</tr>'
+                  +'</thead>'
+                  +'<tbody>';
+
+                  $.each(data[index]['leyes'][0], function(index1, leyes){
+
+                     row += '<tr>'
+                        +'<td>'+leyes['codigoLey']+'</td>'
+                        +'<td>'+leyes['nombreLey']+'</td>'
+                      
+                        +'<td>'
+                           +'<div class="input-group input-group-sm">'                              
+                              +'<input type="text"   value="'+formatoMiles(leyes['cargaPeriodo'])+'"'
+                              +'id="txtCargaPeriodo" name="cargaPeriodo['+leyes['idLey']+']" class="form-control miles"' 
+                              +'style="text-align:right" aria-describedby="inputGroup-sizing-sm" '
+                              +'maxlength="13">'
+                           +'</div>'
+                        +'</td>'
+                        +'<td>'
+                           +'<div class="input-group input-group-sm">'
+                              +'<input type="text" value="'+formatoMiles(leyes['cantHoras'])+'"'
+                              +'id="txtCantHoras"  name="cantHoras['+leyes['idLey']+']" class="form-control miles"' 
+                              +'style="text-align:right" a-describedby="inputGroup-sizing-sm"'
+                              +'maxlength="13">'
+                           +'</div>'
+                        +'</td>'
+                        +'<td>'
+                           +'<div class="input-group input-group-sm">'
+                              +'<div class="input-group-prepend">'
+                                 +'<span class="input-group-text" id="basic-addon-calendar">'
+                                   +'  <i class="fa fa-dollar-sign form-control-feedback"></i>'
+                                 +'</span>'
+                              +'</div>'
+                              +'<input type="text" value="'+formatoMiles(leyes['valor'])+'"' 
+                              +'id="txtValorHora"  name="valor['+leyes['idLey']+']" class="form-control miles"' 
+                              +'style="text-align:right" a-describedby="inputGroup-sizing-sm"'
+                              +'maxlength="13">'                              
+                           +'</div>'
+                        +'</td>'
+                     +'</tr>';
+                  });
+
+               row += '</tbody>'
+               +'</table>'
+            +'</div>'
+         +'</div>'
+      +'</div>';
+      });     
+
+      // Muestra leyes y acciones      
+      $('#acciones').css('display', 'none');
+      $('.rowEliminar').remove();
+      $('#rowCalculoHoras').append(row);
+      $('#rowCalculoHoras').css('display', 'block');
+      $('#acciones').css('display', 'block');
+
    });
-}
+});
 
-$('#guardar').click(function(){
 
-   // console.log();
-   // debugger;
+
+// BTN-GUARDAR
+$('#guardar').click(function(){   
+
    var idFm = $(this).attr('data-form');
    var form = $('#'+idFm);
    var url  = form.attr('action');
-   var data = form.serialize();
+   var dataArray = form.serializeArray();
+   $("#msg").css('display', 'none');
+   
+   //VALIDACIONES 
+   //cargaPeriodo
+   //cantHoras
+   //valorHoras  
+   var countInvalid = 0;   
+   dataArray.forEach( function(element, index) {            
 
+      if (element.value === "") {                     
+      
+         $('[name="'+element.name+'"]').addClass('is-invalid');
+         $('#txtRut').addClass('is-invalid');  
+         countInvalid++;
+         
+         //Si es el primer dato invalido
+         //hace focus
+         if (countInvalid == 1) {
+            $('[name="'+element.name+'"]').focus();
+         }
+      
+      } else {
+         $('#txtRut').removeClass('is-invalid');         
+      }
+      
+   });   
+
+   //Si falta algún dato retorna false
+   if (countInvalid != 0) { 
+      $("#msg").css('display', 'block');
+      $("#msg").append('Todos los campos son obligatorios.');
+      return false; 
+   }
+   
    $.post(
       url,
-      data,
+      dataArray,
       function (result) {
          $.alertable.alert(result.message, {html : true}).always(function(){
             location.reload();
          });
    }).fail(function(data){
 
-      //debugger;
-      console.log(data);
+      dataArray.forEach( function(element, index) {
+      
+         if (element.value === "") {                     
+            $('[name="'+element.name+'"]').addClass('is-invalid');
+            $('#txtRut').addClass('is-invalid');      
+         } else {
+            $('#txtRut').removeClass('is-invalid');
+            $('[name="'+element.name+'"]').addClass('is-valid');
+         }
+         
+      });
 
-      /* VALIDACIONES */
-      //rut
-      if (data.responseJSON.errors.rut != undefined) {
-         $('#txtRut').addClass('is-invalid');
-         $('#vRut').addClass('invalid-feedback');
-         $('#msgRut').html(data.responseJSON.errors.rut);
-      } else {
-         $('#txtRut').removeClass('is-invalid');
-         $('#txtRut').addClass('is-valid');
-         $('#vRut').css('display', 'none');
-      }
-
-      //pass
-      if (data.responseJSON.errors.pass != undefined) {
-         $('#txtPass').addClass('is-invalid');
-         $('#vPass').addClass('invalid-feedback');
-         $('#msgPass').html(data.responseJSON.errors.pass);
-      } else {
-         $('#txtPass').removeClass('is-invalid');
-         $('#txtPass').addClass('is-valid');
-         $('#vPass').css('display', 'none');
-      }
-
-      //nombre
-      if (data.responseJSON.errors.nombre != undefined) {
-         $('#txtNombre').addClass('is-invalid');
-         $('#vNombre').addClass('invalid-feedback');
-         $('#msgNombre').html(data.responseJSON.errors.nombre);
-      } else {
-         $('#txtNombre').removeClass('is-invalid');
-         $('#txtNombre').addClass('is-valid');
-         $('#vNombre').css('display', 'none');
-      }
-
-      //direccion
-      if (data.responseJSON.errors.direccion != undefined) {
-         $('#txtDireccion').addClass('is-invalid');
-         $('#vDireccion').addClass('invalid-feedback');
-         $('#msgDireccion').html(data.responseJSON.errors.direccion);
-      } else {
-         $('#txtDireccion').removeClass('is-invalid');
-         //$('#txtDireccion').addClass('is-valid');
-         $('#vDireccion').css('display', 'none');
-      }
-
-      //correo
-      if (data.responseJSON.errors.correo != undefined) {
-         $('#txtCorreo').addClass('is-invalid');
-         $('#vCorreo').addClass('invalid-feedback');
-         $('#msgCorreo').html(data.responseJSON.errors.correo);
-         console.log(data.responseJSON.errors.correo);
-      } else {
-         $('#txtCorreo').removeClass('is-invalid');
-         $('#txtCorreo').addClass('is-valid');
-         $('#vCorreo').css('display', 'none');
-      }
    });
 });
+
+
+

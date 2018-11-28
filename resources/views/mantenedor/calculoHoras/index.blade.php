@@ -1,8 +1,8 @@
 @extends('main')
 
-@section('title', 'Usuarios')
+@section('title', 'Cálculo Horas')
 
-@section('breadcrumb', 'Usuarios')
+@section('breadcrumb', 'Cálculo Horas')
 
 @section('content')
 
@@ -11,44 +11,29 @@
 <div class="card">
 
    <div class="card-header">
-      <h5 class="font-weight-light mt-2 text-sm-left float-left">Listado de Usuarios</h5>
-      @can('users.create')
-         {!! link_to_route('users.create', $title='Agregar Usuarios', $parameters = [] ,$attributes = [
-            'id'     => 'agregarUsuario',
-            'class'  => 'btn btn-success mt-1 float-right btn-sm'
-         ]) !!}
-      @endcan
+      <h5 class="font-weight-light mt-2 text-sm-left float-left">Cálculo de Horas</h5>
+      
    </div>
-   <div class="card-body">
+   <div class="card-body">      
+      <div>         
+         {!! Form::open(['route' => ['calculohoras.store'], 'method' => 'STORE', 'id' => 'form-agregar']) !!}
+            @can('calculohoras.index')
+               @include('mantenedor.calculoHoras.partials.filtros')
+               <br>               
+               @include('mantenedor.calculoHoras.partials.calculoHoras')
+            @endcan
 
-      <div id="alert" class="alert alert-info mt-2" style="display:none;"></div>
-      <div class="table-responsive-xl">
-         <table id="dataTable-users" class="table table-striped table-bordered table-sm">
-            <thead>
-               <tr>
-                  <th scope="col" width="15%">Rut</th>
-                  <th scope="col" width="20%">Nombre</th>
-                  {{-- <th scope="col" width="20%">Apellido</th> --}}
-                  {{-- <th scope="col" width="15%">Perfil</th> --}}
-                  <th scope="col" width="15%">Correo</th>
-                  <th scope="col" width="10%" class="text-center">{{-- &nbsp; --}}opciones</th>
-               </tr>
-            </thead>
-         </table>
-      </div>
+         {{ Form::close() }}
+      </div>      
    </div>
-
 </div>
 </div>
 </main>
-
-{!! Form::open(['route' => ['users.destroy', ':USER_ID'], 'method' => 'DELETE', 'id' => 'form-delete']) !!}
-{!! Form::close() !!}
 
 @endsection
 
 @section('contentScript')
    <script type="text/javascript">
-      @include("administrador.users.script")
+      @include("mantenedor.calculoHoras.script")
    </script>
 @endsection

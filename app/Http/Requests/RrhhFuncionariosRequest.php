@@ -13,7 +13,7 @@ class RrhhFuncionariosRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,18 @@ class RrhhFuncionariosRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'establecimiento'       => 'required',
+            'rut'                   => 'required|numeric|unique:funcionarios',
+            'nombre'                => 'required|max:100',
+            'apellidoPaterno'       => 'required|max:100',
+            'apellidoMaterno'       => 'required|max:100',
+            'afp'                   => 'required',
+            'salud'                 => 'required',            
+            'tipoContrato'          => 'required',
+            'horasCtoSemanal'       => 'required|max:10',
+            'fechaInicioContrato'   => 'required',
+            'fechaTerminoContrato'  => 'required',
+            'funcion'               => 'required'
         ];
     }
 }

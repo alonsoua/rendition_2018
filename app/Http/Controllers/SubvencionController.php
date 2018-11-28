@@ -99,7 +99,7 @@ class SubvencionController extends Controller
     {
         Request()->validate([
             'nombre'           => 'required|max:100',
-            'porcentajeMaximo' => 'Integer|Min:1|Max:100|required'
+            'porcentajeMaximo' => 'Integer|Min:0|Max:100|required'
         ]);
 
         $subvencion = Subvencion::findOrFail($id);        

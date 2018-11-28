@@ -15,25 +15,27 @@
       @can('subvenciones.create')
          {!! link_to_route('subvenciones.create', $title='Agregar Subvenciones', $parameters = [] ,$attributes = [
             'id'     => 'agregarSubvencion',
-            'class'  => 'btn btn-success mt-1 float-right btn-sm'
+            'class'  => 'btn btn-primary mt-1 float-right'
          ]) !!}
       @endcan
    </div>
-   <div class="card-body">
 
-      <div id="alert" class="alert alert-info mt-2" style="display:none;"></div>
-      <div class="table-responsive-xl">
-         <table id="dataTable-subvenciones" class="table table-striped table-bordered table-sm">
-            <thead>
-               <tr>
-                  <th scope="col">Nombre</th>
-                  <th scope="col">Porcentaje M&aacute;ximo</th>
-                  <th scope="col" width="10%" class="text-center">{{-- &nbsp; --}}opciones</th>
-               </tr>
-            </thead>
-         </table>
+   @can('subvenciones.index')
+      <div class="card-body">
+         <div id="alert" class="alert alert-info mt-2" style="display:none;"></div>
+         <div class="table-responsive-xl">
+            <table id="dataTable-subvenciones" class="table table-striped table-bordered table-sm">
+               <thead>
+                  <tr>
+                     <th scope="col">Nombre</th>
+                     <th scope="col">Porcentaje M&aacute;ximo</th>
+                     <th scope="col" width="15%" class="text-center">{{-- &nbsp; --}}opciones</th>
+                  </tr>
+               </thead>
+            </table>
+         </div>
       </div>
-   </div>
+   @endcan
 
 </div>
 </div>

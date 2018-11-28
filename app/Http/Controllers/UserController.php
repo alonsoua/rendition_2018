@@ -7,8 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\Helper;
 
+use Caffeinated\Shinobi\Models\Role;
 use App\User;
-use App\Rol;
+use App\role_user;
 
 
 
@@ -31,7 +32,7 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
+    {        
         return view('administrador.users.index');
     }
 
@@ -41,11 +42,16 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {
+    {   
+        $editar = 0;
         $pass   = null;
         $nombre = null;
         $correo = null;
-        return view('administrador.users.create', compact('pass', 'nombre', 'correo'));
+
+        $rolRaw = Role::selectRaw('CONCAT(name, " (" , description, ")" ) as nombre, id')->get();        
+        $roles  = $rolRaw->pluck('nombre', 'id');
+
+        return view('administrador.users.create', compact('pass', 'nombre', 'correo', 'roles', 'editar'));
     }
 
     /**
@@ -57,7 +63,8 @@ class UserController extends Controller
     public function store(UserRequest $request)
     {
         if ($request->ajax()) {
-            User::create([
+            $usuario = User::create([
+                'sostenedor'      => $request['sostenedor'],
                 'sostenedor'      => $request['sostenedor'],
                 'rut'             => $request['rut'],
                 'password'        => bcrypt($request->password),
@@ -67,6 +74,8 @@ class UserController extends Controller
                 'direccion'       => $request['direccion'],
                 'email'           => $request['correo']
             ]);
+
+            $usuario->roles()->sync($request->get('rol'));
 
             $mensaje = 'El usuario <b>'.Helper::rut($request['rut']).' - '.$request['nombre'].'</b> ha sido agregado correctamente';
             return response()->json([
@@ -94,11 +103,26 @@ class UserController extends Controller
      */
     public function edit($id)
     {
+        $editar  = 1;
         $usuario = User::findOrFail($id);
-        $pass   = $usuario->pass;
-        $nombre = $usuario->name;
-        $correo = $usuario->email;
-        return view('administrador.users.edit', compact('pass', 'nombre', 'correo', 'usuario'));
+        $roleRaw = Role_user::selectRaw('role_id')->where('user_id', $id)->get();
+        $rol     = $roleRaw->pluck('role_id');
+        $pass    = $usuario->pass;
+        $nombre  = $usuario->name;
+        $correo  = $usuario->email;
+
+        $rolRaw = Role::selectRaw('CONCAT(name, " (" , description, ")" ) as nombre, id')->get();        
+        $roles  = $rolRaw->pluck('nombre', 'id');
+
+        return view('administrador.users.edit', 
+            compact(  'pass'
+                    , 'nombre'
+                    , 'correo'
+                    , 'usuario'
+                    , 'roles'
+                    , 'editar'
+                    , 'rol'
+                ));
     }
 
     /**
@@ -110,14 +134,16 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+
         request()->validate([
+            'rol'               => 'required',
             'rut'               => 'required|numeric|unique:users,rut,'.$id.',id' ,
             'password'          => 'required|max:50',
             'nombre'            => 'required|max:200',
             'apellidoPaterno'   => 'required|max:150',
             'apellidoMaterno'   => 'max:150',
             'direccion'         => 'max:200',
-            'correo'            => 'required|max:150|email'
+            'correo'            => 'required|email|unique:users,email,'.$id.',id'
           ]);
 
         $usuario = User::findOrFail($id);
@@ -130,11 +156,13 @@ class UserController extends Controller
         $usuario->direccion       = $request->direccion;
         $usuario->email           = $request->correo;
 
+
         $mensaje = 'El usuario <b>'.Helper::rut($usuario['rut']).' - '.$request['nombre'].'</b>';
         $mensaje .= ' ha sido editado correctamente';
 
         if ($request->ajax()) {
             $usuario->save();
+            $usuario->roles()->sync($request->get('rol'));
             return response()->json([
                 "message" => $mensaje
             ]);
@@ -147,11 +175,12 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $rut    = DB::table('users')->where('id', $id)->value('rut');
         $nombre = DB::table('users')->where('id', $id)->value('name');
-        DB::table('users')->where('id', $id)->update(['activo' => 0]);
+
+        DB::table('users')->where('id', $id)->update(['estado' => 0]);
         $message = 'El usuario con <b>'.Helper::rut($rut).' - '.$nombre.'</b> fue eliminado correctamente';
         if ($request->ajax()) {
             return response()->json([

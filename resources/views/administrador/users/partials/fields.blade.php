@@ -1,3 +1,20 @@
+{{-- lst ROL --}}
+<div class="form-group row">
+   {!! Form::label('Rol Usuario', 'Rol Usuario', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
+   
+   <div class="col-sm-9">
+      {{ Form::select('rol', $roles , $editar == 0 ? null : $rol,
+         [
+            'id'           => 'lstRol',
+            'placeholder'  => 'Seleccione Rol Usuario',         
+            'class'        => 'form-control select-Rol'
+         ])
+      }}
+
+      <div id="vRol"><span id="msgRol" class="validacion"></span></div>
+   </div>
+</div> 
+
 
 {{-- CHECKBOX SOSTENEDOR --}}
 <div class="form-group row">
@@ -15,8 +32,7 @@
 {{-- RUT --}}
 <div class="form-group row">
    {!! Form::label('Rut', 'Rut', ['class' => 'col-sm-3 col-form-label text-right']) !!}
-   <div class="col-sm-9">
-
+   <div class="col-sm-9">        
       {!! Form::text('rut', null,
          ['id'          => 'txtRut',
          'class'        => 'form-control',
@@ -27,11 +43,11 @@
 </div>
 
 
+
 {{-- CONTRASEÑA --}}
 <div class="form-group row">
    {!! Form::label('Contraseña', 'Contraseña', ['class' => 'col-sm-3 col-form-label text-right']) !!}
    <div class="col-sm-9">
-
       {!! Form::password('password', 
          ['id'          => 'txtPass',
          'class'        => 'form-control',
@@ -39,7 +55,7 @@
          'autocomplete' => 'off'])
       !!}
       <div id="vPass"><span id="msgPass" class="validacion"></span></div>
-      <span id="msgVacio" class="validacion" style="display:none;">Deje el campo en blanco para no cambiar la contraseña actual</span>
+      {{-- <span id="msgVacio" class="validacion" style="display:none;">Deje el campo en blanco para no cambiar la contraseña actual</span> --}}
    </div>
 </div>
 
@@ -107,9 +123,8 @@
 {{-- CORREO --}}
 <div class="form-group row">
    {!! Form::label('Correo', 'Correo', ['class' => 'col-sm-3 col-form-label text-right']) !!}
-   <div class="col-sm-9">
-
-      {!! Form::text('correo', null,
+   <div class="col-sm-9">         
+      {!! Form::email('correo', null, 
          ['id'          => 'txtCorreo',
          'class'        => 'form-control',
          'placeholder'  => 'ejemplo@gmail.com',

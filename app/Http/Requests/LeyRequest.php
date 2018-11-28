@@ -24,13 +24,13 @@ class LeyRequest extends FormRequest
     public function rules()
     {
         return [
-            'codigo'        => 'required|max:20|unique:leys',
-            'nombre'        => 'required|max:100',
-            'tipo'          => 'required',
-            'subvencion'    => 'required',
-            'descripcion'   => 'required',
+            'codigo'           => 'required|max:20|unique:leys',
+            'nombre'           => 'required|max:100',
+            'tipo'             => 'required',
+            'subvencion'       => 'required',
+            'descripcion'      => 'required',
             'porcentajeMáximo' => 'required|Integer|min:0|max:999',
-            'tope'          => 'required|Integer|min:0|max:99999999'
+            'tope'             => 'required|Integer|min:0|max:99999999'
         ];
     }
 }

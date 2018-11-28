@@ -1,7 +1,7 @@
 
 {{-- CÓDIGO --}}
 <div class="form-group row">
-   {!! Form::label('Código', 'Código', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   {!! Form::label('Código', 'Código', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
    <div class="col-sm-9">
 
       {!! Form::text('codigo', null,
@@ -16,7 +16,7 @@
 
 {{-- NOMBRE --}}
 <div class="form-group row">
-   {!! Form::label('Nombre', 'Nombre', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   {!! Form::label('Nombre', 'Nombre', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
 
    <div class="col-sm-9">
       {!! Form::text('nombre', null,
@@ -31,7 +31,7 @@
 
 {{-- DESCRIPCIÓN --}}
 <div class="form-group row">
-   {!! Form::label('Descripción', 'Descripción', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   {!! Form::label('Descripción', 'Descripción', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
    <div class="col-sm-9">
 
       {!! Form::textarea('descripcion', null,

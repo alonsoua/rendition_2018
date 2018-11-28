@@ -21,25 +21,29 @@
    @include('mantenedor.establecimientos.partials.validaciones')
 
    {!! Form::model($establecimiento,
-      ['route'   => ['establecimientos.update', $establecimiento]
-      , 'method' => 'PUT'
-      , 'id'     => 'form-editar'])
-   !!}
+      [    'route'   => ['establecimientos.update', $establecimiento]
+         , 'method'  => 'PUT'
+         , 'id'      => 'form-editar'
+         , 'files'   => true
+         , 'enctype' => 'multipart/form-data'
+      ])
+   !!}         
 
       @include('mantenedor.establecimientos.partials.fields')
-
+      
+      <hr>
       {{-- Acciones Btn --}}
       <div class="form-group row">
          <div class="col-sm-3">
             {!! link_to_route('establecimientos.index', $title='Volver', $parameters = [] ,$attributes = [
                'id'     => 'cancelar',
-               'class'  => 'btn btn-info float-right'
+               'class'  => 'btn btn-light float-left'
             ]) !!}
          </div>
          <div class="col-sm-9">
             {!! link_to('#!', $title='Editar', $attributes = [
                'id'        => 'guardar',
-               'class'     => 'btn btn-success float-left',
+               'class'  => 'btn btn-primary float-right',
                'data-form' => 'form-editar'
             ], $secure = null) !!}
          </div>

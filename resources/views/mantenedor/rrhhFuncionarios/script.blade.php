@@ -1,6 +1,63 @@
 $(document).ready(function(){
 
-   //alert('Prueba');
+   /*
+   |--------------------------------------------------------------------------
+   | Boostrap-DatePicker
+   |--------------------------------------------------------------------------
+   | link: https://uxsolutions.github.io/bootstrap-datepicker/?markup=input&format=&weekStart=&startDate=&endDate=&startView=0&minViewMode=0&maxViewMode=4&todayBtn=false&clearBtn=false&language=en&orientation=auto&multidate=&multidateSeparator=&keyboardNavigation=on&forceParse=on#sandbox
+   | documentación: https://bootstrap-datepicker.readthedocs.io/en/latest/
+   |
+   */
+   
+   $('.fecha-inicio').datepicker({
+      format: 'dd-mm-yyyy',
+      daysOfWeekDisabled: "0",
+      autoclose: true,
+      language: "es"
+   });
+   
+   $('.fecha-termino').datepicker({
+      format: 'dd-mm-yyyy',
+      daysOfWeekDisabled: "0",
+      autoclose: true,
+      language: "es"
+   });
+
+   /*
+   |--------------------------------------------------------------------------
+   | Chosen Select de JQuery
+   |--------------------------------------------------------------------------
+   | link: https://harvesthq.github.io/chosen/
+   | documentación: https://harvesthq.github.io/chosen/options.html
+   |
+   */
+
+   $('.select-establecimientos').chosen({   
+      no_results_text: 'No se encontró el Establecimiento',
+      width : '100%'
+   });
+
+   $('.select-afp').chosen({
+      no_results_text: 'No se encontró la Afp',
+      width : '100%'
+   });
+
+   $('.select-salud').chosen({
+      no_results_text: 'No se encontró el Sistema de Salud',
+      width : '100%'
+   });
+
+   $('.select-tipoContrato').chosen({
+      no_results_text: 'No se encontró el Tipo de Contrato',
+      width : '100%'
+   });
+
+   $('.select-funcion').chosen({
+      no_results_text: 'No se encontró la Función',
+      width : '100%'
+   });
+
+
   /*
    |--------------------------------------------------------------------------
    | DataTable
@@ -53,6 +110,26 @@ $(document).ready(function(){
       $('#msgVacio').remove();
    }
 
+
+   
+   var idSalud = $('#lstSalud').val();
+   
+   if (idSalud == 6) {
+      $('#txtUfIsapre').css('display', 'none');
+      $('#lblUfIsapre').css('display', 'none');
+      $('#txtUfIsapre').val(null);
+      $('#vUfIsapre').css('display', 'none');   
+   } else if (idSalud.length == 0) {   
+      $('#txtUfIsapre').css('display', 'none');
+      $('#txtUfIsapre').val(null);
+      $('#lblUfIsapre').css('display', 'none');
+      $('#vUfIsapre').css('display', 'none');   
+   } else {
+      $('#txtUfIsapre').css('display', 'block');      
+      $('#lblUfIsapre').css('display', 'block');   
+      $('#vUfIsapre').css('display', 'block');         
+   }
+
 });
 
 function MensajeEliminar(e, i) {
@@ -87,18 +164,61 @@ function Eliminar(i) {
    });
 }
 
+$('#navPersonal').click(function(){
+   $('#subvenciones').css('display', 'none');
+   $('#personal').css('display', 'block');
+   $('#navSubvenciones').removeClass("active");
+   $('#navSubvenciones').css('color' , 'black');
+   $(this).removeClass("active");
+   $(this).addClass('active');
+});
+
+$('#navSubvenciones').click(function(){
+   $('#personal').css('display', 'none');
+   $('#subvenciones').css('display', 'block');
+   $('#navPersonal').removeClass('active');
+   $('#navPersonal').css('color' , 'black');
+   $(this).removeClass("active");
+   $(this).addClass('active');
+});
+
+
+
+$('#lstSalud').on('change', function(e){  
+   var idSalud = e.target.value;
+   
+   if (idSalud == 6) {
+      $('#txtUfIsapre').css('display', 'none');
+      $('#lblUfIsapre').css('display', 'none');
+      $('#vUfIsapre').css('display', 'none');   
+   } else if (idSalud.length == 0) {   
+      $('#txtUfIsapre').css('display', 'none');
+      $('#lblUfIsapre').css('display', 'none');
+      $('#vUfIsapre').css('display', 'none');   
+   } else {
+      $('#txtUfIsapre').css('display', 'block');
+      $('#lblUfIsapre').css('display', 'block');   
+      $('#vUfIsapre').css('display', 'block');         
+   }
+
+});
+
+
+
+
 $('#guardar').click(function(){
 
-   // console.log();
-   // debugger;
    var idFm = $(this).attr('data-form');
    var form = $('#'+idFm);
    var url  = form.attr('action');
-   var data = form.serialize();
+   var dataArray = form.serializeArray();
+   
+   $('#navPersonal').css('color' , 'black');
+   $('#navPersonal').css('background' , 'white');
 
    $.post(
       url,
-      data,
+      dataArray,
       function (result) {
          $.alertable.alert(result.message, {html : true}).always(function(){
             location.reload();
@@ -106,11 +226,16 @@ $('#guardar').click(function(){
    }).fail(function(data){
 
       //debugger;
-      console.log(data);
+      console.log(data);      
+      $('#navPersonal').css('color' , 'white');
+      $('#navPersonal').css('background' , 'red');
+      $('#navPersonal').focus();
+
 
       /* VALIDACIONES */
       //rut
       if (data.responseJSON.errors.rut != undefined) {
+         $('#vSalud').css('display', 'block');
          $('#txtRut').addClass('is-invalid');
          $('#vRut').addClass('invalid-feedback');
          $('#msgRut').html(data.responseJSON.errors.rut);
@@ -118,21 +243,11 @@ $('#guardar').click(function(){
          $('#txtRut').removeClass('is-invalid');
          $('#txtRut').addClass('is-valid');
          $('#vRut').css('display', 'none');
-      }
-
-      //pass
-      if (data.responseJSON.errors.pass != undefined) {
-         $('#txtPass').addClass('is-invalid');
-         $('#vPass').addClass('invalid-feedback');
-         $('#msgPass').html(data.responseJSON.errors.pass);
-      } else {
-         $('#txtPass').removeClass('is-invalid');
-         $('#txtPass').addClass('is-valid');
-         $('#vPass').css('display', 'none');
-      }
+      }      
 
       //nombre
       if (data.responseJSON.errors.nombre != undefined) {
+         $('#vSalud').css('display', 'block');
          $('#txtNombre').addClass('is-invalid');
          $('#vNombre').addClass('invalid-feedback');
          $('#msgNombre').html(data.responseJSON.errors.nombre);
@@ -142,27 +257,129 @@ $('#guardar').click(function(){
          $('#vNombre').css('display', 'none');
       }
 
-      //direccion
-      if (data.responseJSON.errors.direccion != undefined) {
-         $('#txtDireccion').addClass('is-invalid');
-         $('#vDireccion').addClass('invalid-feedback');
-         $('#msgDireccion').html(data.responseJSON.errors.direccion);
+      //apellidoPaterno
+      if (data.responseJSON.errors.apellidoPaterno != undefined) {
+         $('#vSalud').css('display', 'block');
+         $('#txtApellidoPaterno').addClass('is-invalid');
+         $('#vApellidoPaterno').addClass('invalid-feedback');
+         $('#msgApellidoPaterno').html(data.responseJSON.errors.apellidoPaterno);
       } else {
-         $('#txtDireccion').removeClass('is-invalid');
-         //$('#txtDireccion').addClass('is-valid');
-         $('#vDireccion').css('display', 'none');
+         $('#txtApellidoPaterno').removeClass('is-invalid');
+         $('#txtApellidoPaterno').addClass('is-valid');
+         $('#vApellidoPaterno').css('display', 'none');
       }
 
-      //correo
-      if (data.responseJSON.errors.correo != undefined) {
-         $('#txtCorreo').addClass('is-invalid');
-         $('#vCorreo').addClass('invalid-feedback');
-         $('#msgCorreo').html(data.responseJSON.errors.correo);
-         console.log(data.responseJSON.errors.correo);
+      //apellidoMaterno
+      if (data.responseJSON.errors.apellidoMaterno != undefined) {
+         $('#vSalud').css('display', 'block');
+         $('#txtApellidoMaterno').addClass('is-invalid');
+         $('#vApellidoMaterno').addClass('invalid-feedback');
+         $('#msgApellidoMaterno').html(data.responseJSON.errors.apellidoMaterno);
       } else {
-         $('#txtCorreo').removeClass('is-invalid');
-         $('#txtCorreo').addClass('is-valid');
-         $('#vCorreo').css('display', 'none');
+         $('#txtApellidoMaterno').removeClass('is-invalid');
+         $('#txtApellidoMaterno').addClass('is-valid');
+         $('#vApellidoMaterno').css('display', 'none');
+      }          
+
+      //idAfp
+      if (data.responseJSON.errors.afp != undefined) {
+         $('#vSalud').css('display', 'block');
+         $('#lstAfp').addClass('is-invalid');
+         $('#vAfp').addClass('invalid-feedback');
+         $('#msgAfp').html(data.responseJSON.errors.afp);
+      } else {
+         $('#lstAfp').removeClass('is-invalid');
+         $('#lstAfp').addClass('is-valid');
+         $('#vAfp').css('display', 'none');
       }
+
+
+      //idSalud
+      if (data.responseJSON.errors.salud != undefined) {
+         $('#vSalud').css('display', 'block');
+         $('#lstSalud').addClass('is-invalid');
+         $('#vSalud').addClass('invalid-feedback');
+         $('#msgSalud').html(data.responseJSON.errors.salud);
+      } else {
+         $('#lstSalud').removeClass('is-invalid');
+         $('#lstSalud').addClass('is-valid');
+         $('#vSalud').css('display', 'none');
+      }
+
+
+      //ufIsapre
+      if (data.responseJSON.errors.ufIsapre != undefined) {
+         $('#vSalud').css('display', 'block');
+         $('#txtUfIsapre').addClass('is-invalid');
+         $('#vUfIsapre').addClass('invalid-feedback');
+         $('#msgUfIsapre').html(data.responseJSON.errors.ufIsapre);
+      } else {
+         $('#txtUfIsapre').removeClass('is-invalid');
+         $('#txtUfIsapre').addClass('is-valid');
+         $('#vUfIsapre').css('display', 'none');
+      }
+
+      //idTipoContrato
+      if (data.responseJSON.errors.tipoContrato != undefined) {
+         $('#vSalud').css('display', 'block');
+         $('#lstTipoContrato').addClass('is-invalid');
+         $('#vTipoContrato').addClass('invalid-feedback');
+         $('#msgTipoContrato').html(data.responseJSON.errors.tipoContrato);
+      } else {
+         $('#lstTipoContrato').removeClass('is-invalid');
+         $('#lstTipoContrato').addClass('is-valid');
+         $('#vTipoContrato').css('display', 'none');
+      }
+
+      //HorasCtoSemanal
+      if (data.responseJSON.errors.horasCtoSemanal != undefined) {
+         $('#vSalud').css('display', 'block');
+         $('#txtHorasCtoSemanal').addClass('is-invalid');
+         $('#vHorasCtoSemanal').addClass('invalid-feedback');
+         $('#msgHorasCtoSemanal').html(data.responseJSON.errors.horasCtoSemanal);
+      } else {
+         $('#txtHorasCtoSemanal').removeClass('is-invalid');
+         $('#txtHorasCtoSemanal').addClass('is-valid');
+         $('#vHorasCtoSemanal').css('display', 'none');
+      }
+
+      //FechaInicioContrato
+      if (data.responseJSON.errors.fechaInicioContrato != undefined) {
+         $('#vSalud').css('display', 'block');
+         $('#txtFechaInicioContrato').addClass('is-invalid');
+         $('#vFechaInicioContrato').addClass('invalid-feedback');
+         $('#msgFechaInicioContrato').html(data.responseJSON.errors.fechaInicioContrato);
+      } else {
+         $('#txtFechaInicioContrato').removeClass('is-invalid');
+         $('#txtFechaInicioContrato').addClass('is-valid');
+         $('#vFechaInicioContrato').css('display', 'none');
+      }
+
+
+      //FechaTerminoContrato
+      if (data.responseJSON.errors.fechaTerminoContrato != undefined) {
+         $('#vSalud').css('display', 'block');
+         $('#txtFechaTerminoContrato').addClass('is-invalid');
+         $('#vFechaTerminoContrato').addClass('invalid-feedback');
+         $('#msgFechaTerminoContrato').html(data.responseJSON.errors.fechaTerminoContrato);
+      } else {
+         $('#txtFechaTerminoContrato').removeClass('is-invalid');
+         $('#txtFechaTerminoContrato').addClass('is-valid');
+         $('#vFechaTerminoContrato').css('display', 'none');
+      }
+
+
+      //idFuncion
+      if (data.responseJSON.errors.funcion != undefined) {
+         $('#vSalud').css('display', 'block');
+         $('#lstFuncion').addClass('is-invalid');
+         $('#vFuncion').addClass('invalid-feedback');
+         $('#msgFuncion').html(data.responseJSON.errors.funcion);
+      } else {
+         $('#lstFuncion').removeClass('is-invalid');
+         $('#lstFuncion').addClass('is-valid');
+         $('#vFuncion').css('display', 'none');
+      }
+
    });
 });

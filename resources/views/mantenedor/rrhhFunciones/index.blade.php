@@ -15,25 +15,27 @@
       @can('funciones.create')
          {!! link_to_route('funciones.create', $title='Agregar Funciones', $parameters = [] ,$attributes = [
             'id'     => 'agregarFuncion',
-            'class'  => 'btn btn-success mt-1 float-right btn-sm'
+            'class'  => 'btn btn-primary mt-1 float-right'
          ]) !!}
       @endcan
    </div>
-   <div class="card-body">
 
-      <div id="alert" class="alert alert-info mt-2" style="display:none;"></div>
-      <div class="table-responsive-xl">
-         <table id="dataTable-funciones" class="table table-striped table-bordered table-sm">
-            <thead>
-               <tr>
-                  <th scope="col" width="15%">C&oacute;digo</th>
-                  <th scope="col" width="20%">Nombre</th>
-                  <th scope="col" width="10%" class="text-center">{{-- &nbsp; --}}opciones</th>
-               </tr>
-            </thead>
-         </table>
+   @can('funciones.index')
+      <div class="card-body">
+         <div id="alert" class="alert alert-info mt-2" style="display:none;"></div>
+         <div class="table-responsive-xl">
+            <table id="dataTable-funciones" class="table table-striped table-bordered table-sm">
+               <thead>
+                  <tr>
+                     <th scope="col" width="15%">C&oacute;digo</th>
+                     <th scope="col" width="60%">Nombre</th>
+                     <th scope="col" width="10%" class="text-center">{{-- &nbsp; --}}opciones</th>
+                  </tr>
+               </thead>
+            </table>
+         </div>
       </div>
-   </div>
+   @endcan
 
 </div>
 </div>

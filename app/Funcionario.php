@@ -6,11 +6,40 @@ use Illuminate\Database\Eloquent\Model;
 
 class Funcionario extends Model
 {
+    protected $table = 'funcionarios';
+
+    protected $fillable = [
+        'idEstablecimiento'
+      , 'rut'
+      , 'nombre'
+      , 'apellidoPaterno'
+      , 'apellidoMaterno'
+      , 'idAfp'
+      , 'idSalud'
+      , 'idTipoContrato'
+      , 'horasCtoSemanal'
+      , 'fechaInicioContrato'
+      , 'fechaTerminoContrato'
+      , 'idFuncion'
+      , 'ufIsapre'
+      , 'estado'
+      ,
+    ];
 	
     /* RELACIONES */
     public function establecimiento()
     {
     	return $this->belongsTo(Establecimiento::class, 'idEstablecimiento');
+    }
+
+    public function afp()
+    {
+        return $this->belongsTo(Afp::class, 'idAfp');
+    }
+
+    public function salud()
+    {
+        return $this->belongsTo(Salud::class, 'idSalud');
     }
 
     public function tipo_contrato()
@@ -21,6 +50,6 @@ class Funcionario extends Model
     public function funcion()
     {
     	return $this->belongsTo(Funcion::class, 'idFuncion');
-    }
+    }    
     /* FIN RELACIONES */
 }

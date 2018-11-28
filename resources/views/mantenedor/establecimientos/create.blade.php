@@ -20,24 +20,42 @@
 
    @include('mantenedor.establecimientos.partials.validaciones')
 
-   {!! Form::open(['route' => ['establecimientos.store'], 'method' => 'STORE', 'id' => 'form-agregar']) !!}
+   {!!Form::open(['route' => ['establecimientos.store']
+         , 'method'  => 'STORE'
+         , 'id'      => 'form-agregar'
+         , 'files'   => true
+         
+      ]) 
+   !!}
 
       @include('mantenedor.establecimientos.partials.fields')
-
+      
+      <hr>
       {{-- Botones --}}
       <div class="form-group row">
          <div class="col-sm-3">
-            {!! link_to_route('establecimientos.index', $title='Volver', $parameters = [] ,$attributes = [
-               'id'     => 'cancelar',
-               'class'  => 'btn btn-info float-right'
-            ]) !!}
+
+            {!! link_to_route('establecimientos.index'
+               , $title='Volver'
+               , $parameters = []
+               , $attributes = [
+                  'id'     => 'cancelar',
+                  'class'  => 'btn btn-light float-left'
+               ]) 
+            !!}
+
          </div>
          <div class="col-sm-9">
-            {!! link_to('#!', $title='Guardar', $attributes = [
-               'id'     => 'guardar',
-               'class'  => 'btn btn-success float-left',
-               'data-form' => 'form-agregar'
-            ], $secure = null) !!}
+
+            {!! link_to('#!'
+               , $title='Guardar'
+               , $attributes = [
+                  'id'     => 'guardar',
+                  'class'  => 'btn btn-primary float-right',
+                  'data-form' => 'form-agregar'
+               ], $secure = null) 
+            !!}
+
 	    	</div>
 	  	</div>
 

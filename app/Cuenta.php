@@ -16,4 +16,21 @@ class Cuenta extends Model
       , 'estado'
       ,
     ];
+
+
+	  // RELACIONES
+    public function subvencion() 
+    {
+    	return $this->belongsToMany(Subvencion::class, 'idSubvencion');
+    }
+    // FIN RELACIONES
+    
+
+    public static function getCuentasSubvencion($idSubvencion) {
+        
+        return Cuenta::join('cuenta_subvencion', 'cuenta_subvencion.idCuenta', '=', 'cuentas.id')             
+                        ->selectRaw(' CONCAT(cuentas.codigo, " - " , cuentas.nombre) as nombre, cuentas.id as id')
+                        ->where('cuenta_subvencion.idSubvencion', $idSubvencion)
+                        ->get();
+    }
 }

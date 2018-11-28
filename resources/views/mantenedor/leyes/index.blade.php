@@ -15,27 +15,29 @@
       @can('leyes.create')
          {!! link_to_route('leyes.create', $title='Agregar Leyes', $parameters = [] ,$attributes = [
             'id'     => 'agregarLey',
-            'class'  => 'btn btn-success mt-1 float-right btn-sm'
+            'class'  => 'btn btn-primary mt-1 float-right'
          ]) !!}
       @endcan
    </div>
-   <div class="card-body">
-
-      <div id="alert" class="alert alert-info mt-2" style="display:none;"></div>
-      <div class="table-responsive-xl">
-         <table id="dataTable-leyes" class="table table-striped table-bordered table-sm">
-            <thead>
-               <tr>
-                  <th scope="col" width="15%">C&oacute;digo</th>
-                  <th scope="col" width="20%">Nombre</th>
-                  <th scope="col" width="20%">Tipo</th>
-                  <th scope="col" width="15%">Subvenci&oacute;n</th>
-                  <th scope="col" width="10%" class="text-center">{{-- &nbsp; --}}Opciones</th>
-               </tr>
-            </thead>
-         </table>
+   
+   @can('leyes.index')
+      <div class="card-body">
+         <div id="alert" class="alert alert-info mt-2" style="display:none;"></div>
+         <div class="table-responsive-xl">
+            <table id="dataTable-leyes" class="table table-striped table-bordered table-sm">
+               <thead>
+                  <tr>
+                     <th scope="col" width="10%">C&oacute;digo</th>
+                     <th scope="col" width="50%">Nombre</th>
+                     <th scope="col" width="10%">Tipo</th>
+                     <th scope="col" width="10%">Subvenci&oacute;n</th>
+                     <th scope="col" width="10%" class="text-center">{{-- &nbsp; --}}Opciones</th>
+                  </tr>
+               </thead>
+            </table>
+         </div>
       </div>
-   </div>
+   @endcan
 
 </div>
 </div>

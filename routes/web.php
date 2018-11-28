@@ -14,9 +14,11 @@
 
 use Illuminate\Http\Request;
 use App\Helpers\Helper;
+use Illuminate\Support\Facades\DB;
 
 /* Modelos */
 use App\User;
+use Caffeinated\Shinobi\Models\Role;
 use App\Sostenedor;
 use App\Establecimiento;
 use App\Subvencion;
@@ -27,6 +29,7 @@ use App\Documento;
 use App\Funcion;
 use App\Funcionario;
 use App\tipo_contrato;
+use App\Imputacion;
 
 
 Route::get('/', function () {
@@ -39,7 +42,7 @@ Auth::routes();
 Route::middleware(['auth'])->group( function () {
 
     Route::get('/', function () {
-        return view('main');
+        return view('inicio.index');
     });
 
     //Menu Administraci?
@@ -57,8 +60,7 @@ Route::middleware(['auth'])->group( function () {
    	Route::group(['prefix' => 'mantenedores'], function () {
     	  
         //Sostenedores
-      	Route::resource('sostenedores', 'SostenedorController');
-        
+      	Route::resource('sostenedores', 'SostenedorController');        
         //Establecimientos
         Route::resource('establecimientos', 'EstablecimientoController');
         //Subvenciones
@@ -66,10 +68,14 @@ Route::middleware(['auth'])->group( function () {
         //Leyes
         Route::resource('leyes', 'LeyController');
         //CargaMensual
-        Route::resource('cargamensual', 'CargaMensualController');
+        Route::resource('cargamensual', 'CargaMensualController');        
         //CalculoHoras
         Route::resource('calculohoras', 'CalculoHoraController');
-        
+          //Periodos en CalculoHoras
+          Route::get('lst-periodos', 'CalculoHoraController@periodos');
+          //cargaLeyes en CalculoHoras
+          Route::get('lst-cargaLeyes', 'CalculoHoraController@cargaLeyes');
+
         /* Gastos */
         //Cuentas
         Route::resource('cuentas', 'CuentaController');
@@ -91,10 +97,15 @@ Route::middleware(['auth'])->group( function () {
         
         //Imputaciones
         Route::resource('imputaciones', 'ImputacionController');
+          //cargaCuentas en Imputaciones          
+          Route::get('imputaciones/getCuentas/{id}', 'ImputacionController@getCuentas');
+          
+
         //ReportesGastos
         Route::resource('reportesgastos', 'ReporteGastoController');       
 
     });
+
 
     //Menu rrhh
     Route::group(['prefix' => 'rrhh'], function () {
@@ -108,19 +119,30 @@ Route::middleware(['auth'])->group( function () {
 
 });
 
+
 /* ADMINISTRACIÓN */
 
     //Users Table
     Route::get('usersTable', function(){
 
         return datatables()
-        ->eloquent(User::query()->where('estado', 1)->orderBy('name'))
+        ->eloquent(User::query()->where('estado', 1))
         ->addColumn('opciones', 'administrador.users.partials.opciones')
         ->rawColumns(['opciones'])
         ->toJson();
 
     });
 
+    //Roles Table
+    Route::get('rolesTable', function(){
+
+        return datatables()
+        ->eloquent(Role::query())
+        ->addColumn('opciones', 'administrador.roles.partials.opciones')
+        ->rawColumns(['opciones'])
+        ->toJson();
+
+    });
 /* FIN ADMINISTRACIÓN */
 
 
@@ -130,7 +152,7 @@ Route::middleware(['auth'])->group( function () {
     Route::get('sostenedoresTable', function(){
 
        return datatables()
-       ->eloquent(Sostenedor::query()->where('estado', 1)->orderBy('rut'))
+       ->eloquent(Sostenedor::query()->where('estado', 1))
        ->addColumn('opciones', 'mantenedor.sostenedores.partials.opciones')
        ->rawColumns(['opciones'])
        ->toJson();
@@ -140,7 +162,7 @@ Route::middleware(['auth'])->group( function () {
     //Establecimientos Table
     Route::get('establecimientosTable', function(){
 
-        $establecimiento = Establecimiento::with('sostenedor')->select('establecimientos.*')->where('estado', 1)->orderBy('nombre');
+        $establecimiento = Establecimiento::with('sostenedor')->select('establecimientos.*')->where('establecimientos.estado', 1);
 
         return datatables()
         ->eloquent($establecimiento)
@@ -155,7 +177,7 @@ Route::middleware(['auth'])->group( function () {
     Route::get('subvencionesTable', function(){
 
        return datatables()
-       ->eloquent(Subvencion::query()->where('estado', 1)->orderBy('nombre'))
+       ->eloquent(Subvencion::query()->where('estado', 1)->where('id','>', 0))
        ->addColumn('opciones', 'mantenedor.subvenciones.partials.opciones')
        ->rawColumns(['opciones'])
        ->toJson();
@@ -165,7 +187,7 @@ Route::middleware(['auth'])->group( function () {
     //Leyes Table
     Route::get('leyesTable', function(){
 
-        $leyes = Ley::with('subvencion')->select('leys.*')->where('estado', 1)->orderBy('nombre');
+        $leyes = Ley::with('subvencion')->select('leys.*')->where('leys.estado', 1);
         return datatables()
         ->eloquent($leyes)
         ->addColumn('opciones', 'mantenedor.leyes.partials.opciones')
@@ -180,10 +202,20 @@ Route::middleware(['auth'])->group( function () {
       //Cuentas Table
       Route::get('cuentasTable', function(){
 
+         $cuenta  = Cuenta::selectRaw(' 
+
+                              DISTINCT 
+                                cuentas.id as id
+                              , cuentas.codigo as codigo
+                              , cuentas.nombre as nombre
+                              , GROUP_CONCAT(" ", subvencions.nombre) as NombreSubvencion                              
+                              ')
+                    ->leftJoin('cuenta_subvencion', 'cuentas.id', '=', 'cuenta_subvencion.idCuenta')
+                    ->leftJoin('subvencions', 'cuenta_subvencion.idSubvencion', '=', 'subvencions.id')
+                    ->groupby('cuentas.id', 'cuentas.codigo', 'cuentas.nombre');                                
+                   
          return datatables()
-         ->eloquent(Cuenta::query()->where('estado', 1)->orderBy('nombre'))
-         ->addColumn('subvencion', 'Relacion Subvencion')
-         ->rawColumns(['subvencion'])
+          ->eloquent($cuenta)         
          ->addColumn('opciones', 'mantenedor.gastosCuentas.partials.opciones')
          ->rawColumns(['opciones'])
          ->toJson();
@@ -194,7 +226,7 @@ Route::middleware(['auth'])->group( function () {
       Route::get('proveedoresTable', function(){
 
          return datatables()
-         ->eloquent(Proveedor::query()->where('estado', 1)->orderBy('razonSocial'))
+         ->eloquent(Proveedor::query()->where('estado', 1))
          ->addColumn('opciones', 'mantenedor.gastosProveedores.partials.opciones')
          ->rawColumns(['opciones'])
          ->toJson();
@@ -205,7 +237,7 @@ Route::middleware(['auth'])->group( function () {
       Route::get('documentosTable', function(){
 
          return datatables()
-         ->eloquent(Documento::query()->where('estado', 1)->orderBy('nombre'))
+         ->eloquent(Documento::query()->where('estado', 1))
          ->addColumn('opciones', 'mantenedor.gastosDocumentos.partials.opciones')
          ->rawColumns(['opciones'])
          ->toJson();
@@ -220,7 +252,7 @@ Route::middleware(['auth'])->group( function () {
       Route::get('funcionesTable', function(){
 
          return datatables()
-         ->eloquent(Funcion::query()->where('estado', 1)->orderBy('nombre'))
+         ->eloquent(Funcion::query()->where('estado', 1))
          ->addColumn('opciones', 'mantenedor.rrhhFunciones.partials.opciones')
          ->rawColumns(['opciones'])
          ->toJson();
@@ -230,7 +262,7 @@ Route::middleware(['auth'])->group( function () {
       //Funcionarios Table
       Route::get('funcionariosTable', function(){
 
-        $funcionarios = Funcionario::with('establecimiento', 'tipo_contrato', 'funcion')->select('funcionarios.*')->where('funcionarios.estado', 1)->orderBy('funcionarios.nombre');
+        $funcionarios = Funcionario::with('establecimiento', 'tipo_contrato', 'funcion')->select('funcionarios.*')->where('funcionarios.estado', 1);
         
         return datatables()
         ->eloquent($funcionarios)             
@@ -241,3 +273,19 @@ Route::middleware(['auth'])->group( function () {
       });
     /* FIN RRHH */
 /* FIN MANTENEDORES */
+
+
+/* GASTOS */
+
+      //Imputaciones Table
+      Route::get('imputacionesTable', function(){
+
+        $imputaciones = Imputacion::with('establecimiento', 'documento', 'proveedor')->select('imputacions.*');        
+        return datatables()
+        ->eloquent($imputaciones)             
+        ->addColumn('opciones', 'gastos.imputaciones.partials.opciones')
+        ->rawColumns(['opciones'])
+        ->toJson();
+
+      });
+/* FIN GASTOS */

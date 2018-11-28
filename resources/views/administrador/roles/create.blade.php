@@ -1,8 +1,8 @@
 @extends('main')
 
-@section('title', 'Agregar Usuario')
+@section('title', 'Agregar Rol')
 
-@section('breadcrumb', 'Usuarios')
+@section('breadcrumb', 'Roles')
 
 @section('content')
 
@@ -13,29 +13,31 @@
 <div class="card">
 
 <div class="card-header">
-	<h4 class="my-0 font-weight-light text-sm-center">Agregar Usuario</h4>
+	<h5 class="my-0 font-weight-light text-sm-center">Agregar Rol</h5>
 </div>
 
 <div class="card-body">
 
-   @include('administrador.users.partials.validaciones')
+   @include('administrador.roles.partials.validaciones')
 
-   {!! Form::open(['route' => ['users.store'], 'method' => 'STORE', 'id' => 'form-agregar']) !!}
+   {!! Form::open(['route' => ['roles.store'], 'method' => 'STORE', 'id' => 'form-agregar', 'autocomplete' => 'off']) !!}
 
-      @include('administrador.users.partials.fields')
+      @include('administrador.roles.partials.fields')
 
+      <hr>
       {{-- Botones --}}
       <div class="form-group row">
-         <div class="col-sm-3">
-            {!! link_to_route('users.index', $title='Volver', $parameters = [] ,$attributes = [
+         <div class="col-sm-1 col-md-2">
+            {!! link_to_route('roles.index', $title='Volver', $parameters = [] ,$attributes = [
                'id'     => 'cancelar',
-               'class'  => 'btn btn-info float-right'
+               'class'  => 'btn btn-light '
             ]) !!}
          </div>
-         <div class="col-sm-9">
+         
+         <div class="col-sm-11 col-md-10">
             {!! link_to('#!', $title='Guardar', $attributes = [
                'id'     => 'guardar',
-               'class'  => 'btn btn-success float-left',
+               'class'  => 'btn btn-primary float-right',
                'data-form' => 'form-agregar'
             ], $secure = null) !!}
 	    	</div>
@@ -54,6 +56,6 @@
 
 @section('contentScript')
    <script type="text/javascript">
-      @include("administrador.users.script")
+      @include("administrador.roles.script")
    </script>
 @endsection

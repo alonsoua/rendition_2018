@@ -26,7 +26,8 @@ class GastosCuentasRequest extends FormRequest
         return [
             'codigo'        => 'required|max:10|unique:cuentas',
             'nombre'        => 'required|max:100',
-            'descripcion'   => 'required'
+            'descripcion'   => 'required',
+            'subvenciones'  => 'required|array'
         ];
     }
 }

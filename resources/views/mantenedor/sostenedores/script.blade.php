@@ -1,6 +1,23 @@
 $(document).ready(function(){
 
-   //alert('Prueba');
+   
+   /*
+   |--------------------------------------------------------------------------
+   | Chosen Select de JQuery
+   |--------------------------------------------------------------------------
+   | link: https://harvesthq.github.io/chosen/
+   | documentación: https://harvesthq.github.io/chosen/options.html
+   |
+   */
+
+   $('.select-comunas').chosen({
+      no_results_text: 'No se encontró la Comuna',
+      width : '100%'
+
+   });
+
+
+
   /*
    |--------------------------------------------------------------------------
    | DataTable

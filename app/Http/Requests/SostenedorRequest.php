@@ -24,14 +24,14 @@ class SostenedorRequest extends FormRequest
     public function rules()
     {
         return [
-            'rut'               => 'required|numeric|unique:sostenedors',
-            'nombre'            => 'required|max:60',
-            'apellidoPaterno'   => 'required|max:150',
-            'apellidoMaterno'   => 'required|max:150',            
-            'comuna'            => 'required',
-            'direccion'         => 'max:250|required',
-            'fono'              => 'max:45',
-            'correo'            => 'max:150|email|min:0'
+            'rut'             => 'required|numeric|unique:sostenedors',
+            'nombre'          => 'required|max:60',
+            'apellidoPaterno' => 'required|max:150',
+            'apellidoMaterno' => 'required|max:150',            
+            'comuna'          => 'required',
+            'direccion'       => 'max:250|required',
+            'fono'            => 'numeric|max:9999999999',
+            'correo'          => 'max:150|email|min:0'
         ];
     }
 }

@@ -15,7 +15,7 @@
 	<ul class="nav nav-pills d-none d-lg-block" style="z-index:10000;">
         
         @guest
-
+            {{-- 
             <li class="nav-item">
             
                 <a class="dropdown-item" href="{{ route('login') }}">{{ __('Ingresar') }}</a>
@@ -31,12 +31,13 @@
                 @endif
             
             </li>
-
+            --}}
         @else
 
    	        @include('estructura.userAuth')
-
+        
         @endguest
+ 
 
 	</ul>
 

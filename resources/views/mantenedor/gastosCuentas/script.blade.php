@@ -1,6 +1,22 @@
 $(document).ready(function(){
 
-   //alert('Prueba');
+   /*
+   |--------------------------------------------------------------------------
+   | Chosen Select de JQuery
+   |--------------------------------------------------------------------------
+   | link: https://harvesthq.github.io/chosen/
+   | documentación: https://harvesthq.github.io/chosen/options.html
+   |
+   */
+
+   $('.select-subvenciones').chosen({
+      no_results_text: 'No se encontró la Subvención',
+      width : '100%',
+      placeholder_text_multiple: 'Seleccione Subvenciones'      
+
+   });
+
+
   /*
    |--------------------------------------------------------------------------
    | DataTable
@@ -36,10 +52,9 @@ $(document).ready(function(){
       "serverSide": true,
       "ajax"      : "{{ url('cuentasTable') }}",
       "columns"   : [
-         {data: 'codigo'},
-         {data: 'nombre'},
-         // {data: 'apellidoPaterno'},
-         {data: 'subvencion'},
+         {data: 'codigo', name:'cuentas.codigo'},         
+         {data: 'nombre', name:'cuentas.nombre'},
+         {data: 'NombreSubvencion'},      
          {data: 'opciones'},
       ],
       "drawCallback": function () {
@@ -94,9 +109,9 @@ $('#guardar').click(function(){
    var idFm = $(this).attr('data-form');
    var form = $('#'+idFm);
    var url  = form.attr('action');
-   var dataArray = form.serializeArray();
+   var dataArray = form.serializeArray();  
 
-
+   //console.log(1, dataArray);
    $.ajax({
       url: url,
       method: 'POST',
@@ -106,6 +121,7 @@ $('#guardar').click(function(){
       dataType: 'json',
       data: dataArray,
       success: function(result){      
+         console.log('success', result);
          $.alertable.alert('<p class="text-center">'+result.message+'</p>', {html : true}).always(function(){
             location.reload();
          });
@@ -113,7 +129,7 @@ $('#guardar').click(function(){
       }, error: function(data) {
       
          /* VALIDACIONES */
-         console.log(data);
+         console.log('error', data);
          //código
          if (data.responseJSON.errors.codigo != undefined) {
             $('#txtCodigo').addClass('is-invalid');
@@ -145,6 +161,17 @@ $('#guardar').click(function(){
             $('#txtDescripcion').removeClass('is-invalid');
             $('#txtDescripcion').addClass('is-valid');
             $('#vDescripcion').css('display', 'none');
+         }
+
+         //subvenciones
+         if (data.responseJSON.errors.subvenciones != undefined) {
+            $('#lstSubvencion').addClass('is-invalid');
+            $('#vSubvencion').addClass('invalid-feedback');
+            $('#msgSubvencion').html(data.responseJSON.errors.subvenciones);
+         } else {
+            $('#lstSubvencion').removeClass('is-invalid');
+            $('#lstSubvencion').addClass('is-valid');
+            $('#vSubvencion').css('display', 'none');
          }
 
       }

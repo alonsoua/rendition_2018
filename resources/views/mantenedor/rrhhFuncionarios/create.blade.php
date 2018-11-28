@@ -1,8 +1,8 @@
 @extends('main')
 
-@section('title', 'Agregar Usuario')
+@section('title', 'Agregar Funcionario')
 
-@section('breadcrumb', 'Usuarios')
+@section('breadcrumb', 'Funcionarios')
 
 @section('content')
 
@@ -11,39 +11,68 @@
 <div class="row justify-content-md-center">
 <div class="col col-lg-11">
 <div class="card">
-
+{{-- 
 <div class="card-header">
-	<h4 class="my-0 font-weight-light text-sm-center">Agregar Usuario</h4>
+	<h4 class="my-0 font-weight-light text-sm-center">Agregar Funcionario</h4>
 </div>
 
 <div class="card-body">
+ --}}
 
-   @include('administrador.users.partials.validaciones')
 
-   {!! Form::open(['route' => ['users.store'], 'method' => 'STORE', 'id' => 'form-agregar']) !!}
+<div class="card">
 
-      @include('administrador.users.partials.fields')
+   <div class="card-header">
+      <h4 class="my-0 font-weight-light text-sm-center">Agregar Funcionario</h4>
+      <ul class="nav nav-tabs card-header-tabs">
+         <li class="nav-item" style="cursor:pointer;">
+            <a class="nav-link active" id="navPersonal" href="#">Personal</a>
+         </li>               
+         <li class="nav-item" style="cursor:pointer;">
+            <a class="nav-link disabled" id="navSubvenciones" href="#">Subvenciones</a>
+         </li>
+      </ul>
+   
+   </div>
 
-      {{-- Botones --}}
-      <div class="form-group row">
-         <div class="col-sm-3">
-            {!! link_to_route('users.index', $title='Volver', $parameters = [] ,$attributes = [
-               'id'     => 'cancelar',
-               'class'  => 'btn btn-info float-right'
-            ]) !!}
+   <div class="card-body">
+
+      @include('mantenedor.rrhhFuncionarios.partials.validaciones')
+
+      {!! Form::open(['route' => ['funcionarios.store'], 'method' => 'STORE', 'id' => 'form-agregar']) !!}
+
+         <div id="personal" style="display: block;">
+            @include('mantenedor.rrhhFuncionarios.partials.fieldsPersonal')               
          </div>
-         <div class="col-sm-9">
-            {!! link_to('#!', $title='Guardar', $attributes = [
-               'id'     => 'guardar',
-               'class'  => 'btn btn-success float-left',
-               'data-form' => 'form-agregar'
-            ], $secure = null) !!}
-	    	</div>
-	  	</div>
+         <div id="subvenciones" style="display: none;">
+            @include('mantenedor.rrhhFuncionarios.partials.fieldsSubvenciones')               
+         </div>  
+         
+         {{-- Botones --}}
+         <div class="form-group row">
+            <div class="col-sm-2 col-md-3">
+               {!! link_to_route('funcionarios.index', $title='Volver', $parameters = [] ,$attributes = [
+                  'id'     => 'cancelar',
+                  'class'  => 'btn btn-light float-md-left float-sm-left'
+               ]) !!}
+            </div>
+            <div class="col-sm-10 col-md-9">
+               {!! link_to('#!', $title='Guardar', $attributes = [
+                  'id'     => 'guardar',
+                  'class'  => 'btn btn-primary float-right',
+                  'data-form' => 'form-agregar'
+               ], $secure = null) !!}
+            </div>
+         </div>
 
-   {!! Form::close() !!}
+      {!! Form::close() !!}       
+   </div>
+</div>    
 
-</div>
+      
+      
+
+{{-- </div> --}}
 </div>
 </div>
 </div>
@@ -54,6 +83,6 @@
 
 @section('contentScript')
    <script type="text/javascript">
-      @include("administrador.users.script")
+      @include("mantenedor.rrhhFuncionarios.script")      
    </script>
 @endsection

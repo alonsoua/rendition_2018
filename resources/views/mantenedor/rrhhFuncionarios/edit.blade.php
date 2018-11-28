@@ -1,8 +1,8 @@
 @extends('main')
 
-@section('title', 'Editar Usuario')
+@section('title', 'Editar Funcionario')
 
-@section('breadcrumb', 'Usuarios')
+@section('breadcrumb', 'Funcionarios')
 
 @section('content')
 
@@ -13,33 +13,48 @@
 <div class="card">
 
 <div class="card-header">
-   <h4 class="my-0 font-weight-light text-sm-center">Editar Usuario: {{ $usuario->nombre }}</h4>
+   <h4 class="my-0 font-weight-light text-sm-center">
+      Editar Funcionario: {{ $funcionario->rut }} - {{ $funcionario->nombre }}
+   </h4>
+   <ul class="nav nav-tabs card-header-tabs">
+         <li class="nav-item" style="cursor:pointer;">
+            <a class="nav-link active" id="navPersonal">Personal</a>
+         </li>               
+         <li class="nav-item" style="cursor:pointer;">
+            <a class="nav-link disabled" id="navSubvenciones">Subvenciones</a>
+         </li>
+      </ul>
 </div>
 
 <div class="card-body">
 
-   @include('administrador.users.partials.validaciones')
+   @include('mantenedor.rrhhFuncionarios.partials.validaciones')
 
-   {!! Form::model($usuario,
-      ['route'   => ['users.update', $usuario]
+   {!! Form::model($funcionario,
+      ['route'   => ['funcionarios.update', $funcionario]
       , 'method' => 'PUT'
       , 'id'     => 'form-editar'])
    !!}
 
-      @include('administrador.users.partials.fields')
+      <div id="personal" style="display: block;">
+         @include('mantenedor.rrhhFuncionarios.partials.fieldsPersonal')               
+      </div>
+      <div id="subvenciones" style="display: none;">
+         @include('mantenedor.rrhhFuncionarios.partials.fieldsSubvenciones')               
+      </div>  
 
       {{-- Acciones Btn --}}
       <div class="form-group row">
-         <div class="col-sm-3">
-            {!! link_to_route('users.index', $title='Volver', $parameters = [] ,$attributes = [
+         <div class="col-sm-2 col-md-3">
+            {!! link_to_route('funcionarios.index', $title='Volver', $parameters = [] ,$attributes = [
                'id'     => 'cancelar',
-               'class'  => 'btn btn-info float-right'
+               'class'  => 'btn btn-light float-md-left float-sm-left'
             ]) !!}
          </div>
-         <div class="col-sm-9">
+         <div class="col-sm-10 col-md-9">
             {!! link_to('#!', $title='Editar', $attributes = [
                'id'        => 'guardar',
-               'class'     => 'btn btn-success float-left',
+               'class'     => 'btn btn-primary float-right ',
                'data-form' => 'form-editar'
             ], $secure = null) !!}
          </div>
@@ -60,6 +75,6 @@
 
 @section('contentScript')
    <script type="text/javascript">
-      @include("administrador.users.script")
+      @include("mantenedor.rrhhFuncionarios.script")
    </script>
 @endsection

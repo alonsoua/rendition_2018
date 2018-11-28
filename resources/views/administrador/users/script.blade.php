@@ -47,10 +47,6 @@ $(document).ready(function(){
       }
    });
 
-   if ($("#form-agregar").length) {
-      $('#msgVacio').remove();
-   }
-
 });
 
 function MensajeEliminar(e, i) {
@@ -84,7 +80,7 @@ function Eliminar(i) {
             html: true
          }).always(function(){});
    }).fail(function(data){
-      // console(data);
+      
    });
 }
 $('#guardar').click(function(){
@@ -93,7 +89,6 @@ $('#guardar').click(function(){
    var form = $('#'+idFm);
    var url  = form.attr('action');
    var dataArray = form.serializeArray();
-
 
    $.ajax({
       url: url,
@@ -105,7 +100,7 @@ $('#guardar').click(function(){
       data: dataArray,
       success: function(result){      
          $.alertable.alert('<p class="text-center">'+result.message+'</p>', {html : true}).always(function(){
-            location.reload();
+            location.reload();                  
          });
       
       }, error: function(data) {
@@ -114,6 +109,17 @@ $('#guardar').click(function(){
          // debugger;
 
          /* VALIDACIONES */
+         //rol      
+         if (data.responseJSON.errors.rol != undefined) {
+            $('#lstRol').addClass('is-invalid');
+            $('#vRol').addClass('invalid-feedback');
+            $('#msgRol').html(data.responseJSON.errors.rol);
+         } else {
+            $('#lstRol').removeClass('is-invalid');
+            $('#lstRol').addClass('is-valid');
+            $('#vRol').css('display', 'none');
+         }
+
          //rut      
          if (data.responseJSON.errors.rut != undefined) {
             $('#txtRut').addClass('is-invalid');

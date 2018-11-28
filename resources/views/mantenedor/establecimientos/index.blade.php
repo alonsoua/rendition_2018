@@ -15,29 +15,31 @@
       @can('establecimientos.create')
          {!! link_to_route('establecimientos.create', $title='Agregar Establecimientos', $parameters = [] ,$attributes = [
             'id'     => 'agregarEstablecimiento',
-            'class'  => 'btn btn-success mt-1 float-right btn-sm'
+            'class'  => 'btn btn-primary mt-1 float-right'
          ]) !!}
       @endcan
    </div>
-   <div class="card-body">
-
-      <div id="alert" class="alert alert-info mt-2" style="display:none;"></div>
-      <div class="table-responsive-xl">
-         <table id="dataTable-establecimientos" class="table table-striped table-bordered table-sm">
-            <thead>
-               <tr>
-                  <th scope="col" width="15%">RBD</th>
-                  <th scope="col" width="20%">Nombre</th>
-                  <th scope="col" width="20%">Sostenedor</th>
-                  <th scope="col" width="15%">Direcci&oacute;n</th>
-                  <th scope="col" width="15%">Tel&eacute;fono</th>
-                  <th scope="col" width="10%" class="text-center">{{-- &nbsp; --}}opciones</th>
-               </tr>
-            </thead>
-         </table>
+   
+   @can('establecimientos.index')
+      <div class="card-body">
+         <div id="alert" class="alert alert-info mt-2" style="display:none;"></div>
+         <div class="table-responsive-xl">
+            <table id="dataTable-establecimientos" class="table table-striped table-bordered table-sm">
+               <thead>
+                  <tr>
+                     <th scope="col" width="8%">RBD</th>
+                     <th scope="col" width="20%">Nombre</th>
+                     <th scope="col" width="20%">Sostenedor</th>
+                     <th scope="col" width="20%">Direcci&oacute;n</th>
+                     <th scope="col" width="8%">Tel&eacute;fono</th>
+                     <th scope="col" width="15%" class="text-center">{{-- &nbsp; --}}opciones</th>
+                  </tr>
+               </thead>
+            </table>
+         </div>
       </div>
-   </div>
-
+   @endcan
+   
 </div>
 </div>
 </main>

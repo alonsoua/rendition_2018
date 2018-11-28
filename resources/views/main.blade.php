@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<title>@yield('title', config('app.name'))</title>
+		<title>@yield('title') Rendiciones</title>
 
       	<!-- CSRF Token -->
       	<meta name="csrf-token" content="{{ csrf_token() }}">
@@ -14,6 +14,11 @@
       	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
 
 		<script defer src="https://use.fontawesome.com/releases/v5.1.0/js/all.js"></script>
+
+		<link rel="stylesheet" href="{{ asset('plugins/chosen/chosen.css') }}">
+		<link rel="stylesheet" href="{{ asset('css/datepicker/bootstrap-datepicker.css') }}">
+
+
 
 	</head>
 
@@ -31,7 +36,7 @@
 			<!-- FIN MENÚ -->
 
    			<!-- BREADCRUMB -->
-   			@include('estructura.breadcrumb')
+   			{{-- @include('estructura.breadcrumb') --}}
    			<!-- FIN BREADCRUMB -->
 
       	@endguest
@@ -49,18 +54,16 @@
 
 
 		<!-- FOOTER -->
-	   	@include('estructura.footer')
+	   	{{-- @include('estructura.footer') --}}
 		<!-- FIN FOOTER -->
 
 
 
 		<!-- JAVASCRIPT -->
 		
+
 	      	<!-- Jquery -->
 			<script src="{{ asset('js/jquery-3.3.1.slim.min.js') }}"></script>
-			{{-- <script src="https://code.jquery.com/jquery-3.3.1.js" 
-			integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" 
-			crossorigin="anonymous"></script> --}}
 
 	      	<!-- Data Tables Jquery -->
 	      	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
@@ -74,10 +77,20 @@
 			integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" 
 			crossorigin="anonymous"></script>
 
+			<!-- Chosen -->
+			<script src="{{ asset('plugins/chosen/chosen.jquery.js') }}"></script>
+
 	      	<!-- Jquery Alert Message -->
 			{!! Html::style('css/alert/jquery.alertable.css') !!}
 			{!! Html::script('js/alert/jquery.alertable.js') !!}
-				
+
+			<!-- Bootstrap Datepicker -->
+			{!! Html::script('js/datepicker/bootstrap-datepicker.min.js') !!}
+			{!! Html::script('js/datepicker/bootstrap-datepicker.es.min.js') !!}
+			
+			<!-- Script General de la Aplicación -->
+			<script src="{{ asset('js/appScript.js') }}"></script>
+
 	      	<!-- Script del contenido -->
 			@yield('contentScript')
 			<!-- Fin Script del contenido -->

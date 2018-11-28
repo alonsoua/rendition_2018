@@ -2,8 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Imputacion;
+use App\Http\Requests\ImputacionRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Helpers\Helper;
+
+use App\Imputacion;
+use App\Establecimiento;
+use App\Subvencion;
+use App\Cuenta;
+use App\CuentaSubvencion;
+use App\Documento;
+use App\Proveedor;
+
 
 class ImputacionController extends Controller
 {
@@ -14,7 +25,7 @@ class ImputacionController extends Controller
      */
     public function index()
     {
-        //
+        return view('gastos.imputaciones.index');
     }
 
     /**
@@ -24,7 +35,31 @@ class ImputacionController extends Controller
      */
     public function create()
     {
-        //
+        $editar = 0;
+    
+        $estaRaw = Establecimiento::selectRaw('CONCAT(rbd, " - " , nombre) as nombre, id')->get();
+        $subvRaw = Subvencion::selectRaw('CONCAT(porcentajeMax, "% - " , nombre) as nombre, id')
+                            ->where('id','>', 0)->get();
+
+        $cuenRaw = Cuenta::selectRaw('CONCAT(codigo, " - " , nombre) as nombre, id')
+                            ->get();              
+
+        $provRaw = Proveedor::selectRaw('CONCAT(rut, " - " , razonSocial) as nombre, id')
+                            ->get();
+        
+        $establecimientos = $estaRaw->pluck('nombre', 'id');
+        $subvenciones     = $subvRaw->pluck('nombre', 'id');
+        $cuentas          = $cuenRaw->pluck('nombre', 'id');
+        $tipoDocumentos   = Documento::pluck('nombre', 'id');
+        $proveedores      = $provRaw->pluck('nombre', 'id');
+        return view('gastos.imputaciones.create', compact(
+                          'editar'
+                        , 'establecimientos'
+                        , 'subvenciones'
+                        , 'cuentas'
+                        , 'tipoDocumentos'
+                        , 'proveedores'
+                    ));
     }
 
     /**
@@ -33,10 +68,13 @@ class ImputacionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ImputacionRequest $request)
     {
-        //
+            //dd($request);
+        if ($request->ajax()) {
+        }   
     }
+    
 
     /**
      * Display the specified resource.
@@ -82,4 +120,17 @@ class ImputacionController extends Controller
     {
         //
     }
+
+
+    public function getCuentas(Request $request, $idSubvencion)
+    {    
+        if ($request->ajax()) {
+            
+            $cuentas = Cuenta::getCuentasSubvencion($idSubvencion);
+            
+            return response()->json($cuentas);
+        }
+        // $idEstablecimiento = $request->idEstablecimiento;
+    }
+
 }

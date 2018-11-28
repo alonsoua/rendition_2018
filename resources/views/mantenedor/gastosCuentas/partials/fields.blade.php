@@ -1,41 +1,13 @@
-{{--       <div class="form-group row">
-         {!! Form::label('Sostenedor', 'Es Sostenedor', ['class' => 'col-sm-3 col-form-label text-right']) !!}
-
-         <div class="col-sm-9">
-            <div class="mt-2">
-               {{ Form::checkbox('sostenedor'), 0 }}
-            </div>
-         </div>
-
-      </div> --}}
-{{--
-      <div class="form-group row">
-         {!! Form::label('Perfil', 'Perfil', ['class' => 'col-sm-3 col-form-label text-right']) !!}
-
-         <div class="col-sm-9">
-            {{ Form::select('size',
-               [
-                  '2' => 'Dev',
-                  '1' => 'Admin'
-               ], null,
-               [
-                  'id'           => 'lstPerfil',
-                  'placeholder'  => 'Seleccione Perfil...',
-                  'class'        => 'form-control'
-               ])
-            }}
-         </div>
-
-      </div> --}}
 
 {{-- CÓDIGO --}}
 <div class="form-group row">
-   {!! Form::label('Código', 'Código', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   {!! Form::label('Código', 'Código', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
    <div class="col-sm-9">
 
       {!! Form::text('codigo', null,
          ['id'          => 'txtCodigo',
          'class'        => 'form-control',
+         'maxlength'    => '10',
          'placeholder'  => 'Código'])
       !!}
       <div id="vCodigo"><span id="msgCodigo" class="validacion"></span></div> {{-- Div de Validación --}}
@@ -45,12 +17,13 @@
 
 {{-- NOMBRE --}}
 <div class="form-group row">
-   {!! Form::label('Nombre', 'Nombre', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   {!! Form::label('Nombre', 'Nombre', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
 
    <div class="col-sm-9">
       {!! Form::text('nombre', null,
          ['id'          => 'txtNombre',
          'class'        => 'form-control',
+         'maxlength'    => '100',
          'placeholder'  => 'Nombre'])
       !!}
       <div id="vNombre"><span id="msgNombre" class="validacion"></span></div>
@@ -60,7 +33,7 @@
 
 {{-- DESCRIPCIÓN --}}
 <div class="form-group row">
-   {!! Form::label('Descripción', 'Descripción', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   {!! Form::label('Descripción', 'Descripción', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
    <div class="col-sm-9">
 
       {!! Form::textarea('descripcion', null,
@@ -73,3 +46,33 @@
       <div id="vDescripcion"><span id="msgDescripcion" class="validacion"></span></div>
    </div>
 </div>
+
+
+
+{{-- lst SUBVENCIONES --}}
+<div class="form-group row">
+   {!! Form::label('Subvenciones', 'Subvenciones', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
+
+   <div class="col-sm-9">
+    {{--   <select name="subvenciones[]" id="lstSubvencion" multiple
+      tabindex="-1" class="select-subvenciones form-control">
+         
+         @foreach($subvenciones as $subvencion)
+
+             <option value="{{$subvencion->id}}">{{$subvencion->nombre}}</option>
+         @endforeach      
+      </select> --}}
+
+
+
+      {{ Form::select('subvenciones[]', $subvenciones ,  $editar == 0 ? null : $cuentaSub
+         ,[
+            'id'           => 'lstSubvencion',                  
+            'class'        => 'select-subvenciones form-control',
+            'multiple' 
+         ])
+      }}
+
+      <div id="vSubvencion"><span id="msgSubvencion" class="validacion"></span></div>
+   </div>
+</div> 

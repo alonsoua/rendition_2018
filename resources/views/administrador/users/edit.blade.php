@@ -13,7 +13,10 @@
 <div class="card">
 
 <div class="card-header">
-   <h4 class="my-0 font-weight-light text-sm-center">Editar Usuario: {{ $usuario->rut }} - {{ $usuario->name }}</h4>
+   <h6 class="my-0 font-weight-light text-sm-center">Editar Usuario</h6>
+   <h5 class="my-0 font-weight-light text-sm-center">{{ $usuario->rut }} - {{ $usuario->name }} 
+   {{ $usuario->apellidoPaterno }} {{ $usuario->apellidoMaterno }}</h5>
+   
 </div>
 
 <div class="card-body">
@@ -29,18 +32,19 @@
 
       @include('administrador.users.partials.fields')
 
+      <hr>
       {{-- Acciones Btn --}}
       <div class="form-group row">
          <div class="col-sm-3">
             {!! link_to_route('users.index', $title='Volver', $parameters = [] ,$attributes = [
                'id'     => 'cancelar',
-               'class'  => 'btn btn-info float-right'
+               'class'  => 'btn btn-light float-left'
             ]) !!}
          </div>
          <div class="col-sm-9">
             {!! link_to('#!', $title='Editar', $attributes = [
                'id'        => 'guardar',
-               'class'     => 'btn btn-success float-left',
+               'class'  => 'btn btn-primary float-right',
                'data-form' => 'form-editar'
             ], $secure = null) !!}
          </div>

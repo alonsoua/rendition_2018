@@ -39,7 +39,7 @@ class EstablecimientoController extends Controller
      */
     public function create()
     {
-        
+        $editar  = 0;
         $tDepRaw = tipo_dependencia::select()->where('estado', '1')->get();
         $sostRaw = Sostenedor::selectRaw('CONCAT(rut, " - " , nombre, " ", apellidoPaterno, " ", apellidoMaterno) as nombre, id')->where('estado', '1')->get();
         
@@ -47,7 +47,13 @@ class EstablecimientoController extends Controller
         $sostenedores     = $sostRaw->pluck('nombre',  'id');
         $comunas          = Comuna::pluck('nombre', 'id');
 
-        return view('mantenedor.establecimientos.create', compact('tipoDependencias', 'sostenedores', 'comunas'));
+        return view('mantenedor.establecimientos.create'
+            , compact(
+                  'tipoDependencias'
+                , 'sostenedores'
+                , 'comunas'
+                , 'editar'
+            ));
     }
 
     /**
@@ -58,7 +64,12 @@ class EstablecimientoController extends Controller
      */
     public function store(EstablecimientoRequest $request)
     {
+        
         if ($request->ajax()) {
+
+            if ($request->hasFile('insignia')) {
+
+            }
             Establecimiento::create([
                 'rbd'               => $request->rbd,
                 'nombre'            => $request->nombre,
@@ -69,7 +80,8 @@ class EstablecimientoController extends Controller
                 'idComuna'          => $request->comuna,
                 'direccion'         => $request->direccion,
                 'fono'              => $request->fono,
-                'correo'            => $request->correo
+                'correo'            => $request->correo,
+                'insignia'          => $request->insignia
             ]);
 
             //MENSAJE
@@ -100,6 +112,7 @@ class EstablecimientoController extends Controller
      */
     public function edit($id)
     {
+        $editar = 1;
         $establecimiento  = Establecimiento::findOrFail($id);
         
         $tDepRaw = tipo_dependencia::select()->where('estado', '1')->get();
@@ -116,6 +129,7 @@ class EstablecimientoController extends Controller
                 , 'tipoDependencias'
                 , 'sostenedores'
                 , 'comunas'
+                , 'editar'
         ));
     }
 
@@ -127,20 +141,21 @@ class EstablecimientoController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
+    {   
+         
         Request()->validate([
-            'nombre'            => 'required|max:200',
-             'rbd'              => 'required|max:20|unique:establecimientos,rbd,'.$id.',id' ,
-            'razonSocial'       => 'required|max:150',
-            'rut'               => 'required|numeric|unique:establecimientos,rut,'.$id.',id' ,
-            'tipoDependencia'   => 'required',
-            'sostenedor'        => 'required',
-            'comuna'            => 'required',
-            'direccion'         => 'required|max:250',
-            'fono'              => 'required|max:45',
-            'correo'            => 'max:150|email'
+            'rbd'             => 'required|unique:establecimientos,rbd,'.$id.',id,' ,
+            'nombre'          => 'required|max:200',
+            'razonSocial'     => 'required|max:150',
+            'rut'             => 'required|numeric|unique:establecimientos,rut,'.$id.',id' ,
+            'tipoDependencia' => 'required',
+            'sostenedor'      => 'required',
+            'comuna'          => 'required',
+            'direccion'       => 'required|max:250',
+            'fono'            => 'required|numeric|max:9999999999',
+            'correo'          => 'max:150|email'
           ]);
-
+        
          $establecimiento = Establecimiento::findOrFail($id);        
          $establecimiento->rbd               = $request->rbd;
          $establecimiento->nombre            = $request->nombre;
@@ -152,8 +167,9 @@ class EstablecimientoController extends Controller
          $establecimiento->direccion         = $request->direccion;
          $establecimiento->fono              = $request->fono;
          $establecimiento->correo            = $request->correo;
+         $establecimiento->insignia          = $img;
 
-         $mensaje = 'El Establecimiento con nombre <b>'.$establecimiento['nombre'].'</b> ha sido editado correctamente';
+         $mensaje = 'El Establecimiento <b>'.$establecimiento['nombre'].'</b> ha sido editado correctamente';
 
          if ($request->ajax()) {
             $establecimiento->save();
@@ -173,7 +189,7 @@ class EstablecimientoController extends Controller
     {
         $nombre = DB::table('establecimientos')->where('id', $id)->value('nombre');
         DB::table('establecimientos')->where('id', $id)->update(['estado' => 0]);
-        $message = 'El establecimiento con nombre <b>'.$nombre.'</b> fue eliminado correctamente';
+        $message = 'El establecimiento <b>'.$nombre.'</b> fue eliminado correctamente';
         
         if ($request->ajax()) {
             return response()->json([

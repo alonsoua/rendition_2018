@@ -37,14 +37,14 @@ class LeyController extends Controller
      */
     public function create()
     {        
-     
+        $editar = 0;
         $subRaw       = Subvencion::selectRaw('CONCAT(porcentajeMax, "% - " , nombre) as nombre, id')
                         ->where('estado', '1')->get();                  
         $subvenciones = $subRaw->pluck('nombre',  'id');    
         
-        $porcentajeMáximo = '';
+        $porcentajeMaximo = '';
 
-        return view('mantenedor.leyes.create', compact('subvenciones' , 'porcentajeMáximo'));
+        return view('mantenedor.leyes.create', compact('subvenciones' , 'porcentajeMaximo', 'editar'));
     }
 
     /**
@@ -99,9 +99,8 @@ class LeyController extends Controller
      */
     public function edit($id)
     {
-        
+        $editar           = 1;   
         $ley              = Ley::findOrFail($id);
-        $porcentajeMáximo = $ley->porcMax;
 
         $subRaw       = Subvencion::selectRaw('CONCAT(porcentajeMax, "% - " , nombre) as nombre, id')
                         ->where('estado', '1')->get();
@@ -110,8 +109,8 @@ class LeyController extends Controller
         return view('mantenedor.leyes.edit', 
             compact(
                   'subvenciones'
-                , 'ley'
-                , 'porcentajeMáximo'
+                , 'ley'        
+                , 'editar'
         ));
     }
 
@@ -140,7 +139,7 @@ class LeyController extends Controller
          $ley->tipo         = $request->tipo;
          $ley->idSubvencion = $request->subvencion;
          $ley->descripcion  = $request->descripcion;
-         $ley->porcMax      = $request->porcentajeMax;
+         $ley->porcMax      = $request->porcentajeMáximo;
          $ley->tope         = $request->tope;
          
          // Checkbox
@@ -152,7 +151,7 @@ class LeyController extends Controller
 
          
 
-         $mensaje = 'El ley con nombre <b>'.$ley['nombre'].'</b> ha sido editado correctamente';
+         $mensaje = 'El ley <b>'.$ley['codigo'].' - '.$ley['nombre'].'</b> ha sido editada correctamente';
 
          if ($request->ajax()) {
             $ley->save();

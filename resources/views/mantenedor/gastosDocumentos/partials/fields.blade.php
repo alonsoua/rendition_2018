@@ -1,5 +1,5 @@
 {{--       <div class="form-group row">
-         {!! Form::label('Sostenedor', 'Es Sostenedor', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+         {!! Form::label('Sostenedor', 'Es Sostenedor', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
 
          <div class="col-sm-9">
             <div class="mt-2">
@@ -10,7 +10,7 @@
       </div> --}}
 {{--
       <div class="form-group row">
-         {!! Form::label('Perfil', 'Perfil', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+         {!! Form::label('Perfil', 'Perfil', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
 
          <div class="col-sm-9">
             {{ Form::select('size',
@@ -30,7 +30,7 @@
 
 {{-- CÓDIGO --}}
 <div class="form-group row">
-   {!! Form::label('Código', 'Código', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   {!! Form::label('Código', 'Código', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
    <div class="col-sm-9">
 
       {!! Form::text('codigo', null,
@@ -45,7 +45,7 @@
 
 {{-- NOMBRE --}}
 <div class="form-group row">
-   {!! Form::label('Nombre', 'Nombre', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   {!! Form::label('Nombre', 'Nombre', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
 
    <div class="col-sm-9">
       {!! Form::text('nombre', null,
@@ -60,7 +60,7 @@
 
 {{-- DESCRIPCIÓN --}}
 <div class="form-group row">
-   {!! Form::label('Descripción', 'Descripción', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   {!! Form::label('Descripción', 'Descripción', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
    <div class="col-sm-9">
 
       {!! Form::textarea('descripcion', null,
@@ -77,7 +77,7 @@
 
 {{-- CHECKBOX EXENTO --}}
 <div class="form-group row">
-   {!! Form::label('Exento', 'Exento', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   {!! Form::label('Exento', 'Exento', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
 
    <div class="col-sm-9">
       <div class="mt-2">

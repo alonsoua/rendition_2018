@@ -26,7 +26,7 @@ class GastosProveedoresRequest extends FormRequest
         return [
             'tipoPersona'   => 'required',
             'rut'           => 'required|unique:proveedors',
-            'razonSocial'   => 'required',
+            'razonSocial'   => 'required|max:100',
             'giro'          => 'max:45',
             'comuna'        => 'required',
             'direccion'     => 'required|max:250',

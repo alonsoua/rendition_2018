@@ -15,29 +15,31 @@
       @can('sostenedores.create')
          {!! link_to_route('sostenedores.create', $title='Agregar Sostenedores', $parameters = [] ,$attributes = [
             'id'     => 'agregarSostenedor',
-            'class'  => 'btn btn-success mt-1 float-right btn-sm'
+            'class'  => 'btn btn-primary mt-1 float-right'
          ]) !!}
       @endcan
    </div>
-   <div class="card-body">
 
-      <div id="alert" class="alert alert-info mt-2" style="display:none;"></div>
-      <div class="table-responsive-xl">
-         <table id="dataTable-sostenedores" class="table table-striped table-bordered table-sm">
-            <thead>
-               <tr>
-                  <th scope="col" width="10%">Rut</th>
-                  <th scope="col" width="15%">Nombre</th>
-                  <th scope="col" width="15%">Apellido</th>
-                  <th scope="col" width="25%">Direcci&oacute;n</th>
-                  <th scope="col" width="10%">Tel&eacute;fono</th>
-                  <th scope="col" width="10%">Correo</th>
-                  <th scope="col" width="10%" class="text-center">{{-- &nbsp; --}}opciones</th>
-               </tr>
-            </thead>
-         </table>
+   @can('sostenedores.index')
+      <div class="card-body">
+         <div id="alert" class="alert alert-info mt-2" style="display:none;"></div>
+         <div class="table-responsive-xl">
+            <table id="dataTable-sostenedores" class="table table-striped table-bordered table-sm">
+               <thead>
+                  <tr>
+                     <th scope="col" width="8%">Rut</th>
+                     <th scope="col" width="15%">Nombre</th>
+                     <th scope="col" width="15%">Apellido</th>
+                     <th scope="col" width="25%">Direcci&oacute;n</th>
+                     <th scope="col" width="8%">Tel&eacute;fono</th>
+                     <th scope="col" width="10%">Correo</th>
+                     <th scope="col" width="15%" class="text-center">{{-- &nbsp; --}}opciones</th>
+                  </tr>
+               </thead>
+            </table>
+         </div>
       </div>
-   </div>
+   @endcan
 
 </div>
 </div>

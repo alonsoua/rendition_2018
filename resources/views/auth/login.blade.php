@@ -63,6 +63,24 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="periodo" class="col-md-4 control-label">Periodo</label>
+
+                            <div class="col-md-6">
+                                <select name="periodo" id="periodo">
+                                    <option value="1">2018</option>
+                                    <option value="2">2019</option>
+                                </select>
+                                {{-- <input id="periodo" type="periodo" class="form-control" name="periodo" required>
+
+                                @if ($errors->has('periodo'))
+                                    <span class="help-block">
+                                        <strong></strong>
+                                    </span>
+                                @endif --}}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
                                 <div class="checkbox">
                                     <label>

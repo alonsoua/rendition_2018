@@ -9,6 +9,7 @@ use App\Helpers\Helper;
 
 use App\Cuenta;
 use App\Subvencion;
+use App\CuentaSubvencion;
 
 class CuentaController extends Controller
 {
@@ -37,12 +38,13 @@ class CuentaController extends Controller
      */
     public function create()
     {
-        $subRaw       = Subvencion::selectRaw('CONCAT(porcentajeMax, "% - " , nombre) as nombre, id')
-                        ->where('estado', '1')->get();
+        $editar = 0;
+        $subRaw = Subvencion::selectRaw('CONCAT(porcentajeMax, "% - " , nombre) as nombre, id')
+                    ->where('estado', '1')->where('id','>', 0)->get();
         
-        $subvenciones = $subRaw->pluck('nombre',  'id');
+        $subvenciones = $subRaw->pluck('nombre',  'id');        
         
-        return view('mantenedor.gastosCuentas.create', compact('subvenciones'));
+        return view('mantenedor.gastosCuentas.create', compact('subvenciones', 'editar'));
     }
 
     /**
@@ -53,13 +55,24 @@ class CuentaController extends Controller
      */
     public function store(GastosCuentasRequest $request)
     {
+        
         if ($request->ajax()) {
-            Cuenta::create([
+
+            $cuenta = Cuenta::create([
                 'codigo'         => $request->codigo,
                 'nombre'         => $request->nombre,
                 'descripcion'    => $request->descripcion,
             ]);
-
+            
+            //Agregamos relación cuenta subvenciones
+            $subvencion = $request->subvenciones;            
+            foreach ($subvencion as $key => $value) {
+                $cuentaSubvencion = CuentaSubvencion::create([
+                    'idCuenta'     => $cuenta->id,
+                    'idSubvencion' => $value,                    
+                ]);
+            }           
+            
             //MENSAJE
             $mensaje = 'La cuenta <b>'.$request['codigo'].' - '.$request['nombre'].'</b>';
             $mensaje .= ' ha sido agregada correctamente';
@@ -89,14 +102,26 @@ class CuentaController extends Controller
      */
     public function edit($id)
     {
-        $cuenta           = Cuenta::findOrFail($id);
+        $editar = 1;
+        $cuenta = Cuenta::findOrFail($id);
 
-        // $subRaw       = Subvencion::selectRaw('CONCAT(porcentajeMax, "% - " , nombre) as nombre, id')
-        //                 ->where('estado', '1')->get();
-        // $subvenciones = $subRaw->pluck('nombre',  'id'); 
+        $subRaw = Subvencion::selectRaw('CONCAT(porcentajeMax, "% - " , nombre) as nombre, id')
+                    ->where('estado', '1')->where('id','>', 0)->get();
+        $subvenciones = $subRaw->pluck('nombre',  'id'); 
 
-        return view('mantenedor.gastosCuentas.edit', compact('cuenta'));
-            
+
+        $csRaw  = DB::table('cuenta_subvencion')
+                    ->selectRaw('subvencions.id as idSub')
+                    ->leftJoin('subvencions', 'cuenta_subvencion.idSubvencion', '=', 'subvencions.id')
+                    ->where('cuenta_subvencion.idCuenta', $id)->get();
+        $cuentaSub = $csRaw->pluck('idSub');         
+
+        return view('mantenedor.gastosCuentas.edit', 
+            compact(  'cuenta'
+                    , 'editar'
+                    , 'subvenciones'
+                    , 'cuentaSub'
+                ));            
     }
 
     /**
@@ -111,22 +136,35 @@ class CuentaController extends Controller
         Request()->validate([
             'codigo'        => 'required|max:10|unique:cuentas,codigo,'.$id.',id' ,
             'nombre'        => 'required|max:100',
-            'descripcion'   => 'required'
+            'descripcion'   => 'required',
+            'subvenciones'  => 'required|array'
           ]);
 
-            $cuenta = Cuenta::findOrFail($id);        
-            $cuenta->codigo       = $request->codigo;
-            $cuenta->nombre       = $request->nombre;         
-            $cuenta->descripcion  = $request->descripcion;        
+        $cuenta = Cuenta::findOrFail($id);        
+        $cuenta->codigo       = $request->codigo;
+        $cuenta->nombre       = $request->nombre;         
+        $cuenta->descripcion  = $request->descripcion;      
 
-            $mensaje = 'La cuenta <b>'.$cuenta['codigo'].' - '.$cuenta['nombre'].'</b> ha sido editada correctamente';
+        //Elimina relación cuenta - subvencion
+        $subvenciones = CuentaSubvencion::where('idCuenta', '=' , $id);
+        $subvenciones->delete();
 
-            if ($request->ajax()) {
-                $cuenta->save();
-                return response()->json([
-                    "message" => $mensaje
-                ]);
-            }
+        //Agrega cuenta - subvencion
+        $subvencion = $request->subvenciones;        
+        foreach ($subvencion as $key => $idSubvencion) {
+            $cuentaSubvencion = CuentaSubvencion::create([
+                'idCuenta'     => $cuenta->id,
+                'idSubvencion' => $idSubvencion,                    
+            ]);
+        }      
+        
+        $mensaje = 'La cuenta <b>'.$cuenta['codigo'].' - '.$cuenta['nombre'].'</b> ha sido editada correctamente';
+        if ($request->ajax()) {
+            $cuenta->save();
+            return response()->json([
+                "message" => $mensaje
+            ]);
+        }
     }
 
     /**

@@ -1,5 +1,26 @@
 $(document).ready(function(){
 
+    /*
+   |--------------------------------------------------------------------------
+   | Chosen Select de JQuery
+   |--------------------------------------------------------------------------
+   | link: https://harvesthq.github.io/chosen/
+   | documentación: https://harvesthq.github.io/chosen/options.html
+   |
+   */
+
+   $('.select-tipo').chosen({      
+      disable_search: true,
+      width : '100%'
+
+   });
+
+   $('.select-subvencion').chosen({
+      no_results_text: 'No se encontró la Subvención',
+      width : '100%'
+
+   });
+
    //alert('Prueba');
   /*
    |--------------------------------------------------------------------------

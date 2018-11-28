@@ -2,13 +2,14 @@
 {{-- CÓDIGO --}}
 <div class="form-group row">
    
-   {!! Form::label('Código', 'Código', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   {!! Form::label('Código', 'Código', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
    
    <div class="col-sm-9">
 
       {!! Form::text('codigo', null,
          ['id'          => 'txtCodigo',
          'class'        => 'form-control',
+         'maxlength'    => '20',
          'placeholder'  => 'Código'])
       !!}
    
@@ -21,13 +22,14 @@
 {{-- NOMBRE --}}
 <div class="form-group row">
   
-   {!! Form::label('Nombre', 'Nombre', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   {!! Form::label('Nombre', 'Nombre', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
   
    <div class="col-sm-9">
 
       {!! Form::text('nombre', null,
          ['id'          => 'txtNombre',
          'class'        => 'form-control',
+         'maxlength'    => '100',
          'placeholder'  => 'Nombre'])
       !!}
   
@@ -39,18 +41,18 @@
 
 {{-- TIPO --}}
 <div class="form-group row">
-   {!! Form::label('Tipo', 'Tipo', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   {!! Form::label('Tipo', 'Tipo', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
 
    <div class="col-sm-9">
       {{ Form::select('tipo',
          [
             'Haber'     => 'Haber',
             'Descuento' => 'Descuento'
-         ], null,
+         ], $editar == 0 ? null : $ley->tipo,
          [
             'id'           => 'lstTipo',
             'placeholder'  => 'Seleccione Tipo...',
-            'class'        => 'form-control'
+            'class'        => 'select-tipo form-control'
          ])
       }}
 
@@ -63,14 +65,14 @@
 
 {{-- SUBVENCIÓN --}}
 <div class="form-group row">
-   {!! Form::label('Subvención', 'Subvención', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   {!! Form::label('Subvención', 'Subvención', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
 
    <div class="col-sm-9">
-      {{ Form::select('subvencion', $subvenciones, null,
+      {{ Form::select('subvencion', $subvenciones, $editar == 0 ? null : $ley->idSubvencion,
          [
             'id'           => 'lstSubvencion',
             'placeholder'  => 'Seleccione Subvención...',
-            'class'        => 'form-control'
+            'class'        => 'select-subvencion form-control'
          ])
       }}
 
@@ -84,7 +86,7 @@
 {{-- DESCRIPCIÓN --}}
 <div class="form-group row">
   
-   {!! Form::label('Descripción', 'Descripción', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   {!! Form::label('Descripción', 'Descripción', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
   
    <div class="col-sm-9">
 
@@ -105,7 +107,7 @@
 <hr></hr>
 <div class="form-group row">
    
-   {!! Form::label('Detalle', 'Detalle', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   {!! Form::label('Detalle', 'Detalle', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
    
 
    {{-- IMPONIBLE --}}
@@ -166,14 +168,22 @@
 
 {{-- PORCENTAJE MÁXIMO --}}
 <div class="form-group row">
-   {!! Form::label('Porcentaje Máximo', 'Porcentaje Máximo', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   {!! Form::label('Porcentaje Máximo', 'Porcentaje Máximo', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
 
-   <div class="col-sm-9">
-      {!! Form::number('porcentajeMáximo', $porcentajeMáximo,
+   <div class="col-sm-9 input-group">
+      {!! Form::number('porcentajeMáximo', $editar == 0 ? null : $ley->porcMax,
          ['id'          => 'txtPorcentajeMax',
          'class'        => 'form-control',
+         'maxlength'    => '3',
          'placeholder'  => 'Porcentaje Máximo'])
       !!}
+      
+      <div class="input-group-prepend">
+         <span class="input-group-text" id="basic-addon-calendar">
+             <i class="fa fa-percent form-control-feedback"></i> 
+         </span>
+      </div>
+
       <div id="vPorcentajeMax"><span id="msgPorcentajeMax" class="validacion"></span></div>
    </div>
 </div>
@@ -181,14 +191,16 @@
 
 {{-- TOPE POR HORA --}}
 <div class="form-group row">
-   {!! Form::label('Tope por Hora', 'Tope por Hora', ['class' => 'col-sm-3 col-form-label text-right']) !!}
+   {!! Form::label('Tope por Hora', 'Tope por Hora', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
 
    <div class="col-sm-9">
       {!! Form::number('tope', null,
          ['id'          => 'txtTope',
          'class'        => 'form-control',
+         'maxlength'    => '8',
          'placeholder'  => 'Tope por Hora'])
       !!}
+      
       <div id="vTope"><span id="msgTope" class="validacion"></span></div>
    </div>
 </div>

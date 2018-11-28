@@ -1,6 +1,34 @@
 $(document).ready(function(){
 
-   //alert('Prueba');
+   /*
+   |--------------------------------------------------------------------------
+   | Chosen Select de JQuery
+   |--------------------------------------------------------------------------
+   | link: https://harvesthq.github.io/chosen/
+   | documentación: https://harvesthq.github.io/chosen/options.html
+   |
+   */
+
+   $('.select-tipoDependencias').chosen({
+     
+      disable_search: true,
+      width : '100%'
+
+   });
+
+   $('.select-sostenedores').chosen({
+      no_results_text: 'No se encontró el Sostenedor',
+      width : '100%'
+
+   });
+
+   $('.select-comunas').chosen({
+      no_results_text: 'No se encontró la Comuna',
+      width : '100%'
+
+   });
+
+   
   /*
    |--------------------------------------------------------------------------
    | DataTable
@@ -99,7 +127,6 @@ $('#guardar').click(function(){
    var url  = form.attr('action');
    var dataArray = form.serializeArray();
 
-
    $.ajax({
       url: url,
       method: 'POST',
@@ -109,12 +136,14 @@ $('#guardar').click(function(){
       dataType: 'json',
       data: dataArray,
       success: function(result){      
+         console.log(1, result);
          $.alertable.alert('<p class="text-center">'+result.message+'</p>', {html : true}).always(function(){
             location.reload();
          });
       
       }, error: function(data) {
       
+         console.log(data);
          /* VALIDACIONES */
          //rbd      
          if (data.responseJSON.errors.rbd != undefined) {

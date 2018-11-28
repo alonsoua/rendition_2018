@@ -49,8 +49,8 @@ class SostenedorController extends Controller
         //     ->select(DB::raw('regiones.nombre as nombreRegion, comunas.nombre as nombreComuna, comunas.id as idComuna'))->distinct()->get();
 
         $comunas = Comuna::pluck('nombre', 'id');
-                
-        return view('mantenedor.sostenedores.create', compact('comunas'));
+        $editar  = 0;
+        return view('mantenedor.sostenedores.create', compact('comunas', 'editar'));
     }
 
     /**
@@ -106,11 +106,12 @@ class SostenedorController extends Controller
      */
     public function edit($id)
     {
+        $editar = 1;
         $sostenedor = Sostenedor::findOrFail($id);
 
         $comunas = Comuna::pluck('nombre', 'id');
 
-        return view('mantenedor.sostenedores.edit', compact('sostenedor', 'comunas'));
+        return view('mantenedor.sostenedores.edit', compact('sostenedor', 'comunas', 'editar'));
     }
 
     /**
@@ -130,7 +131,7 @@ class SostenedorController extends Controller
             'apellidoMaterno'   => 'required|max:150',
             'comuna'            => 'required',
             'direccion'         => 'max:250',
-            'fono'              => 'max:45',
+            'fono'              => 'numeric|max:9999999999',
             'correo'            => 'max:150|email'
           ]);
 

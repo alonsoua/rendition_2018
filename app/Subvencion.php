@@ -17,4 +17,11 @@ class Subvencion extends Model
       , 'estado'
       ,
     ];
+
+
+    // RELACIONES
+    public function cuenta() 
+    {
+    	return $this->belongsToMany(Cuenta::class, 'idCuenta');
+    }
 }

@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class Establecimiento extends Model
 {
@@ -41,4 +43,5 @@ class Establecimiento extends Model
     	return $this->belongsTo(Sostenedor::class, 'idComuna');
     }
     /* FIN RELACIONES */
+
 }

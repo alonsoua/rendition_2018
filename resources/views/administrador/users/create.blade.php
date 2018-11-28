@@ -12,30 +12,31 @@
 <div class="col col-lg-11">
 <div class="card">
 
-<div class="card-header">
-	<h4 class="my-0 font-weight-light text-sm-center">Agregar Usuario</h4>
+<div class="card-header">	
+   <h5 class="my-0 font-weight-light text-sm-center">Agregar Usuario</h5>
 </div>
 
 <div class="card-body">
 
    @include('administrador.users.partials.validaciones')
 
-   {!! Form::open(['route' => ['users.store'], 'method' => 'STORE', 'id' => 'form-agregar']) !!}
+   {!! Form::open(['route' => ['users.store'], 'method' => 'STORE', 'id' => 'form-agregar', 'autocomplete' => 'off']) !!}
 
       @include('administrador.users.partials.fields')
 
+      <hr>
       {{-- Botones --}}
       <div class="form-group row">
          <div class="col-sm-3">
             {!! link_to_route('users.index', $title='Volver', $parameters = [] ,$attributes = [
                'id'     => 'cancelar',
-               'class'  => 'btn btn-info float-right'
+               'class'  => 'btn btn-light float-left'
             ]) !!}
          </div>
          <div class="col-sm-9">
             {!! link_to('#!', $title='Guardar', $attributes = [
                'id'     => 'guardar',
-               'class'  => 'btn btn-success float-left',
+               'class'  => 'btn btn-primary float-right',
                'data-form' => 'form-agregar'
             ], $secure = null) !!}
 	    	</div>
