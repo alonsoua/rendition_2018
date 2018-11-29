@@ -33,6 +33,11 @@ $(document).ready(function(){
    |
    */
 
+    $('.select-funcionarios').chosen({         
+         no_results_text: 'No se encontró el Funcionario',
+         width : '100%',         
+      });
+   
    $('.select-establecimientos').chosen({         
       no_results_text: 'No se encontró el Establecimiento',
       width : '100%'
@@ -52,6 +57,12 @@ $(document).ready(function(){
    });
 
    $('.select-tipoDocumento').chosen({
+      no_results_text: 'No se encontró el Tipo Documento',
+      width : '100%'
+
+   });
+
+   $('.select-formaPagos').chosen({
       no_results_text: 'No se encontró el Tipo Documento',
       width : '100%'
 
@@ -104,15 +115,17 @@ $(document).ready(function(){
       "serverSide": true,
       "ajax"      : "{{ url('imputacionesTable') }}",
       "columns"   : [
-         {data: 'establecimiento.nombre', name: 'establecimientos.nombre'},
-         {data: 'subvencion.nombre', name: 'subvencions.nombre'},
-         {data: 'documento.nombre', name: 'documentos.nombre'},
-         {data: 'descripcion', name: 'imputacions.descripcion'},
-         {data: 'proveedor.nombre', name: 'proveedors.nombre'},
-         {data: 'montoGasto', name: 'imputacions.montoGasto'},
-         {data: 'montoDocumento', name: 'imputacions.montoDocumento'},
-         {data: 'estado', name: 'imputacions.estado'},
+
+         {data: 'establecimiento.nombre', name: 'establecimiento.nombre'},
+         {data: 'subvencion.nombre',      name: 'subvencion.nombre'},
+         {data: 'documento.nombre',       name: 'documento.nombre'},
+         {data: 'descripcion',            name: 'imputacions.descripcion'},
+         {data: 'proveedor.razonSocial',  name: 'proveedor.razonSocial'},
+         {data: 'montoGasto',             name: 'imputacions.montoGasto'},
+         {data: 'montoDocumento',         name: 'imputacions.montoDocumento'},
+         {data: 'estado',                 name: 'imputacions.estado'},
          {data: 'opciones'},
+
       ],
       "drawCallback": function () {
          $('.dataTables_paginate > .pagination').addClass('pagination-sm');
@@ -121,6 +134,19 @@ $(document).ready(function(){
 
    if ($("#form-agregar").length) {
       $('#msgVacio').remove();
+   }
+   
+
+   var checked = $('[name=reembolsable]').prop('checked');
+   
+   if (checked) {            
+      $('#lstFuncionario_chosen').css('display', 'block');      
+      $('#lblFuncionario').css('display', 'block');      
+      $('#vFuncionario').css('display', 'block');      
+   }else {      
+      $('#lstFuncionario_chosen').css('display', 'none');      
+      $('#lblFuncionario').css('display', 'none');
+      $('#vFuncionario').css('display', 'none');
    }
 
 });
@@ -163,6 +189,7 @@ function Eliminar(i) {
 }
 
 
+
 $('#lstSubvencion').on('change', function(e){
    var idSubvencion = e.target.value;   
    $('#idSubvencion').val(idSubvencion);
@@ -188,6 +215,64 @@ $('#lstSubvencion').on('change', function(e){
 
 
 
+$('#lstEstablecimiento').on('change', function(e){
+   var idEstablecimiento = e.target.value;   
+   $('#idEstablecimiento').val(idEstablecimiento);
+
+
+   $.get('getFuncionarios/'+idEstablecimiento+'', function(data) {
+
+      $('#lstFuncionario').empty();
+      
+      //Carga lstFuncionario en select
+      $('#lstFuncionario').append('<option value="0" disable="false" selected="true">Seleccione Funcionario</option>');
+      
+      if ($.isEmptyObject(data)) {
+            
+         $('#lstFuncionario').addClass('is-invalid');
+         $('#vFuncionario').css('display', 'block');
+         $('#vFuncionario').addClass('invalid-feedback');
+         $('#msgFuncionario').html('El establecimiento seleccionado, no tiene funcionarios agregados.');
+                  
+      }else {
+         $('#lstFuncionario').removeClass('is-invalid');
+         $('#lstFuncionario').addClass('is-valid');
+         $('#vFuncionario').css('display', 'none');
+      }
+
+
+
+      $.each(data, function(id, funcionario){                 
+         $('#lstFuncionario').append('<option value="'+id+'">'+funcionario+'</option>');
+         $('#lstFuncionario').removeAttr('disabled');      
+      });      
+      
+      //Actualiza Select
+      $("#lstFuncionario").trigger("chosen:updated");
+
+   });
+});
+
+
+$('[name=reembolsable]').on('click', function(e){
+   
+   var checked = $(this).prop('checked');
+
+   if (checked) {            
+      $('#lstFuncionario_chosen').css('display', 'block');      
+      $('#lblFuncionario').css('display', 'block');      
+      $('#vFuncionario').css('display', 'block');      
+   } 
+   else {      
+      $('#lstFuncionario_chosen').css('display', 'none');      
+      $('#lblFuncionario').css('display', 'none'); 
+      $('#vFuncionario').css('display', 'none');     
+   }
+   
+});
+
+
+
 $('#guardar').click(function(){
    
    var idFm = $(this).attr('data-form');
@@ -205,6 +290,7 @@ $('#guardar').click(function(){
       data: dataArray,
       success: function(result){      
          console.log(1, result);
+
          $.alertable.alert('<p class="text-center">'+result.message+'</p>', {html : true}).always(function(){
             location.reload();
          });
@@ -222,6 +308,17 @@ $('#guardar').click(function(){
             $('#lstEstablecimiento').removeClass('is-invalid');
             $('#lstEstablecimiento').addClass('is-valid');
             $('#vEstablecimiento').css('display', 'none');
+         }
+
+         //funcionario      
+         if (data.responseJSON.errors.funcionario != undefined) {
+            $('#lstFuncionario').addClass('is-invalid');
+            $('#vFuncionario').addClass('invalid-feedback');
+            $('#msgFuncionario').html(data.responseJSON.errors.funcionario);
+         } else {
+            $('#lstFuncionario').removeClass('is-invalid');
+            $('#lstFuncionario').addClass('is-valid');
+            $('#vFuncionario').css('display', 'none');
          }
 
          //subvencion      
@@ -255,6 +352,17 @@ $('#guardar').click(function(){
             $('#lstTipoDocumento').removeClass('is-invalid');
             $('#lstTipoDocumento').addClass('is-valid');
             $('#vTipoDocumento').css('display', 'none');
+         }
+
+         //formaPago      
+         if (data.responseJSON.errors.formaPago != undefined) {
+            $('#lstFormaPago').addClass('is-invalid');
+            $('#vFormaPago').addClass('invalid-feedback');
+            $('#msgFormaPago').html(data.responseJSON.errors.formaPago);
+         } else {
+            $('#lstFormaPago').removeClass('is-invalid');
+            $('#lstFormaPago').addClass('is-valid');
+            $('#vFormaPago').css('display', 'none');
          }
 
          //numDocumento

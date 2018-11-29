@@ -187,8 +187,10 @@ class EstablecimientoController extends Controller
      */
     public function destroy(Request $request, $id)
     {
+
         $nombre = DB::table('establecimientos')->where('id', $id)->value('nombre');
-        DB::table('establecimientos')->where('id', $id)->update(['estado' => 0]);
+
+        DB::table('establecimientos')->where('id', $id)->delete();
         $message = 'El establecimiento <b>'.$nombre.'</b> fue eliminado correctamente';
         
         if ($request->ajax()) {

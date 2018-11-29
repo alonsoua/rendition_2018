@@ -20,7 +20,7 @@
          @can('imputaciones.destroy')
 
             <a href="#!" class="dropdown-item small-button"
-            id="{{ $id }}" data-nombre="{{ $nombre }}" onclick=" MensajeEliminar(event, this) ">
+            id="{{ $id }}" data-numDocumento="{{ $numDocumento }}" onclick=" MensajeEliminar(event, this) ">
                Eliminar
             </a>
 

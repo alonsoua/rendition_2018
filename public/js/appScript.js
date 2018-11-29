@@ -56,3 +56,19 @@ function formatoDecimales(n) {
 	}
   //return n === '' ? n : Number(n).toLocaleString();
 }
+
+function msgEliminarRegistroUtilizado (gramatica, texto) {
+  if (gramatica == 'F') {
+    return 'La '+ texto +' que intenta eliminar, está siendo utilizada en el sistema.';
+  } else if (gramatica == 'M') {
+    return 'El '+ texto +' que intenta eliminar, está siendo utilizado en el sistema.';
+  }
+}
+
+function msgEliminadoCorrectamente (gramatica, texto) {
+  if (gramatica == 'F') {
+    return 'La '+ texto +' fue eliminada correctamente';
+  } else if (gramatica == 'M') {
+    return 'El '+ texto +' fue eliminado correctamente.';
+  }
+}

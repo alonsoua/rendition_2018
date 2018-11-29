@@ -52,4 +52,16 @@ class Funcionario extends Model
     	return $this->belongsTo(Funcion::class, 'idFuncion');
     }    
     /* FIN RELACIONES */
+
+    public static function getFuncionarios($idEstablecimiento) {
+        
+        $funcionarios = Funcionario::where('idEstablecimiento', $idEstablecimiento)
+                                  ->selectRaw('CONCAT(rut, " - " , nombre, " ", apellidoPaterno, " ", apellidoMaterno) 
+                                as nombre, id')
+                                
+                                ->get();
+        
+        return $funcionarios->pluck('nombre', 'id');
+    }
+    
 }

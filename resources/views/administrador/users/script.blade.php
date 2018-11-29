@@ -80,7 +80,16 @@ function Eliminar(i) {
             html: true
          }).always(function(){});
    }).fail(function(data){
+      var res = data.status;         
       
+         var mensaje = '';
+         if (res == 404) {
+            //404 No encontró el registro
+            row.fadeOut(); 
+            mensaje = msgEliminadoCorrectamente('M', 'Usuario');
+         }
+
+         $.alertable.alert('<p class="text-center">'+mensaje+'</p>', {html: true}).always(function(){});
    });
 }
 $('#guardar').click(function(){

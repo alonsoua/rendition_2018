@@ -10,9 +10,12 @@ class Imputacion extends Model
 
     protected $fillable = [
         'idEstablecimiento'
+      , 'reembolsable'
+      , 'idFuncionario'
       , 'idSubvencion'
       , 'idCuenta'
       , 'idTipoDocumento'
+      , 'formaPago'
       , 'numDocumento'
       , 'fechaDocumento'
       , 'fechaPago'
@@ -29,6 +32,16 @@ class Imputacion extends Model
     public function establecimiento()
     {
     	return $this->belongsTo(Establecimiento::class, 'idEstablecimiento');
+    }   
+
+    public function documento()
+    {
+        return $this->belongsTo(Documento::class, 'idTipoDocumento');
+    }
+
+    public function proveedor()
+    {
+        return $this->belongsTo(Proveedor::class, 'idProveedor');
     }
 
     public function subvencion()
@@ -39,17 +52,8 @@ class Imputacion extends Model
     public function cuenta()
     {
         return $this->belongsTo(Cuenta::class, 'idCuenta');
-    }
-
-    public function documento()
-    {
-        return $this->belongsTo(documento::class, 'idTipoDocumento');
-    }
-
-    public function proveedor()
-    {
-        return $this->belongsTo(Proveedor::class, 'idProveedor');
     }    
     /* FIN RELACIONES */
 }
+
 

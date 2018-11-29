@@ -180,7 +180,7 @@ class UserController extends Controller
         $rut    = DB::table('users')->where('id', $id)->value('rut');
         $nombre = DB::table('users')->where('id', $id)->value('name');
 
-        DB::table('users')->where('id', $id)->update(['estado' => 0]);
+        DB::table('users')->where('id', $id)->delete();
         $message = 'El usuario con <b>'.Helper::rut($rut).' - '.$nombre.'</b> fue eliminado correctamente';
         if ($request->ajax()) {
             return response()->json([

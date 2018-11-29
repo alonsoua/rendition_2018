@@ -14,6 +14,7 @@ use App\Cuenta;
 use App\CuentaSubvencion;
 use App\Documento;
 use App\Proveedor;
+use App\Funcionario;
 
 
 class ImputacionController extends Controller
@@ -52,6 +53,9 @@ class ImputacionController extends Controller
         $cuentas          = $cuenRaw->pluck('nombre', 'id');
         $tipoDocumentos   = Documento::pluck('nombre', 'id');
         $proveedores      = $provRaw->pluck('nombre', 'id');
+
+        
+        $funcionarios     = Funcionario::getFuncionarios(null);
         return view('gastos.imputaciones.create', compact(
                           'editar'
                         , 'establecimientos'
@@ -59,6 +63,7 @@ class ImputacionController extends Controller
                         , 'cuentas'
                         , 'tipoDocumentos'
                         , 'proveedores'
+                        , 'funcionarios'
                     ));
     }
 
@@ -68,10 +73,84 @@ class ImputacionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ImputacionRequest $request)
+    public function store(Request $request)
     {
-            //dd($request);
+        //dd($request->reembolsable);
         if ($request->ajax()) {
+            // Validaciones
+            if (empty($request->reembolsable)) {
+                Request()->validate([
+                    'establecimiento' => 'required',            
+                    'subvencion'      => 'required',            
+                    'cuenta'          => 'required',            
+                    'tipoDocumento'   => 'required',
+                    'formaPago'       => 'required',
+                    'numDocumento'    => 'required|Integer|min:0|max:99999999999',
+                    'fechaDocumento'  => 'required',
+                    'fechaPago'       => 'required',
+                    'descripcion'     => 'required',
+                    'proveedor'       => 'required',
+                    'montoGasto'      => 'required|Integer|min:0|max:999999',
+                    'montoDocumento'  => 'required|Integer|min:0|max:999999',           
+                    'estado'          => 'required'
+
+                ]);   
+            }  else {
+                Request()->validate([
+                    'establecimiento' => 'required',            
+                    'funcionario'     => 'required',
+                    'subvencion'      => 'required',            
+                    'cuenta'          => 'required',            
+                    'tipoDocumento'   => 'required',
+                    'formaPago'       => 'required',
+                    'numDocumento'    => 'required|Integer|min:0|max:99999999999',
+                    'fechaDocumento'  => 'required',
+                    'fechaPago'       => 'required',
+                    'descripcion'     => 'required',
+                    'proveedor'       => 'required',
+                    'montoGasto'      => 'required|Integer|min:0|max:999999',
+                    'montoDocumento'  => 'required|Integer|min:0|max:999999',           
+                    'estado'          => 'required'
+
+                ]);   
+            }     
+            
+            DB::transaction(function () use ($request){
+
+                // Formateamos Fechas
+                $fechaDocu = date("Y-m-d", strtotime($request->fechaDocumento));
+                $fechaPago = date("Y-m-d", strtotime($request->fechaPago));
+                
+                // Crea Funcionario            
+                $imputacion = Imputacion::Create([
+                    'idEstablecimiento' => $request->establecimiento,
+                    'reembolsable'      => $request->reembolsable,
+                    'idFuncionario'     => $request->funcionario,
+                    'idSubvencion'      => $request->subvencion,
+                    'idCuenta'          => $request->cuenta,
+                    'idTipoDocumento'   => $request->tipoDocumento,
+                    'numDocumento'      => $request->numDocumento,
+                    'fechaDocumento'    => $fechaDocu,
+                    'fechaPago'         => $fechaPago,
+                    'descripcion'       => $request->descripcion,
+                    'idProveedor'       => $request->proveedor,
+                    'montoGasto'        => $request->montoGasto,
+                    'montoDocumento'    => $request->montoDocumento,                
+                    'estado'            => $request->estado
+                ]);            
+
+            });
+
+            $establecimiento = Establecimiento::findOrFail($request->establecimiento);
+
+            //MENSAJE
+            $mensaje = 'El gasto <b>'.$request['numDocumento'].' - '.$establecimiento.'</b> 
+                        ha sido ingresado correctamente';
+
+            return response()->json([
+                "message" => $mensaje
+            ]);
+
         }   
     }
     
@@ -129,8 +208,17 @@ class ImputacionController extends Controller
             $cuentas = Cuenta::getCuentasSubvencion($idSubvencion);
             
             return response()->json($cuentas);
-        }
-        // $idEstablecimiento = $request->idEstablecimiento;
+        }        
+    }
+
+    public function getFuncionarios(Request $request, $idEstablecimiento)
+    {    
+        if ($request->ajax()) {            
+            
+            $funcionarios = Funcionario::getFuncionarios($idEstablecimiento);
+            
+            return response()->json($funcionarios);
+        }        
     }
 
 }

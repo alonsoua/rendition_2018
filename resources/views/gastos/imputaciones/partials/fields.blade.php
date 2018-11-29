@@ -15,6 +15,34 @@
 </div> 
 
 
+{{-- CHECKBOX REEMBOLSABLE --}}
+<div class="form-group row">
+   
+   {!! Form::label('Es Reembolsable', 'Es Reembolsable', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
+
+   <div class="col-sm-2 mt-2">
+      
+      {{ Form::checkbox('reembolsable'), 0 }}
+      
+   </div>
+   
+   <div class="col-sm-7 mt-2">
+      {{ Form::select('funcionario', $funcionarios , $editar == 0 ? null : null,
+         [
+            'id'          => 'lstFuncionario',
+            'placeholder' => 'Seleccione Funcionario',
+            'class'       => 'form-control select-funcionarios',
+            'disabled'
+         ])
+      }}
+      
+      <div id="vFuncionario"><span id="msgFuncionario" class="validacion"></span></div>
+
+   </div>
+
+</div>
+
+
 {{-- lst SUBVENCIÓN --}}
 <div class="form-group row">
    {!! Form::label('Subvención', 'Subvención', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
@@ -76,6 +104,30 @@
    </div>
 
 </div> 
+
+
+{{-- lst ESTABLECIMIENTO --}}
+<div class="form-group row">
+   {!! Form::label('Forma Pago', 'Forma Pago', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
+
+   <div class="col-sm-9">
+      {{ Form::select('formaPago', [
+            '1' => 'Efectivo',
+            '2'    => 'Tarjeta de Crédito',
+            '3'    => 'Tarjeta de Débito',
+            '4'    => 'Transferencia',
+            '5'    => 'Cheque'
+         ] , $editar == 0 ? null : null,
+         [
+            'id'           => 'lstFormaPago',
+            'placeholder'  => 'Seleccione Forma Pago',
+            'class'        => 'form-control select-formaPagos'
+         ])
+      }}
+      <div id="vFormaPago"><span id="msgFormaPago" class="validacion"></span></div>
+   </div>
+</div> 
+
 
 
 {{-- N° DOCUMENTO --}}

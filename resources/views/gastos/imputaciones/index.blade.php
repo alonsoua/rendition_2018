@@ -35,7 +35,7 @@
                      <th scope="col" width="10%">Monto Gasto</th>
                      <th scope="col" width="10%">Monto Doc.</th>
                      <th scope="col" width="10%">Estado</th>
-                     <th scope="col" width="15%" class="text-center">{{-- &nbsp; --}}opciones</th>
+                     <th scope="col" width="15%" class="text-center">opciones</th>
                   </tr>
                </thead>
             </table>

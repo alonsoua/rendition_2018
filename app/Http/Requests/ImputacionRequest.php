@@ -13,7 +13,7 @@ class ImputacionRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -24,10 +24,11 @@ class ImputacionRequest extends FormRequest
     public function rules()
     {
         return [
-            'establecimiento' => 'required',
-            'subvencion'      => 'required',
+            'establecimiento' => 'required',            
+            'subvencion'      => 'required',            
             'cuenta'          => 'required',            
             'tipoDocumento'   => 'required',
+            'formaPago'       => 'required',
             'numDocumento'    => 'required|Integer|min:0|max:99999999999',
             'fechaDocumento'  => 'required',
             'fechaPago'       => 'required',
@@ -36,6 +37,7 @@ class ImputacionRequest extends FormRequest
             'montoGasto'      => 'required|Integer|min:0|max:999999',
             'montoDocumento'  => 'required|Integer|min:0|max:999999',           
             'estado'          => 'required'
+
 
         ];      
     }
