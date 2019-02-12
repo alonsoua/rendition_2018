@@ -32,7 +32,7 @@
                      <th scope="col" width="45%">Descripción</th>
                      {{-- <th scope="col" width="15%">Perfil</th> --}}
                      {{-- <th scope="col" width="15%">Correo</th> --}}
-                     <th scope="col" width="15%" class="text-center">{{-- &nbsp; --}}opciones</th>
+                     <th scope="col" width="8%" class="text-center">{{-- &nbsp; --}}opciones</th>
                   </tr>
                </thead>
             </table>

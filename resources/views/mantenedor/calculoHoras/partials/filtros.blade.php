@@ -1,3 +1,4 @@
+@include('estructura.cargando')
 <input type="hidden" id="idEstablecimiento">
 <div class="form-group row">
    {!! Form::label('Establecimiento', 'Establecimiento', ['class' => 'col-sm-3 col-form-label text-right']) !!}

@@ -12,7 +12,7 @@ $(document).ready(function(){
    */
    $.fn.dataTable.ext.classes.sPagination = 'pagination pagination-sm';
    $('#dataTable-subvenciones').DataTable({
-
+      "processing": true,
       "oLanguage" : {
          "sProcessing"        : "Procesando...",
          "sLengthMenu"        : "Mostrar _MENU_ registros por página",
@@ -37,7 +37,10 @@ $(document).ready(function(){
       "ajax"      : "{{ url('subvencionesTable') }}",
       "columns"   : [
          {data: 'nombre'},
-         {data: 'porcentajeMax'},
+         {
+            data: 'porcentajeMax',
+            render: $.fn.dataTable.render.number( ',', '%','.', 0, '' )
+         },
          {data: 'opciones'},
       ],
       "drawCallback": function () {
@@ -55,7 +58,7 @@ function MensajeEliminar(e, i) {
    e.preventDefault();
    var nombre = $(i).attr('data-nombre');
 
-   $.alertable.confirm('<p class="text-center">¿Está seguro de eliminar el subvención con nombre <b>'+nombre+'</b>?</p>', {
+   $.alertable.confirm('<p class="text-center">¿Está seguro de eliminar la Subvención <b>'+nombre+'</b>?</p>', {
       html: true
    }).then(function() {
       Eliminar(i);
@@ -79,7 +82,19 @@ function Eliminar(i) {
          row.fadeOut(); //Quitamos la fila
          $.alertable.alert('<p class="text-center">'+result.message+'</p>', {html : true}).always(function(){});
    }).fail(function(data){
-      // console(data);
+      var res = data.status;         
+      
+      var mensaje = '';
+      if (res == 500) {
+         //500 Clave foranea
+         mensaje = msgEliminarRegistroUtilizado('F', 'Subvención');
+      } else if (res == 404) { 
+         //404 No encontró el registro
+         row.fadeOut(); 
+         mensaje = msgEliminadoCorrectamente('F', 'Subvención');
+      }
+
+      $.alertable.alert('<p class="text-center">'+mensaje+'</p>', {html: true}).always(function(){});
    });
 }
 
@@ -89,7 +104,7 @@ $('#guardar').click(function(){
    var form = $('#'+idFm);
    var url  = form.attr('action');
    var dataArray = form.serializeArray();
-
+   $(".cargando").css('visibility', 'visible');
 
    $.ajax({
       url: url,
@@ -101,11 +116,14 @@ $('#guardar').click(function(){
       data: dataArray,
       success: function(result){      
          $.alertable.alert('<p class="text-center">'+result.message+'</p>', {html : true}).always(function(){
+            $(".cargando").css('visibility', 'visible');
             location.reload();
          });
       
+      }, complete: function(data) {
+         $(".cargando").css('visibility', 'hidden');
       }, error: function(data) {
-      
+         $(".cargando").css('visibility', 'hidden');
          /* VALIDACIONES */
          console.log(data);
          //nombre

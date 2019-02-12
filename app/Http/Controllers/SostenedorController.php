@@ -125,7 +125,7 @@ class SostenedorController extends Controller
     {
 
         Request()->validate([
-            'rut'               => 'required|numeric|unique:sostenedors,rut,'.$id.',id' ,
+            'rut'               => 'required|unique:sostenedors,rut,'.$id.',id' ,
             'nombre'            => 'required|max:200',
             'apellidoPaterno'   => 'required|max:150',
             'apellidoMaterno'   => 'required|max:150',
@@ -167,9 +167,10 @@ class SostenedorController extends Controller
         $rut    = DB::table('sostenedors')->where('id', $id)->value('rut');
         $nombre = DB::table('sostenedors')->where('id', $id)->value('nombre');
 
-        DB::table('sostenedors')->where('id', $id)->update(['estado' => 0]);
+        DB::table('sostenedors')->where('id', $id)->delete();
 
-        $message = 'El sostenedor <b>'.$rut.' - '.$nombre.'</b> fue eliminado correctamente';
+        $texto   = Helper::rut($rut).' - '.$nombre;
+        $message = Helper::msgEliminado('M', 'Sostenedor', $texto);    
 
         if ($request->ajax()) {
             return response()->json([

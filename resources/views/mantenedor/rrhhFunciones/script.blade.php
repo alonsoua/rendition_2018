@@ -12,7 +12,7 @@ $(document).ready(function(){
    */
    $.fn.dataTable.ext.classes.sPagination = 'pagination pagination-sm';
    $('#dataTable-funciones').DataTable({
-
+      "processing": true,
       "oLanguage" : {
          "sProcessing"        : "Procesando...",
          "sLengthMenu"        : "Mostrar _MENU_ registros por página",
@@ -55,7 +55,7 @@ function MensajeEliminar(e, i) {
    e.preventDefault();
    var codigo = $(i).attr('data-codigo');
    var nombre = $(i).attr('data-nombre');
-   var texto  = '¿Está seguro de eliminar la función <b>'+codigo+' - '+nombre+'</b>?';
+   var texto  = '¿Está seguro de eliminar la Función <b>'+codigo+' - '+nombre+'</b>?';
 
    $.alertable.confirm('<p class="text-center">'+texto+'</p>', {
       html: true
@@ -74,16 +74,25 @@ function Eliminar(i) {
    var url  = form.attr('action').replace(':FUNCION_ID', id);
    var data = form.serialize();
 
-   $.post(
-      url,
-      data,
-      function (result) {
+   $.post( url, data, function (result) {
          row.fadeOut(); //Quitamos la fila
          $.alertable.alert('<p class="text-center">'+result.message+'</p>', {
             html: true
          }).always(function(){});
    }).fail(function(data){
-      // console(data);
+      var res = data.status;         
+      
+      var mensaje = '';
+      if (res == 500) {
+         //500 Clave foranea
+         mensaje = msgEliminarRegistroUtilizado('F', 'Función');
+      } else if (res == 404) { 
+         //404 No encontró el registro
+         row.fadeOut(); 
+         mensaje = msgEliminadoCorrectamente('F', 'Función');
+      }
+
+      $.alertable.alert('<p class="text-center">'+mensaje+'</p>', {html: true}).always(function(){});
    });
 }
 
@@ -94,7 +103,7 @@ $('#guardar').click(function(){
    var url  = form.attr('action');
    var dataArray = form.serializeArray();
 
-
+   $(".cargando").css('visibility', 'visible');
    $.ajax({
       url: url,
       method: 'POST',
@@ -105,11 +114,14 @@ $('#guardar').click(function(){
       data: dataArray,
       success: function(result){      
          $.alertable.alert('<p class="text-center">'+result.message+'</p>', {html : true}).always(function(){
+            $(".cargando").css('visibility', 'visible');
             location.reload();
          });
       
+      }, complete: function(data) {
+         $(".cargando").css('visibility', 'hidden');
       }, error: function(data) {
-      
+         $(".cargando").css('visibility', 'hidden');
          /* VALIDACIONES */
          console.log(data);
          //código

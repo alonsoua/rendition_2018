@@ -142,12 +142,13 @@ class EstablecimientoController extends Controller
      */
     public function update(Request $request, $id)
     {   
-         
+        
+        //dd($request->rbd);
         Request()->validate([
-            'rbd'             => 'required|unique:establecimientos,rbd,'.$id.',id,' ,
+            'rbd'             => 'required|unique:establecimientos,rbd,'.$id.',id' ,
             'nombre'          => 'required|max:200',
             'razonSocial'     => 'required|max:150',
-            'rut'             => 'required|numeric|unique:establecimientos,rut,'.$id.',id' ,
+            'rut'             => 'required|unique:establecimientos,rut,'.$id.',id' ,
             'tipoDependencia' => 'required',
             'sostenedor'      => 'required',
             'comuna'          => 'required',
@@ -155,7 +156,6 @@ class EstablecimientoController extends Controller
             'fono'            => 'required|numeric|max:9999999999',
             'correo'          => 'max:150|email'
           ]);
-        
          $establecimiento = Establecimiento::findOrFail($id);        
          $establecimiento->rbd               = $request->rbd;
          $establecimiento->nombre            = $request->nombre;
@@ -167,7 +167,7 @@ class EstablecimientoController extends Controller
          $establecimiento->direccion         = $request->direccion;
          $establecimiento->fono              = $request->fono;
          $establecimiento->correo            = $request->correo;
-         $establecimiento->insignia          = $img;
+        //$establecimiento->insignia          = $img;
 
          $mensaje = 'El Establecimiento <b>'.$establecimiento['nombre'].'</b> ha sido editado correctamente';
 
@@ -190,9 +190,9 @@ class EstablecimientoController extends Controller
 
         $nombre = DB::table('establecimientos')->where('id', $id)->value('nombre');
 
-        DB::table('establecimientos')->where('id', $id)->delete();
-        $message = 'El establecimiento <b>'.$nombre.'</b> fue eliminado correctamente';
-        
+        DB::table('establecimientos')->where('id', $id)->delete();        
+        $message = Helper::msgEliminado('M', 'Establecimiento', $nombre);
+
         if ($request->ajax()) {
             return response()->json([
                'id'        => $id,

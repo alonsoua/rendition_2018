@@ -142,8 +142,11 @@ class DocumentoController extends Controller
         $nombre = DB::table('documentos')->where('id', $id)->value('nombre');
         $codigo = DB::table('documentos')->where('id', $id)->value('codigo');
        
-        DB::table('documentos')->where('id', $id)->update(['estado' => 0]);
-        $message = 'El documento <b>'.$codigo.' - '.$nombre.'</b> fue eliminado correctamente';
+        DB::table('documentos')->where('id', $id)->delete();
+
+        $texto   = $codigo.' - '.$nombre;
+        $message = Helper::msgEliminado('M', 'Tipo de Documento', $texto);
+        
         
         if ($request->ajax()) {
             return response()->json([

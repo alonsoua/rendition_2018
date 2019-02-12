@@ -27,9 +27,9 @@
             <table id="dataTable-documentos" class="table table-striped table-bordered table-sm">
                <thead>
                   <tr>
-                     <th scope="col" width="15%">C&oacute;digo</th>
-                     <th scope="col" width="40%">Nombre</th>
-                     <th scope="col" width="10%" class="text-center">{{-- &nbsp; --}}opciones</th>
+                     <th scope="col" width="30%">C&oacute;digo</th>
+                     <th scope="col" width="50%">Nombre</th>
+                     <th scope="col" width="8%" class="text-center">{{-- &nbsp; --}}opciones</th>
                   </tr>
                </thead>
             </table>

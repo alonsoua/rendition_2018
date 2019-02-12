@@ -1,5 +1,27 @@
 <div class="text-center">
-   <div class="btn-group">  
+<table>
+   <tr>
+      <td>
+         <div class="btn-group  btn-group-sm ">
+            <button type="button" class="btn btn-sm btn-success dropdown-toggle dropdown-toggle-split mr-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+               <span class="sr-only"></span>
+               <i class="fa fa-flag fa-sm"></i> 
+            </button>
+            <div class="dropdown-menu dropdown-menu-right">                              
+
+               <a href="#!" class="dropdown-item small-button"
+               id="{{ $id }}" data-estado ="Aprobar" onclick=" ModificarEstado(event, this) ">
+                  Aprobar
+               </a>
+               <a href="#!" class="dropdown-item small-button"
+               id="{{ $id }}" data-estado ="Rechazar" onclick=" ModificarEstado(event, this) ">
+                  Rechazar
+               </a>              
+            </div>     
+         </div>
+      </td>
+      <td>
+         <div class="btn-group  btn-group-sm">
       <button type="button" class="btn btn-sm btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
          <span class="sr-only"></span>
          <i class="fa fa-cog fa-sm"></i> 
@@ -20,7 +42,7 @@
          @can('imputaciones.destroy')
 
             <a href="#!" class="dropdown-item small-button"
-            id="{{ $id }}" data-numDocumento="{{ $numDocumento }}" onclick=" MensajeEliminar(event, this) ">
+            id="{{ $id }}" data-descripcion="{{ $descripcion }}" onclick=" MensajeEliminar(event, this) ">
                Eliminar
             </a>
 
@@ -28,4 +50,10 @@
 
       </div>      
    </div>
+      </td>
+   </tr>
+</table>
+   
+
+   
 </div>

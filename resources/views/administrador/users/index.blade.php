@@ -20,7 +20,8 @@
       @endcan
    </div>
 
-   @can('users.index')
+   @can('users.index')     
+  
       <div class="card-body">
          <div id="alert" class="alert alert-info mt-2" style="display:none;"></div>
          <div class="table-responsive-xl">
@@ -28,11 +29,9 @@
                <thead>
                   <tr>
                      <th scope="col" width="15%">Rut</th>
-                     <th scope="col" width="20%">Nombre</th>
-                     {{-- <th scope="col" width="20%">Apellido</th> --}}
-                     {{-- <th scope="col" width="15%">Perfil</th> --}}
-                     <th scope="col" width="15%">Correo</th>
-                     <th scope="col" width="10%" class="text-center">{{-- &nbsp; --}}opciones</th>
+                     <th scope="col" width="25%">Nombre</th>             
+                     <th scope="col" width="25%">Correo</th>
+                     <th scope="col" width="8%" class="text-center">{{-- &nbsp; --}}opciones</th>
                   </tr>
                </thead>
             </table>

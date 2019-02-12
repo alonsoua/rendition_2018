@@ -158,8 +158,10 @@ class ProveedorController extends Controller
         $rut         = DB::table('proveedors')->where('id', $id)->value('rut');
         $razonSocial = DB::table('proveedors')->where('id', $id)->value('razonSocial');
        
-        DB::table('proveedors')->where('id', $id)->update(['estado' => 0]);
-        $message = 'El proveedor <b>'.$rut.' - '.$razonSocial.'</b> fue eliminado correctamente';
+        DB::table('proveedors')->where('id', $id)->delete();
+
+        $texto   = Helper::rut($rut).' - '.$razonSocial;
+        $message = Helper::msgEliminado('M', 'Proveedor', $texto);        
         
         if ($request->ajax()) {
             return response()->json([

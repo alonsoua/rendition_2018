@@ -27,12 +27,12 @@
             <table id="dataTable-proveedores" class="table table-striped table-bordered table-sm">
                <thead>
                   <tr>
-                     <th scope="col" width="8%">Rut</th>
+                     <th scope="col" width="9%">Rut</th>
                      <th scope="col" width="20%">Raz&oacute;n Social</th>
                      <th scope="col" width="20%">Giro</th>
                      <th scope="col" width="20%">Direcci&oacute;n</th>
                      <th scope="col" width="8%">Tel&eacute;fono</th>
-                     <th scope="col" width="10%" class="text-center">{{-- &nbsp; --}}opciones</th>
+                     <th scope="col" width="8%" class="text-center">{{-- &nbsp; --}}opciones</th>
                   </tr>
                </thead>
             </table>

@@ -32,7 +32,7 @@
                      <th scope="col" width="20%">Sostenedor</th>
                      <th scope="col" width="20%">Direcci&oacute;n</th>
                      <th scope="col" width="8%">Tel&eacute;fono</th>
-                     <th scope="col" width="15%" class="text-center">{{-- &nbsp; --}}opciones</th>
+                     <th scope="col" width="8%" class="text-center">{{-- &nbsp; --}}opciones</th>
                   </tr>
                </thead>
             </table>

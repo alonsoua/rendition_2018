@@ -134,8 +134,9 @@ class FuncionController extends Controller
         $nombre = DB::table('funcions')->where('id', $id)->value('nombre');
         $codigo = DB::table('funcions')->where('id', $id)->value('codigo');
        
-        DB::table('funcions')->where('id', $id)->update(['estado' => 0]);
-        $message = 'La función <b>'.$codigo.' - '.$nombre.'</b> fue eliminada correctamente';
+        DB::table('funcions')->where('id', $id)->delete();
+        $texto   = $codigo.' - '.$nombre;
+        $message = Helper::msgEliminado('F', 'Función', $texto);        
         
         if ($request->ajax()) {
             return response()->json([

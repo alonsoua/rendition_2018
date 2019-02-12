@@ -29,9 +29,9 @@
                   <tr>
                      <th scope="col" width="10%">C&oacute;digo</th>
                      <th scope="col" width="50%">Nombre</th>
-                     <th scope="col" width="10%">Tipo</th>
-                     <th scope="col" width="10%">Subvenci&oacute;n</th>
-                     <th scope="col" width="10%" class="text-center">{{-- &nbsp; --}}Opciones</th>
+                     <th scope="col" width="8%">Tipo</th>
+                     <th scope="col" width="15%">Subvenci&oacute;n</th>
+                     <th scope="col" width="8%" class="text-center">{{-- &nbsp; --}}Opciones</th>
                   </tr>
                </thead>
             </table>

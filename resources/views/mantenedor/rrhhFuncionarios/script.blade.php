@@ -1,5 +1,6 @@
 $(document).ready(function(){
 
+   
    /*
    |--------------------------------------------------------------------------
    | Boostrap-DatePicker
@@ -69,7 +70,7 @@ $(document).ready(function(){
    */
    $.fn.dataTable.ext.classes.sPagination = 'pagination pagination-sm';
    $('#dataTable-funcionarios').DataTable({
-
+      "processing": true,
       "oLanguage" : {
          "sProcessing"        : "Procesando...",
          "sLengthMenu"        : "Mostrar _MENU_ registros por página",
@@ -95,12 +96,65 @@ $(document).ready(function(){
       "columns"   : [
          
          {data: 'establecimiento.nombre',    name: 'establecimiento.nombre'},
-         {data: 'rut',                       name: 'funcionarios.rut'},
+         {
+            data: 'rut',
+            name: 'funcionarios.rut',
+            render: function formateaRut(data) {
+               var rut = data;
+               var actual = rut.replace(/^0+/, "");
+               if (actual != '' && actual.length > 1) {
+                  var sinPuntos = actual.replace(/\./g, "");
+                  var actualLimpio = sinPuntos.replace(/-/g, "");
+                  var inicio = actualLimpio.substring(0, actualLimpio.length - 1);
+                  var rutPuntos = "";
+                  var i = 0;
+                  var j = 1;
+                  for (i = inicio.length - 1; i >= 0; i--) {
+                     var letra = inicio.charAt(i);
+                     rutPuntos = letra + rutPuntos;
+                     if (j % 3 == 0 && j <= inicio.length - 1) {
+                        rutPuntos = "." + rutPuntos;
+                     }
+                     j++;
+                  }
+                  var dv = actualLimpio.substring(actualLimpio.length - 1);
+                  rutPuntos = rutPuntos + "-" + dv;
+               }                
+               return rutPuntos;
+            }
+         },
          {data: 'nombre',                    name: 'funcionarios.nombre'},
          {data: 'tipo_contrato.tipoContrato',name: 'tipo_contrato.tipoContrato'},
          {data: 'funcion.nombre',            name: 'funcion.nombre'},
          {data: 'opciones'},
       ],
+         dom: 'Bfrtip',
+         buttons: [       
+            {
+               extend: 'pdfHtml5',
+               className: 'btn btn-primary btn-sm mr-1 float-left',
+               exportOptions: { 
+                  orthogonal: 'export', 
+                  columns: [ 0, 1, 2, 3, 4]
+               },
+            },
+            {
+               extend: 'csv',
+               className: 'btn btn-primary btn-sm mr-1 float-left',
+               exportOptions: { 
+                  orthogonal: 'export', 
+                  columns: [ 0, 1, 2, 3, 4]
+               },
+            },
+            {
+               extend: 'excelHtml5',
+               className: 'btn btn-primary btn-sm mr-1 float-left',
+               exportOptions: { 
+                  orthogonal: 'export', 
+                  columns: [ 0, 1, 2, 3, 4]
+               },
+            }    
+        ],
       "drawCallback": function () {
          $('.dataTables_paginate > .pagination').addClass('pagination-sm');
       }
@@ -153,14 +207,23 @@ function Eliminar(i) {
    var url  = form.attr('action').replace(':USER_ID', id);
    var data = form.serialize();
 
-   $.post(
-      url,
-      data,
-      function (result) {
+   $.post( url, data, function (result) {
          row.fadeOut(); //Quitamos la fila
          $.alertable.alert(result.message).always(function(){});
    }).fail(function(data){
-      // console(data);
+      var res = data.status;         
+   
+      var mensaje = '';
+      if (res == 500) {
+         //500 Clave foranea
+         mensaje = msgEliminarRegistroUtilizado('M', 'Funcionario');
+      } else if (res == 404) { 
+         //404 No encontró el registro
+         row.fadeOut(); 
+         mensaje = msgEliminadoCorrectamente('M', 'Funcionario');
+      }
+
+      $.alertable.alert('<p class="text-center">'+mensaje+'</p>', {html: true}).always(function(){});
    });
 }
 
@@ -168,7 +231,8 @@ $('#navPersonal').click(function(){
    $('#subvenciones').css('display', 'none');
    $('#personal').css('display', 'block');
    $('#navSubvenciones').removeClass("active");
-   $('#navSubvenciones').css('color' , 'black');
+   $('#navSubvenciones').css('color' , '#495057');
+   
    $(this).removeClass("active");
    $(this).addClass('active');
 });
@@ -177,7 +241,8 @@ $('#navSubvenciones').click(function(){
    $('#personal').css('display', 'none');
    $('#subvenciones').css('display', 'block');
    $('#navPersonal').removeClass('active');
-   $('#navPersonal').css('color' , 'black');
+   $('#navPersonal').css('color' , '#495057');
+
    $(this).removeClass("active");
    $(this).addClass('active');
 });
@@ -216,15 +281,17 @@ $('#guardar').click(function(){
    $('#navPersonal').css('color' , 'black');
    $('#navPersonal').css('background' , 'white');
 
+   $(".cargando").css('visibility', 'visible');
    $.post(
       url,
       dataArray,
       function (result) {
          $.alertable.alert(result.message, {html : true}).always(function(){
+            $(".cargando").css('visibility', 'visible');
             location.reload();
          });
    }).fail(function(data){
-
+      $(".cargando").css('visibility', 'hidden');
       //debugger;
       console.log(data);      
       $('#navPersonal').css('color' , 'white');

@@ -33,7 +33,7 @@ $(document).ready(function(){
    */
    $.fn.dataTable.ext.classes.sPagination = 'pagination pagination-sm';
    $('#dataTable-leyes').DataTable({
-
+      "processing": true,
       "oLanguage" : {
          "sProcessing"        : "Procesando...",
          "sLengthMenu"        : "Mostrar _MENU_ registros por página",
@@ -63,6 +63,41 @@ $(document).ready(function(){
          {data: 'subvencion.nombre',name: 'subvencion.nombre'},
          {data: 'opciones'},
       ],
+        dom: 'Bfrtip',
+        buttons: [ 
+            // {
+            //     extend: 'print',
+            //     text: 'Imprimir',
+            //     className: 'btn btn-primary btn-sm mr-1 float-left',
+            //     exportOptions: {
+            //         columns: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+            //     }
+            // },
+            {
+               extend: 'pdfHtml5',
+               className: 'btn btn-primary btn-sm mr-1 float-left',
+               exportOptions: { 
+                  orthogonal: 'export', 
+                  columns: [ 0, 1, 2, 3]
+               },
+            },
+            {
+               extend: 'csv',
+               className: 'btn btn-primary btn-sm mr-1 float-left',
+               exportOptions: { 
+                  orthogonal: 'export', 
+                  columns: [ 0, 1, 2, 3]
+               },
+            },
+            {
+               extend: 'excelHtml5',
+               className: 'btn btn-primary btn-sm mr-1 float-left',
+               exportOptions: { 
+                  orthogonal: 'export', 
+                  columns: [ 0, 1, 2, 3]
+               },
+            }    
+        ],
       "drawCallback": function () {
          $('.dataTables_paginate > .pagination').addClass('pagination-sm');
       }
@@ -96,16 +131,23 @@ function Eliminar(i) {
    var url  = form.attr('action').replace(':LEYES_ID', id);
    var data = form.serialize();
 
-   $.post(
-      url,
-      data,
-      function (result) {
-         row.fadeOut(); //Quitamos la fila
-         $.alertable.alert('<p class="text-center">'+result.message+'</p>', {
-            html: true
-         }).always(function(){});
+   $.post( url, data, function (result) {
+         row.fadeOut();
+         $.alertable.alert('<p class="text-center">'+result.message+'</p>', {html: true}).always(function(){});
    }).fail(function(data){
-      // console(data);
+      
+      var res = data.status;
+      var mensaje = '';
+      if (res == 500) {
+         //500 Clave foranea
+         mensaje = msgEliminarRegistroUtilizado('F', 'Ley');
+      } else if (res == 404) { 
+         //404 No encontró el registro
+         row.fadeOut(); 
+         mensaje = msgEliminadoCorrectamente('F', 'Ley');
+      }
+
+      $.alertable.alert('<p class="text-center">'+mensaje+'</p>', {html: true}).always(function(){});
    });
 }
 
@@ -116,7 +158,7 @@ $('#guardar').click(function(){
    var url  = form.attr('action');
    var dataArray = form.serializeArray();
 
-
+   $(".cargando").css('visibility', 'visible');
    $.ajax({
       url: url,
       method: 'POST',
@@ -127,11 +169,14 @@ $('#guardar').click(function(){
       data: dataArray,
       success: function(result){      
          $.alertable.alert('<p class="text-center">'+result.message+'</p>', {html : true}).always(function(){
+            $(".cargando").css('visibility', 'visible');
             location.reload();
          });
       
+      }, complete: function(data) {
+         $(".cargando").css('visibility', 'hidden');
       }, error: function(data) {
-      
+         $(".cargando").css('visibility', 'hidden');
          console.log(data);
          /* VALIDACIONES */
          //codigo      

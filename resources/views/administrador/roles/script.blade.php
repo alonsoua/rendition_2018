@@ -12,7 +12,7 @@ $(document).ready(function(){
    */
    $.fn.dataTable.ext.classes.sPagination = 'pagination pagination-sm';
    $('#dataTable-roles').DataTable({
-
+      "processing": true,
       "oLanguage" : {
          "sProcessing"        : "Procesando...",
          "sLengthMenu"        : "Mostrar _MENU_ registros por página",
@@ -49,10 +49,10 @@ $(document).ready(function(){
 
 function MensajeEliminar(e, i) {
    e.preventDefault();
-   var rut    = $(i).attr('data-rut');
+   var id     = $(i).attr('data-id');
    var nombre = $(i).attr('data-nombre');
 
-   $.alertable.confirm('<p class="text-center">¿Está seguro de eliminar el usuario <b>'+rut+' - '+nombre+'</b>?</p>', {
+   $.alertable.confirm('<p class="text-center">¿Está seguro de eliminar el Rol <b>'+nombre+'</b>?</p>', {
       html: true
    }).then(function() {
       Eliminar(i);
@@ -68,17 +68,33 @@ function Eliminar(i) {
    var form = $('#form-delete');
    var url  = form.attr('action').replace(':ROL_ID', id);
    var data = form.serialize();
+   var mensaje = '';
 
-   $.post(
-      url,
-      data,
-      function (result) {
-         row.fadeOut(); //Quitamos la fila
-         $.alertable.alert('<p class="text-center">'+result.message+'</p>', {
-            html: true
-         }).always(function(){});
-   }).fail(function(data){
-      
+   $.post( url, data, function (result) {
+                  
+         if (result.id == 0 && result.message == 0) {
+            mensaje = msgEliminarRegistroUtilizado('M', 'Rol');            
+         } else {
+            row.fadeOut();         
+            mensaje = result.message;
+         }
+
+         $.alertable.alert('<p class="text-center">'+mensaje+'</p>', {html: true}).always(function(){});
+
+   }).fail( function(data) {
+         
+         var res = data.status;
+         
+         if (res == 500) {
+            //500 Clave foranea
+            mensaje = msgEliminarRegistroUtilizado('M', 'Rol');
+         } else if (res == 404) { 
+            //404 No encontró el registro
+            row.fadeOut(); 
+            mensaje = msgEliminadoCorrectamente('M', 'Rol');
+         }
+
+         $.alertable.alert('<p class="text-center">'+mensaje+'</p>', {html: true}).always(function(){});
    });
 }
 
@@ -102,7 +118,7 @@ $('#guardar').click(function(){
    var url  = form.attr('action');
    var dataArray = form.serializeArray();
 
-
+   $(".cargando").css('visibility', 'visible');
    $.ajax({
       url: url,
       method: 'POST',
@@ -113,11 +129,14 @@ $('#guardar').click(function(){
       data: dataArray,
       success: function(result){      
          $.alertable.alert('<p class="text-center">'+result.message+'</p>', {html : true}).always(function(){
+            $(".cargando").css('visibility', 'visible');
             location.reload();
          });
       
+      }, complete: function(data) {
+         $(".cargando").css('visibility', 'hidden');
       }, error: function(data) {
-      
+         $(".cargando").css('visibility', 'hidden');
          console.log(data); 
          // debugger;
 

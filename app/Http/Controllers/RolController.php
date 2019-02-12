@@ -216,8 +216,37 @@ class RolController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        //
+    public function destroy(Request $request, $id)
+    { 
+
+        // Consulta si el rol está asignado a usuarios
+        $count = role_user::selectRaw('count(id) as count')
+                            ->where('role_id', $id)
+                            ->get();
+
+        
+        // Si está asignado setea id y message
+        // de lo contrario elimina con normalidad.
+        // La libreria auth no instala claves foraneas en las tablas que crea, 
+        // por eso se verifica de esta manera.
+        if ($count[0]['count'] > 0) {                  
+          
+          $id      = 0;
+          $message = 0;
+
+        } else {
+
+          $nombre = DB::table('roles')->where('id', $id)->value('name');
+          DB::table('roles')->where('id', $id)->delete();
+          
+          $message = Helper::msgEliminado('M', 'Rol', $nombre);                            
+        }
+
+        if ($request->ajax()) {
+          return response()->json([
+             'id'        => $id,
+             'message'   => $message
+          ]);
+        }                  
     }
 }

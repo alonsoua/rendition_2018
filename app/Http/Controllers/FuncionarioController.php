@@ -355,7 +355,7 @@ class FuncionarioController extends Controller
         if ($request->salud == 6) {
             Request()->validate([
                     'establecimiento'       => 'required',                    
-                    'rut'                   => 'required|numeric|unique:funcionarios,rut,'.$id.',id' ,
+                    'rut'                   => 'required|unique:funcionarios,rut,'.$id.',id' ,
                     'nombre'                => 'required|max:100',
                     'apellidoPaterno'       => 'required|max:100',
                     'apellidoMaterno'       => 'required|max:100',
@@ -370,7 +370,7 @@ class FuncionarioController extends Controller
         }  elseif  (empty($request->salud)) {                  
             Request()->validate([
                     'establecimiento'       => 'required',                    
-                    'rut'                   => 'required|numeric|unique:funcionarios,rut,'.$id.',id' ,
+                    'rut'                   => 'required|unique:funcionarios,rut,'.$id.',id' ,
                     'nombre'                => 'required|max:100',
                     'apellidoPaterno'       => 'required|max:100',
                     'apellidoMaterno'       => 'required|max:100',
@@ -385,7 +385,7 @@ class FuncionarioController extends Controller
         } else {
             Request()->validate([
                     'establecimiento'       => 'required',                    
-                    'rut'                   => 'required|numeric|unique:funcionarios,rut,'.$id.',id' ,
+                    'rut'                   => 'required|unique:funcionarios,rut,'.$id.',id' ,
                     'nombre'                => 'required|max:100',
                     'apellidoPaterno'       => 'required|max:100',
                     'apellidoMaterno'       => 'required|max:100',
@@ -460,8 +460,22 @@ class FuncionarioController extends Controller
      * @param  \App\Funcionario  $funcionario
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Funcionario $funcionario)
+    public function destroy(Request $request, $id)
     {
-        //
+        $nombre = DB::table('funcionarios')->where('id', $id)->value('nombre');
+        $rut = DB::table('funcionarios')->where('id', $id)->value('rut');
+
+        DB::table('funcionarios')->where('id', $id)->delete();   
+
+        $texto   = Helper::rut($rut).' - '.$nombre;     
+        $message = Helper::msgEliminado('M', 'Funcionario', $texto);
+
+        if ($request->ajax()) {
+            
+            return response()->json([
+               'id'        => $id,
+               'message'   => $message
+            ]);
+        }
     }
 }

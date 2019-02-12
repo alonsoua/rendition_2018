@@ -30,6 +30,7 @@ use App\Funcion;
 use App\Funcionario;
 use App\tipo_contrato;
 use App\Imputacion;
+use App\Liquidacion;
 
 
 Route::get('/', function () {
@@ -99,22 +100,34 @@ Route::middleware(['auth'])->group( function () {
         Route::resource('imputaciones', 'ImputacionController');
           //carga Cuentas en Imputaciones          
           Route::get('imputaciones/getCuentas/{id}', 'ImputacionController@getCuentas');
+
+          //carga Documentos en Imputaciones          
+          Route::get('imputaciones/getDocumentos/{id}', 'ImputacionController@getDocumentos');
+
           //carga Funcionarios en Imputaciones          
           Route::get('imputaciones/getFuncionarios/{id}', 'ImputacionController@getFuncionarios');
-          
+          Route::get('imputaciones/{idImputacion}/getFuncionarios/{id}', 'ImputacionController@getFuncionarios');
 
+          //Modifica estado de imputación
+          Route::get('modificarEstado/{id}/{estado}', 'ImputacionController@modificarEstado');
+          
         //ReportesGastos
         Route::resource('reportesgastos', 'ReporteGastoController');       
 
     });
 
 
-    //Menu rrhh
+    //Menu RRHH
     Route::group(['prefix' => 'rrhh'], function () {
         
-        //Imputaciones
+        //Liquidaciones
         Route::resource('liquidaciones', 'LiquidacionController');
-        //ReportesGastos
+          Route::get('liquidaciones/getFuncionarios/{id}', 'LiquidacionController@getFuncionarios');
+
+          Route::get('liquidaciones/getPeriodos/{id}', 'LiquidacionController@getPeriodos');
+
+
+        //ReportesRRHH
         Route::resource('reportesrrhh', 'ReporteRrhhController');       
 
     });
@@ -210,10 +223,10 @@ Route::middleware(['auth'])->group( function () {
                                 cuentas.id as id
                               , cuentas.codigo as codigo
                               , cuentas.nombre as nombre
-                              , GROUP_CONCAT(" ", subvencions.nombre) as NombreSubvencion                              
+                              , GROUP_CONCAT(" ", subvencions.nombre) as NombreSubvencion                                                 
                               ')
                     ->leftJoin('cuenta_subvencion', 'cuentas.id', '=', 'cuenta_subvencion.idCuenta')
-                    ->leftJoin('subvencions', 'cuenta_subvencion.idSubvencion', '=', 'subvencions.id')
+                    ->leftJoin('subvencions', 'cuenta_subvencion.idSubvencion', '=', 'subvencions.id')                   
                     ->groupby('cuentas.id', 'cuentas.codigo', 'cuentas.nombre');                                
                    
          return datatables()
@@ -282,7 +295,7 @@ Route::middleware(['auth'])->group( function () {
       //Imputaciones Table
       Route::get('imputacionesTable', function(){
 
-        $imputaciones = Imputacion::with('establecimiento', 'subvencion', 'documento', 'proveedor')
+        $imputaciones = Imputacion::with('establecimiento', 'cuenta', 'subvencion', 'documento', 'proveedor')
                                     ->select('imputacions.*');     
 
         return datatables()
@@ -293,3 +306,22 @@ Route::middleware(['auth'])->group( function () {
 
       });
 /* FIN GASTOS */
+
+
+/* RRHH */
+
+      //Liquidaciones Table
+      Route::get('liquidacionesTable', function(){
+
+        $liquidaciones = Liquidacion::select('liquidacions.*')
+                              ->with('establecimiento', 'funcionario', 'periodo')
+                              ;
+
+        return datatables()
+        ->eloquent($liquidaciones)             
+        ->addColumn('opciones', 'RRHH.liquidaciones.partials.opciones')
+        ->rawColumns(['opciones'])
+        ->toJson();
+
+      });
+/* FIN RRHH */

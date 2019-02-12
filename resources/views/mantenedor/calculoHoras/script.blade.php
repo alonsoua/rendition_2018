@@ -33,42 +33,42 @@ $(document).ready(function(){
    | drawCallback function: Agrega class "pagination-sm" para que se vea pequeña.
    |
    */
-   $.fn.dataTable.ext.classes.sPagination = 'pagination pagination-sm';
-   $('#dataTable-users').DataTable({
+   // $.fn.dataTable.ext.classes.sPagination = 'pagination pagination-sm';
+   // $('#dataTable-users').DataTable({
 
-      "oLanguage" : {
-         "sProcessing"        : "Procesando...",
-         "sLengthMenu"        : "Mostrar _MENU_ registros por página",
-         "sZeroRecords"       : "<h5 class='font-weight-light mt-5 mb-5'>No encontramos ningún usuario con esas características</h5>",
-         "sEmptyTable"        : "<h5 class='font-weight-light mt-5 mb-5'>No existen usuarios registrados</h5>",
-         "sLoadingRecords"    : "Cargando...",
-         "sInfo"              : "Mostrando _START_ a _END_ de _TOTAL_ registros",
-         "sInfoEmpty"         : "Mostrando 0 a 0 de 0 usuarios",
-         "sInfoFiltered"      : "<br>(filtro aplicado en _MAX_ usuarios)",
-         "sInfoPostFix"       : "",
-         "sInfoThousands"     : ".",
-         "sSearch"            : "Buscar:",
-         "sUrl"               : "",
-            "oPaginate"       : {
-                  "sFirst"       : "Primera",
-                  "sPrevious"    : "Anterior",
-                  "sNext"        : "Siguiente",
-                  "sLast"        : "Última",
-            },
-      },
-      "serverSide": true,
-      "ajax"      : "{{ url('usersTable') }}",
-      "columns"   : [
-         {data: 'rut'},
-         {data: 'name'},
-         // {data: 'apellidoPaterno'},
-         {data: 'email'},
-         {data: 'opciones'},
-      ],
-      "drawCallback": function () {
-         $('.dataTables_paginate > .pagination').addClass('pagination-sm');
-      }
-   });
+   //    "oLanguage" : {
+   //       "sProcessing"        : "Procesando...",
+   //       "sLengthMenu"        : "Mostrar _MENU_ registros por página",
+   //       "sZeroRecords"       : "<h5 class='font-weight-light mt-5 mb-5'>No encontramos ningún usuario con esas características</h5>",
+   //       "sEmptyTable"        : "<h5 class='font-weight-light mt-5 mb-5'>No existen usuarios registrados</h5>",
+   //       "sLoadingRecords"    : "Cargando...",
+   //       "sInfo"              : "Mostrando _START_ a _END_ de _TOTAL_ registros",
+   //       "sInfoEmpty"         : "Mostrando 0 a 0 de 0 usuarios",
+   //       "sInfoFiltered"      : "<br>(filtro aplicado en _MAX_ usuarios)",
+   //       "sInfoPostFix"       : "",
+   //       "sInfoThousands"     : ".",
+   //       "sSearch"            : "Buscar:",
+   //       "sUrl"               : "",
+   //          "oPaginate"       : {
+   //                "sFirst"       : "Primera",
+   //                "sPrevious"    : "Anterior",
+   //                "sNext"        : "Siguiente",
+   //                "sLast"        : "Última",
+   //          },
+   //    },
+   //    "serverSide": true,
+   //    "ajax"      : "{{ url('usersTable') }}",
+   //    "columns"   : [
+   //       {data: 'rut'},
+   //       {data: 'name'},
+   //       // {data: 'apellidoPaterno'},
+   //       {data: 'email'},
+   //       {data: 'opciones'},
+   //    ],
+   //    "drawCallback": function () {
+   //       $('.dataTables_paginate > .pagination').addClass('pagination-sm');
+   //    }
+   // });
 
    if ($("#form-agregar").length) {
       $('#msgVacio').remove();
@@ -81,7 +81,7 @@ $('#lstEstablecimiento').on('change', function(e){
    var idEstablecimiento = e.target.value;
    
    $('#idEstablecimiento').val(idEstablecimiento);
-
+   $(".cargando").css('visibility', 'visible');
    $.get('lst-periodos?idEstablecimiento='+ idEstablecimiento,function(data) {
       
       $('#lstPeriodo').empty();
@@ -96,6 +96,7 @@ $('#lstEstablecimiento').on('change', function(e){
       $("#lstPeriodo").trigger("chosen:updated");
       
       $('#row-Periodo').css('display', 'block');
+      $(".cargando").css('visibility', 'hidden');
    });
 });
 
@@ -110,7 +111,7 @@ $('#lstPeriodo').on('change', function(e){
    
    var url = 'lst-cargaLeyes?idPeriodo='+idPeriodo+'&idEstablecimiento='+idEstablecimiento;
    var row = '';
-
+   $(".cargando").css('visibility', 'visible');
    $.get(url,function(data) {
       
       $.each(data, function(index, subvencion){         
@@ -181,12 +182,13 @@ $('#lstPeriodo').on('change', function(e){
       +'</div>';
       });     
 
-      // Muestra leyes y acciones      
+      // Muestra leyes y acciones   
       $('#acciones').css('display', 'none');
       $('.rowEliminar').remove();
       $('#rowCalculoHoras').append(row);
       $('#rowCalculoHoras').css('display', 'block');
       $('#acciones').css('display', 'block');
+      $(".cargando").css('visibility', 'hidden');   
 
    });
 });
@@ -201,7 +203,7 @@ $('#guardar').click(function(){
    var url  = form.attr('action');
    var dataArray = form.serializeArray();
    $("#msg").css('display', 'none');
-   
+   $(".cargando").css('visibility', 'visible');
    //VALIDACIONES 
    //cargaPeriodo
    //cantHoras
@@ -222,14 +224,17 @@ $('#guardar').click(function(){
          }
       
       } else {
-         $('#txtRut').removeClass('is-invalid');         
+         $('#txtRut').removeClass('is-invalid');     
+
       }
       
    });   
 
    //Si falta algún dato retorna false
    if (countInvalid != 0) { 
+      $(".cargando").css('visibility', 'hidden');
       $("#msg").css('display', 'block');
+      $("#msg").empty();
       $("#msg").append('Todos los campos son obligatorios.');
       return false; 
    }
@@ -239,10 +244,12 @@ $('#guardar').click(function(){
       dataArray,
       function (result) {
          $.alertable.alert(result.message, {html : true}).always(function(){
+            $(".cargando").css('visibility', 'visible');
             location.reload();
          });
    }).fail(function(data){
 
+      $(".cargando").css('visibility', 'hidden');
       dataArray.forEach( function(element, index) {
       
          if (element.value === "") {                     
@@ -252,7 +259,6 @@ $('#guardar').click(function(){
             $('#txtRut').removeClass('is-invalid');
             $('[name="'+element.name+'"]').addClass('is-valid');
          }
-         
       });
 
    });

@@ -24,7 +24,7 @@ class SostenedorRequest extends FormRequest
     public function rules()
     {
         return [
-            'rut'             => 'required|numeric|unique:sostenedors',
+            'rut'             => 'required|unique:sostenedors',
             'nombre'          => 'required|max:60',
             'apellidoPaterno' => 'required|max:150',
             'apellidoMaterno' => 'required|max:150',            

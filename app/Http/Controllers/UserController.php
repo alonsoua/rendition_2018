@@ -137,7 +137,7 @@ class UserController extends Controller
 
         request()->validate([
             'rol'               => 'required',
-            'rut'               => 'required|numeric|unique:users,rut,'.$id.',id' ,
+            'rut'               => 'required|unique:users,rut,'.$id.',id' ,
             'password'          => 'required|max:50',
             'nombre'            => 'required|max:200',
             'apellidoPaterno'   => 'required|max:150',
@@ -181,7 +181,10 @@ class UserController extends Controller
         $nombre = DB::table('users')->where('id', $id)->value('name');
 
         DB::table('users')->where('id', $id)->delete();
-        $message = 'El usuario con <b>'.Helper::rut($rut).' - '.$nombre.'</b> fue eliminado correctamente';
+        
+        $texto   = Helper::rut($rut).' - '.$nombre;
+        $message = Helper::msgEliminado('M', 'Usuario', $texto);
+        
         if ($request->ajax()) {
             return response()->json([
                'id'        => $id,

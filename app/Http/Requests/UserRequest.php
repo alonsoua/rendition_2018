@@ -25,7 +25,7 @@ class UserRequest extends FormRequest
     {
         return [
             'rol'               => 'required',
-            'rut'               => 'required|unique:users|numeric',
+            'rut'               => 'required|unique:users',
             'password'          => 'required|max:50',
             'nombre'            => 'required|max:200',
             'apellidoPaterno'   => 'required|max:150',

@@ -9,7 +9,9 @@ use App\Helpers\Helper;
 
 use App\Cuenta;
 use App\Subvencion;
+use App\Documento;
 use App\CuentaSubvencion;
+use App\CuentaDocumento;
 
 class CuentaController extends Controller
 {
@@ -43,8 +45,13 @@ class CuentaController extends Controller
                     ->where('estado', '1')->where('id','>', 0)->get();
         
         $subvenciones = $subRaw->pluck('nombre',  'id');        
+
+        $docRaw = Documento::selectRaw('CONCAT(codigo, " - " , nombre) as nombre, id')
+                    ->where('estado', '1')->where('id','>', 0)->get();
         
-        return view('mantenedor.gastosCuentas.create', compact('subvenciones', 'editar'));
+        $documentos = $docRaw->pluck('nombre',  'id');  
+        
+        return view('mantenedor.gastosCuentas.create', compact('subvenciones', 'documentos', 'editar'));
     }
 
     /**
@@ -73,6 +80,15 @@ class CuentaController extends Controller
                 ]);
             }           
             
+            //Agregamos relación cuenta documentos
+            $documento = $request->documentos;            
+            foreach ($documento as $key => $value) {
+                $cuentaDocumento = CuentaDocumento::create([
+                    'idCuenta'     => $cuenta->id,
+                    'idDocumento' => $value,                    
+                ]);
+            }
+
             //MENSAJE
             $mensaje = 'La cuenta <b>'.$request['codigo'].' - '.$request['nombre'].'</b>';
             $mensaje .= ' ha sido agregada correctamente';
@@ -109,18 +125,30 @@ class CuentaController extends Controller
                     ->where('estado', '1')->where('id','>', 0)->get();
         $subvenciones = $subRaw->pluck('nombre',  'id'); 
 
+        $docRaw = Documento::selectRaw('CONCAT(codigo, " - " , nombre) as nombre, id')
+                    ->where('estado', '1')->where('id','>', 0)->get();
+        
+        $documentos = $docRaw->pluck('nombre',  'id');  
 
         $csRaw  = DB::table('cuenta_subvencion')
                     ->selectRaw('subvencions.id as idSub')
                     ->leftJoin('subvencions', 'cuenta_subvencion.idSubvencion', '=', 'subvencions.id')
                     ->where('cuenta_subvencion.idCuenta', $id)->get();
-        $cuentaSub = $csRaw->pluck('idSub');         
+        $cuentaSub = $csRaw->pluck('idSub');   
+
+        $cdRaw  = DB::table('cuenta_documento')
+                    ->selectRaw('documentos.id as idDoc')
+                    ->leftJoin('documentos', 'cuenta_documento.idDocumento', '=', 'documentos.id')
+                    ->where('cuenta_documento.idCuenta', $id)->get();
+        $cuentaDocs = $cdRaw->pluck('idDoc');        
 
         return view('mantenedor.gastosCuentas.edit', 
             compact(  'cuenta'
                     , 'editar'
                     , 'subvenciones'
                     , 'cuentaSub'
+                    , 'documentos'
+                    , 'cuentaDocs'
                 ));            
     }
 
@@ -137,7 +165,8 @@ class CuentaController extends Controller
             'codigo'        => 'required|max:10|unique:cuentas,codigo,'.$id.',id' ,
             'nombre'        => 'required|max:100',
             'descripcion'   => 'required',
-            'subvenciones'  => 'required|array'
+            'subvenciones'  => 'required|array',
+            'documentos'    => 'required|array'
           ]);
 
         $cuenta = Cuenta::findOrFail($id);        
@@ -155,6 +184,19 @@ class CuentaController extends Controller
             $cuentaSubvencion = CuentaSubvencion::create([
                 'idCuenta'     => $cuenta->id,
                 'idSubvencion' => $idSubvencion,                    
+            ]);
+        }
+
+        //Elimina relación cuenta - documento
+        $documentos = CuentaDocumento::where('idCuenta', '=' , $id);
+        $documentos->delete();
+
+        //Agrega cuenta - documento
+        $documento = $request->documentos;        
+        foreach ($documento as $key => $idDocumento) {
+            $cuentaDocumento = CuentaDocumento::create([
+                'idCuenta'     => $cuenta->id,
+                'idDocumento' => $idDocumento,                    
             ]);
         }      
         
@@ -177,9 +219,15 @@ class CuentaController extends Controller
     {
         $nombre = DB::table('cuentas')->where('id', $id)->value('nombre');
         $codigo = DB::table('cuentas')->where('id', $id)->value('codigo');
-       
-        DB::table('cuentas')->where('id', $id)->update(['estado' => 0]);
-        $message = 'La cuenta <b>'.$codigo.' - '.$nombre.'</b> fue eliminada correctamente';
+        
+        DB::table('cuenta_subvencion')->where('idCuenta', $id)->delete();
+        DB::table('cuenta_documento')->where('idCuenta', $id)->delete();
+        DB::table('cuentas')->where('id', $id)->delete();
+
+        // dd($db);
+
+        $texto   = $codigo.' - '.$nombre;
+        $message = Helper::msgEliminado('F', 'Cuenta', $texto);        
         
         if ($request->ajax()) {
             return response()->json([
@@ -189,3 +237,4 @@ class CuentaController extends Controller
         }
     }
 }
+

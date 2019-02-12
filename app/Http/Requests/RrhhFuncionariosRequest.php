@@ -25,7 +25,7 @@ class RrhhFuncionariosRequest extends FormRequest
     {
         return [
             'establecimiento'       => 'required',
-            'rut'                   => 'required|numeric|unique:funcionarios',
+            'rut'                   => 'required|unique:funcionarios',
             'nombre'                => 'required|max:100',
             'apellidoPaterno'       => 'required|max:100',
             'apellidoMaterno'       => 'required|max:100',

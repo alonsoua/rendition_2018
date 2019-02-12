@@ -76,3 +76,23 @@
       <div id="vSubvencion"><span id="msgSubvencion" class="validacion"></span></div>
    </div>
 </div> 
+
+
+
+{{-- lst TIPO DOCUMENTO --}}
+<div class="form-group row">
+   {!! Form::label('Tipo Documento', 'Tipo Documento', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
+
+   <div class="col-sm-9">
+
+      {{ Form::select('documentos[]', $documentos ,  $editar == 0 ? null : $cuentaDocs
+         ,[
+            'id'           => 'lstDocumento',                  
+            'class'        => 'select-documentos form-control',
+            'multiple' 
+         ])
+      }}
+
+      <div id="vDocumento"><span id="msgDocumento" class="validacion"></span></div>
+   </div>
+</div> 

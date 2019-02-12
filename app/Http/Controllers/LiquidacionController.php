@@ -2,8 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Liquidacion;
+//use App\Http\Requests\LiquidacionRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Helpers\Helper;
+
+use App\Liquidacion;
+use App\Establecimiento;
+
+use App\Funcionario;
+use App\Periodo;
 
 class LiquidacionController extends Controller
 {
@@ -14,7 +22,7 @@ class LiquidacionController extends Controller
      */
     public function index()
     {
-        //
+        return view('RRHH.liquidaciones.index');
     }
 
     /**
@@ -24,7 +32,22 @@ class LiquidacionController extends Controller
      */
     public function create()
     {
-        //
+        $editar = 0;
+    
+        $estaRaw = Establecimiento::selectRaw('CONCAT(rbd, " - " , nombre) as nombre, id')->get();
+        
+        $establecimientos = $estaRaw->pluck('nombre', 'id');
+               
+        $funcionarios = Funcionario::getFuncionarios(null);
+        $periodos     = Periodo::getPeriodos(null);
+        
+        return view('RRHH.liquidaciones.create', compact(
+                          'editar'
+                        , 'establecimientos'
+                        , 'funcionarios'
+                        , 'periodos'
+                      
+                    ));
     }
 
     /**
@@ -81,5 +104,31 @@ class LiquidacionController extends Controller
     public function destroy(Liquidacion $liquidacion)
     {
         //
+    }
+
+
+
+    public function getFuncionarios(Request $request, $idEstablecimiento)
+    {    
+
+        if ($request->ajax()) {            
+            
+            $funcionarios = Funcionario::getFuncionarios($idEstablecimiento);
+            
+            return response()->json($funcionarios);
+        }        
+    }
+
+
+
+    public function getPeriodos(Request $request, $idAno)
+    {    
+
+        if ($request->ajax()) {            
+            
+            $periodos = Periodo::getPeriodos($idAno);
+            
+            return response()->json($periodos);
+        }        
     }
 }

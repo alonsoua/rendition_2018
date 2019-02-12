@@ -6,25 +6,27 @@
 
 @section('content')
 
+@include('estructura.cargando')
+
 <main style="background-color: #eeeeee;">
 <div class="container" style=" padding-top: 15px;">
 <div class="row justify-content-md-center">
 <div class="col col-lg-11">
 <div class="card">
 
-<div class="card-header">
-   <h4 class="my-0 font-weight-light text-sm-center">
-      Editar Funcionario: {{ $funcionario->rut }} - {{ $funcionario->nombre }}
-   </h4>
-   <ul class="nav nav-tabs card-header-tabs">
+   <div class="card-header">
+      <h4 class="my-0 font-weight-light text-sm-center">
+         Editar Funcionario: {{ $funcionario->rut }} - {{ $funcionario->nombre }}
+      </h4>
+      <ul class="nav nav-tabs card-header-tabs">
          <li class="nav-item" style="cursor:pointer;">
             <a class="nav-link active" id="navPersonal">Personal</a>
          </li>               
          <li class="nav-item" style="cursor:pointer;">
-            <a class="nav-link disabled" id="navSubvenciones">Subvenciones</a>
+            <a class="nav-link" id="navSubvenciones">Subvenciones</a>
          </li>
       </ul>
-</div>
+   </div>
 
 <div class="card-body">
 

@@ -29,7 +29,7 @@
                   <tr>
                      <th scope="col">Nombre</th>
                      <th scope="col">Porcentaje M&aacute;ximo</th>
-                     <th scope="col" width="15%" class="text-center">{{-- &nbsp; --}}opciones</th>
+                     <th scope="col" width="8%" class="text-center">{{-- &nbsp; --}}opciones</th>
                   </tr>
                </thead>
             </table>

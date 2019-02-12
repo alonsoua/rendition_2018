@@ -26,12 +26,10 @@
             <table id="dataTable-cuentas" class="table table-bordered table-striped table-hover table-sm ">
                <thead>
                   <tr>
-                     <th scope="col" width="15%">C&oacute;digo</th>
-                     <th scope="col" width="35%">Nombre</th>
-                     {{-- <th scope="col" width="20%">Apellido</th> --}}
-                     {{-- <th scope="col" width="15%">Perfil</th> --}}
-                     <th scope="col" width="35%">Subvenciones</th>
-                     <th scope="col" width="15%" class="text-center">{{-- &nbsp; --}}opciones</th>
+                     <th scope="col" width="5%">C&oacute;digo</th>
+                     <th scope="col" width="40%">Nombre</th>                     
+                     <th scope="col" width="60%">Subvenciones</th>                     
+                     <th scope="col" width="8%" class="text-center">{{-- &nbsp; --}}opciones</th>
                   </tr>
                </thead>
             </table>

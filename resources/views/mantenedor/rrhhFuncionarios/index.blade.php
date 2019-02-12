@@ -27,12 +27,12 @@
             <table id="dataTable-funcionarios" class="table table-striped table-bordered table-sm">
                <thead>
                   <tr>
-                     <th scope="col" width="20%">Establecimiento</th>
-                     <th scope="col" width="15%">Rut</th>
+                     <th scope="col" width="25%">Establecimiento</th>
+                     <th scope="col" width="9%">Rut</th>
                      <th scope="col" width="20%">Nombre</th>
                      <th scope="col" width="15%">Tipo Contrato</th>
-                     <th scope="col" width="15%">Funci&oacute;n</th>
-                     <th scope="col" width="10%" class="text-center">{{-- &nbsp; --}}opciones</th>
+                     <th scope="col" width="10%">Funci&oacute;n</th>
+                     <th scope="col" width="8%" class="text-center">{{-- &nbsp; --}}opciones</th>
                   </tr>
                </thead>
             </table>

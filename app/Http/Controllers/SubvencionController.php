@@ -127,8 +127,10 @@ class SubvencionController extends Controller
     public function destroy(Request $request, $id)
     {
         $nombre = DB::table('subvencions')->where('id', $id)->value('nombre');
-        DB::table('subvencions')->where('id', $id)->update(['estado' => 0]);
-        $message = 'La subvención con nombre <b>'.$nombre.'</b> fue eliminada correctamente';
+        
+        DB::table('subvencions')->where('id', $id)->delete();
+
+        $message = Helper::msgEliminado('F', 'Subvención', $nombre);        
         
         if ($request->ajax()) {
             return response()->json([

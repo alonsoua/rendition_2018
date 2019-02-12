@@ -6,6 +6,8 @@
 
 @section('content')
 
+@include('estructura.cargando')
+
 <main style="background-color: #eeeeee;">
 <div class="container" style=" padding-top: 15px;">
 <div class="row justify-content-md-center">

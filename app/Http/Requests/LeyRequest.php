@@ -24,7 +24,7 @@ class LeyRequest extends FormRequest
     public function rules()
     {
         return [
-            'codigo'           => 'required|max:20|unique:leys',
+            'codigo'           => 'required|max:20',
             'nombre'           => 'required|max:100',
             'tipo'             => 'required',
             'subvencion'       => 'required',

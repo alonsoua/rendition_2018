@@ -1,10 +1,12 @@
 @extends('main')
 
-@section('title', 'Editar Establecimiento')
+@section('title', 'Editar Imputación de Gasto')
 
-@section('breadcrumb', 'Establecimientos')
+@section('breadcrumb', 'Imputación de Gasto')
 
 @section('content')
+
+@include('estructura.cargando')
 
 <main style="background-color: #eeeeee;">
 <div class="container" style=" padding-top: 15px;">
@@ -13,15 +15,15 @@
 <div class="card">
 
 <div class="card-header">
-   <h4 class="my-0 font-weight-light text-sm-center">Editar Establecimiento: {{ $establecimiento->nombre }}</h4>
+   <h4 class="my-0 font-weight-light text-sm-center">Editar Gasto: {{ $imputacion->numDocumento }}</h4>
 </div>
 
 <div class="card-body">
 
-   @include('mantenedor.establecimientos.partials.validaciones')
+   @include('gastos.imputaciones.partials.validaciones')
 
-   {!! Form::model($establecimiento,
-      [    'route'   => ['establecimientos.update', $establecimiento]
+   {!! Form::model($imputacion,
+      [    'route'   => ['imputaciones.update', $imputacion]
          , 'method'  => 'PUT'
          , 'id'      => 'form-editar'
          , 'files'   => true
@@ -30,13 +32,13 @@
    !!}
          {{-- , 'enctype' => 'multipart/form-data' --}}
 
-      @include('mantenedor.establecimientos.partials.fields')
+      @include('gastos.imputaciones.partials.fields')
 
       <hr>
       {{-- Acciones Btn --}}
       <div class="form-group row">
          <div class="col-sm-3">
-            {!! link_to_route('establecimientos.index', $title='Volver', $parameters = [] ,$attributes = [
+            {!! link_to_route('imputaciones.index', $title='Volver', $parameters = [] ,$attributes = [
                'id'     => 'cancelar',
                'class'  => 'btn btn-light float-left'
             ]) !!}
@@ -65,6 +67,6 @@
 
 @section('contentScript')
    <script type="text/javascript">
-      @include("mantenedor.establecimientos.script")
+      @include("gastos.imputaciones.script")
    </script>
 @endsection

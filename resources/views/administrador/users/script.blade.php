@@ -10,9 +10,11 @@ $(document).ready(function(){
    | drawCallback function: Agrega class "pagination-sm" para que se vea pequeña.
    |
    */
+  
+   
    $.fn.dataTable.ext.classes.sPagination = 'pagination pagination-sm';
    $('#dataTable-users').DataTable({
-
+      "processing": true,
       "oLanguage" : {
          "sProcessing"        : "Procesando...",
          "sLengthMenu"        : "Mostrar _MENU_ registros por página",
@@ -36,18 +38,72 @@ $(document).ready(function(){
       "serverSide": true,
       "ajax"      : "{{ url('usersTable') }}",
       "columns"   : [
-         {data: 'rut'},
+         {
+            data: 'rut',
+            render: function formateaRut(data) {
+               var rut = data;
+               var actual = rut.replace(/^0+/, "");
+               if (actual != '' && actual.length > 1) {
+                  var sinPuntos = actual.replace(/\./g, "");
+                  var actualLimpio = sinPuntos.replace(/-/g, "");
+                  var inicio = actualLimpio.substring(0, actualLimpio.length - 1);
+                  var rutPuntos = "";
+                  var i = 0;
+                  var j = 1;
+                  for (i = inicio.length - 1; i >= 0; i--) {
+                     var letra = inicio.charAt(i);
+                     rutPuntos = letra + rutPuntos;
+                     if (j % 3 == 0 && j <= inicio.length - 1) {
+                        rutPuntos = "." + rutPuntos;
+                     }
+                     j++;
+                  }
+                  var dv = actualLimpio.substring(actualLimpio.length - 1);
+                  rutPuntos = rutPuntos + "-" + dv;
+               }                
+               return rutPuntos;
+            }
+         },
          {data: 'name'},
          // {data: 'apellidoPaterno'},
          {data: 'email'},
          {data: 'opciones'},
       ],
+         dom: 'Bfrtip',
+         buttons: [
+            {
+               extend: 'pdfHtml5',
+               className: 'btn btn-primary btn-sm mr-1 float-left',
+               exportOptions: { 
+                  orthogonal: 'export', 
+                  columns: [ 0, 1, 2]
+               },
+            },
+            {
+               extend: 'csv',
+               className: 'btn btn-primary btn-sm mr-1 float-left',
+               exportOptions: { 
+                  orthogonal: 'export', 
+                  columns: [ 0, 1, 2]
+               },
+            },
+            {
+               extend: 'excelHtml5',
+               className: 'btn btn-primary btn-sm mr-1 float-left',
+               exportOptions: { 
+                  orthogonal: 'export', 
+                  columns: [ 0, 1, 2]
+               },
+            } 
+        ],
       "drawCallback": function () {
          $('.dataTables_paginate > .pagination').addClass('pagination-sm');
       }
-   });
+   });   
 
 });
+
+
 
 function MensajeEliminar(e, i) {
    e.preventDefault();
@@ -99,6 +155,8 @@ $('#guardar').click(function(){
    var url  = form.attr('action');
    var dataArray = form.serializeArray();
 
+   $(".cargando").css('visibility', 'visible');
+   
    $.ajax({
       url: url,
       method: 'POST',
@@ -109,11 +167,14 @@ $('#guardar').click(function(){
       data: dataArray,
       success: function(result){      
          $.alertable.alert('<p class="text-center">'+result.message+'</p>', {html : true}).always(function(){
+            $(".cargando").css('visibility', 'visible');
             location.reload();                  
          });
       
+      }, complete: function(data) {
+         $(".cargando").css('visibility', 'hidden');
       }, error: function(data) {
-      
+         $(".cargando").css('visibility', 'hidden');
          console.log(data); 
          // debugger;
 

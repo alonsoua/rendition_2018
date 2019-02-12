@@ -54,6 +54,24 @@ class Imputacion extends Model
         return $this->belongsTo(Cuenta::class, 'idCuenta');
     }    
     /* FIN RELACIONES */
+
+
+
+     public static function modificarEstado($idImputacion, $estado) {
+        
+        $nombreEstado = '';
+        if ($estado == 'Aprobar') {
+          $nombreEstado = 'Aprobado';
+        } else if ($estado == 'Rechazar') {
+          $nombreEstado = 'Rechazado';
+        } else {
+          $nombreEstado = 'Por Aprobar';
+        }
+        $imputacion = Imputacion::findOrFail($idImputacion);        
+        $imputacion->estado = $nombreEstado;        
+
+        return $imputacion;
+    }
 }
 
 

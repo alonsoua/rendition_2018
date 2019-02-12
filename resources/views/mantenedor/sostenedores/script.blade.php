@@ -29,7 +29,7 @@ $(document).ready(function(){
    */
    $.fn.dataTable.ext.classes.sPagination = 'pagination pagination-sm';
    $('#dataTable-sostenedores').DataTable({
-
+      "processing": true,
       "oLanguage" : {
          "sProcessing"        : "Procesando...",
          "sLengthMenu"        : "Mostrar _MENU_ registros por página",
@@ -53,7 +53,32 @@ $(document).ready(function(){
       "serverSide": true,
       "ajax"      : "{{ url('sostenedoresTable') }}",
       "columns"   : [
-         {data: 'rut'},
+         {
+            data: 'rut',
+            render: function formateaRut(data) {
+               var rut = data;
+               var actual = rut.replace(/^0+/, "");
+               if (actual != '' && actual.length > 1) {
+                  var sinPuntos = actual.replace(/\./g, "");
+                  var actualLimpio = sinPuntos.replace(/-/g, "");
+                  var inicio = actualLimpio.substring(0, actualLimpio.length - 1);
+                  var rutPuntos = "";
+                  var i = 0;
+                  var j = 1;
+                  for (i = inicio.length - 1; i >= 0; i--) {
+                     var letra = inicio.charAt(i);
+                     rutPuntos = letra + rutPuntos;
+                     if (j % 3 == 0 && j <= inicio.length - 1) {
+                        rutPuntos = "." + rutPuntos;
+                     }
+                     j++;
+                  }
+                  var dv = actualLimpio.substring(actualLimpio.length - 1);
+                  rutPuntos = rutPuntos + "-" + dv;
+               }                
+               return rutPuntos;
+            }
+         },
          {data: 'nombre'},
          {data: 'apellidoPaterno'},
          {data: 'direccion'},
@@ -61,6 +86,41 @@ $(document).ready(function(){
          {data: 'correo'},
          {data: 'opciones'},
       ],
+         dom: 'Bfrtip',
+         buttons: [ 
+            // {
+            //     extend: 'print',
+            //     text: 'Imprimir',
+            //     className: 'btn btn-primary btn-sm mr-1 float-left',
+            //     exportOptions: {
+            //         columns: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+            //     }
+            // },
+            {
+               extend: 'pdfHtml5',
+               className: 'btn btn-primary btn-sm mr-1 float-left',
+               exportOptions: { 
+                  orthogonal: 'export', 
+                  columns: [ 0, 1, 2, 3, 4, 5]
+               },
+            },
+            {
+               extend: 'csv',
+               className: 'btn btn-primary btn-sm mr-1 float-left',
+               exportOptions: { 
+                  orthogonal: 'export', 
+                  columns: [ 0, 1, 2, 3, 4, 5]
+               },
+            },
+            {
+               extend: 'excelHtml5',
+               className: 'btn btn-primary btn-sm mr-1 float-left',
+               exportOptions: { 
+                  orthogonal: 'export', 
+                  columns: [ 0, 1, 2, 3, 4, 5]
+               },
+            }    
+        ],
       "drawCallback": function () {
          $('.dataTables_paginate > .pagination').addClass('pagination-sm');
       }
@@ -105,7 +165,19 @@ function Eliminar(i) {
             html: true
          }).always(function(){});
    }).fail(function(data){
-       console.log(data);
+         var res = data.status;         
+      
+         var mensaje = '';
+         if (res == 500) {
+            //500 Clave foranea
+            mensaje = msgEliminarRegistroUtilizado('M', 'Sostenedor');
+         } else if (res == 404) { 
+            //404 No encontró el registro
+            row.fadeOut(); 
+            mensaje = msgEliminadoCorrectamente('M', 'Sostenedor');
+         }
+
+         $.alertable.alert('<p class="text-center">'+mensaje+'</p>', {html: true}).always(function(){});
    });
 }
 
@@ -115,7 +187,7 @@ $('#guardar').click(function(){
    var form = $('#'+idFm);
    var url  = form.attr('action');
    var dataArray = form.serializeArray();
-
+   $(".cargando").css('visibility', 'visible');
    $.ajax({
       url: url,
       method: 'POST',
@@ -128,11 +200,14 @@ $('#guardar').click(function(){
          $.alertable.alert('<p class="text-center">'+result.message+'</p>', {
             html : true
          }).always(function(){
+            $(".cargando").css('visibility', 'visible');
             location.reload();
          });
       
+      }, complete: function(data) {
+         $(".cargando").css('visibility', 'hidden');
       }, error: function(data) {
-         
+         $(".cargando").css('visibility', 'hidden');
          console.log(data);
          //debugger;
 
@@ -227,85 +302,3 @@ $('#guardar').click(function(){
       }
    });
 });
-
-
-
-
-
-   //$.post( url, data, function(result) {
-   //       $.alertable.alert(result.message, {html : true}).always(function(){
-   //          location.reload();
-   //       });
-   // }).fail(function(data){
-
-   //    //console.log();
-   //   //debugger;
-
-   //    /* VALIDACIONES */
-   //    //rut      
-   //    if (data.responseJSON.errors.rut!= undefined) {
-   //       $('#txtRut').addClass('is-invalid');
-   //       $('#vRut').addClass('invalid-feedback');
-   //       $('#msgRut').html(data.responseJSON.errors.rut);
-   //    } else {
-   //       $('#txtRut').removeClass('is-invalid');
-   //       $('#txtRut').addClass('is-valid');
-   //       $('#vRut').css('display', 'none');
-   //    }
-
-   //    //nombre
-   //    if (data.responseJSON.errors.nombre != undefined) {
-   //       $('#txtNombre').addClass('is-invalid');
-   //       $('#vNombre').addClass('invalid-feedback');
-   //       $('#msgNombre').html(data.responseJSON.errors.nombre);
-   //    } else {
-   //       $('#txtNombre').removeClass('is-invalid');
-   //       $('#txtNombre').addClass('is-valid');
-   //       $('#vNombre').css('display', 'none');
-   //    }
-
-   //    //apellidoPaterno
-   //    if (data.responseJSON.errors.apellidoPaterno != undefined) {
-   //       $('#txtApellidoPaterno').addClass('is-invalid');
-   //       $('#vApellidoPaterno').addClass('invalid-feedback');
-   //       $('#msgApellidoPaterno').html(data.responseJSON.errors.apellidoPaterno);
-   //    } else {
-   //       $('#txtApellidoPaterno').removeClass('is-invalid');
-   //       $('#txtApellidoPaterno').addClass('is-valid');
-   //       $('#vApellidoPaterno').css('display', 'none');
-   //    }
-
-   //    //apellidoMaterno
-   //    if (data.responseJSON.errors.apellidoMaterno != undefined) {
-   //       $('#txtApellidoMaterno').addClass('is-invalid');
-   //       $('#vApellidoMaterno').addClass('invalid-feedback');
-   //       $('#msgApellidoMaterno').html(data.responseJSON.errors.apellidoMaterno);
-   //    } else {
-   //       $('#txtApellidoMaterno').removeClass('is-invalid');
-   //       $('#txtApellidoMaterno').addClass('is-valid');
-   //       $('#vApellidoMaterno').css('display', 'none');
-   //    }      
-
-   //    //direccion
-   //    if (data.responseJSON.errors.direccion != undefined) {
-   //       $('#txtDireccion').addClass('is-invalid');
-   //       $('#vDireccion').addClass('invalid-feedback');
-   //       $('#msgDireccion').html(data.responseJSON.errors.direccion);
-   //    } else {
-   //       $('#txtDireccion').removeClass('is-invalid');
-   //       //$('#txtDireccion').addClass('is-valid');
-   //       $('#vDireccion').css('display', 'none');
-   //    }
-
-   //    //correo
-   //    if (data.responseJSON.errors.correo != undefined) {
-   //       $('#txtCorreo').addClass('is-invalid');
-   //       $('#vCorreo').addClass('invalid-feedback');
-   //       $('#msgCorreo').html(data.responseJSON.errors.correo);
-   //       console.log(data.responseJSON.errors.correo);
-   //    } else {
-   //       $('#txtCorreo').removeClass('is-invalid');
-   //       $('#txtCorreo').addClass('is-valid');
-   //       $('#vCorreo').css('display', 'none');
-   //    }
-   // });

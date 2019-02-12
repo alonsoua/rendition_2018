@@ -27,7 +27,8 @@ class GastosCuentasRequest extends FormRequest
             'codigo'        => 'required|max:10|unique:cuentas',
             'nombre'        => 'required|max:100',
             'descripcion'   => 'required',
-            'subvenciones'  => 'required|array'
+            'subvenciones'  => 'required|array',
+            'documentos'    => 'required|array'
         ];
     }
 }

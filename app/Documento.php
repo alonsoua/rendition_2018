@@ -17,4 +17,6 @@ class Documento extends Model
       , 'estado'
       ,
     ];
+
+    
 }

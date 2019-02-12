@@ -6,11 +6,13 @@
 
 @section('content')
 
+@include('estructura.cargando')
+
 <main style="background-color: #eeeeee;">
 <div class="container" style=" padding-top: 15px;">
 <div class="row justify-content-md-center">
 <div class="col col-lg-11">
-<div class="card">
+{{-- <div class="card"> --}}
 {{-- 
 <div class="card-header">
 	<h4 class="my-0 font-weight-light text-sm-center">Agregar Funcionario</h4>
@@ -23,16 +25,17 @@
 <div class="card">
 
    <div class="card-header">
-      <h4 class="my-0 font-weight-light text-sm-center">Agregar Funcionario</h4>
+      <h4 class="my-0 font-weight-light text-sm-center">
+         Agregar Funcionario
+      </h4>
       <ul class="nav nav-tabs card-header-tabs">
          <li class="nav-item" style="cursor:pointer;">
-            <a class="nav-link active" id="navPersonal" href="#">Personal</a>
+            <a class="nav-link active" id="navPersonal" style="color:#495057;" href="#">Personal</a>
          </li>               
          <li class="nav-item" style="cursor:pointer;">
-            <a class="nav-link disabled" id="navSubvenciones" href="#">Subvenciones</a>
+            <a class="nav-link" id="navSubvenciones" style="color:#495057;" href="#">Subvenciones</a>
          </li>
-      </ul>
-   
+      </ul>   
    </div>
 
    <div class="card-body">
@@ -73,7 +76,7 @@
       
 
 {{-- </div> --}}
-</div>
+{{-- </div> --}}
 </div>
 </div>
 </div>

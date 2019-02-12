@@ -124,7 +124,7 @@ class LeyController extends Controller
     public function update(Request $request, $id)
     {
         Request()->validate([
-            'codigo'            => 'required|max:20|unique:leys,codigo,'.$id.',id' ,
+            'codigo'            => 'required|max:20' ,
             'nombre'            => 'required|max:100',
             'tipo'              => 'required',
             'subvencion'        => 'required',
@@ -172,8 +172,10 @@ class LeyController extends Controller
         $nombre = DB::table('leys')->where('id', $id)->value('nombre');
         $codigo = DB::table('leys')->where('id', $id)->value('codigo');
        
-        DB::table('leys')->where('id', $id)->update(['estado' => 0]);
-        $message = 'La ley <b>'.$codigo.' - '.$nombre.'</b> fue eliminada correctamente';
+        DB::table('leys')->where('id', $id)->delete();
+        
+        $texto   = $codigo.' - '.$nombre;
+        $message = Helper::msgEliminado('F', 'Ley', $texto);        
         
         if ($request->ajax()) {
             return response()->json([

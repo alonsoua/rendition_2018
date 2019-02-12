@@ -12,9 +12,11 @@ use App\Establecimiento;
 use App\Subvencion;
 use App\Cuenta;
 use App\CuentaSubvencion;
+use App\CuentaDocumento;
 use App\Documento;
 use App\Proveedor;
 use App\Funcionario;
+use App\forma_pago;
 
 
 class ImputacionController extends Controller
@@ -43,7 +45,9 @@ class ImputacionController extends Controller
                             ->where('id','>', 0)->get();
 
         $cuenRaw = Cuenta::selectRaw('CONCAT(codigo, " - " , nombre) as nombre, id')
-                            ->get();              
+                            ->get();    
+
+
 
         $provRaw = Proveedor::selectRaw('CONCAT(rut, " - " , razonSocial) as nombre, id')
                             ->get();
@@ -53,7 +57,7 @@ class ImputacionController extends Controller
         $cuentas          = $cuenRaw->pluck('nombre', 'id');
         $tipoDocumentos   = Documento::pluck('nombre', 'id');
         $proveedores      = $provRaw->pluck('nombre', 'id');
-
+        $formaPago        = forma_pago::pluck('nombre', 'id');
         
         $funcionarios     = Funcionario::getFuncionarios(null);
         return view('gastos.imputaciones.create', compact(
@@ -64,6 +68,7 @@ class ImputacionController extends Controller
                         , 'tipoDocumentos'
                         , 'proveedores'
                         , 'funcionarios'
+                        , 'formaPago'
                     ));
     }
 
@@ -74,8 +79,7 @@ class ImputacionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        //dd($request->reembolsable);
+    {  
         if ($request->ajax()) {
             // Validaciones
             if (empty($request->reembolsable)) {
@@ -90,10 +94,9 @@ class ImputacionController extends Controller
                     'fechaPago'       => 'required',
                     'descripcion'     => 'required',
                     'proveedor'       => 'required',
-                    'montoGasto'      => 'required|Integer|min:0|max:999999',
-                    'montoDocumento'  => 'required|Integer|min:0|max:999999',           
+                    'montoGasto'      => 'required|Integer|min:0|max:99999999',
+                    'montoDocumento'  => 'required|Integer|min:0|max:99999999',           
                     'estado'          => 'required'
-
                 ]);   
             }  else {
                 Request()->validate([
@@ -108,8 +111,8 @@ class ImputacionController extends Controller
                     'fechaPago'       => 'required',
                     'descripcion'     => 'required',
                     'proveedor'       => 'required',
-                    'montoGasto'      => 'required|Integer|min:0|max:999999',
-                    'montoDocumento'  => 'required|Integer|min:0|max:999999',           
+                    'montoGasto'      => 'required|Integer|min:0|max:99999999',
+                    'montoDocumento'  => 'required|Integer|min:0|max:99999999',           
                     'estado'          => 'required'
 
                 ]);   
@@ -120,15 +123,17 @@ class ImputacionController extends Controller
                 // Formateamos Fechas
                 $fechaDocu = date("Y-m-d", strtotime($request->fechaDocumento));
                 $fechaPago = date("Y-m-d", strtotime($request->fechaPago));
-                
+               
+                $funcionario = $request->funcionario == 0 ? null : $request->funcionario;
                 // Crea Funcionario            
                 $imputacion = Imputacion::Create([
                     'idEstablecimiento' => $request->establecimiento,
                     'reembolsable'      => $request->reembolsable,
-                    'idFuncionario'     => $request->funcionario,
+                    'idFuncionario'     => $funcionario,
                     'idSubvencion'      => $request->subvencion,
                     'idCuenta'          => $request->cuenta,
                     'idTipoDocumento'   => $request->tipoDocumento,
+                    'idFormaPago'       => $request->formaPago,
                     'numDocumento'      => $request->numDocumento,
                     'fechaDocumento'    => $fechaDocu,
                     'fechaPago'         => $fechaPago,
@@ -144,7 +149,7 @@ class ImputacionController extends Controller
             $establecimiento = Establecimiento::findOrFail($request->establecimiento);
 
             //MENSAJE
-            $mensaje = 'El gasto <b>'.$request['numDocumento'].' - '.$establecimiento.'</b> 
+            $mensaje = 'El Gasto <b>'.$request['numDocumento'].' - '.$establecimiento['nombre'].'</b> 
                         ha sido ingresado correctamente';
 
             return response()->json([
@@ -172,9 +177,41 @@ class ImputacionController extends Controller
      * @param  \App\Imputacion  $imputacion
      * @return \Illuminate\Http\Response
      */
-    public function edit(Imputacion $imputacion)
+    public function edit($id)
     {
-        //
+        $editar = 1;
+        $imputacion = Imputacion::findOrFail($id);
+        $estaRaw = Establecimiento::selectRaw('CONCAT(rbd, " - " , nombre) as nombre, id')->get();
+        $subvRaw = Subvencion::selectRaw('CONCAT(porcentajeMax, "% - " , nombre) as nombre, id')
+                            ->where('id','>', 0)->get();
+
+        $cuenRaw = Cuenta::selectRaw('CONCAT(codigo, " - " , nombre) as nombre, id')
+                            ->get();              
+
+        $provRaw = Proveedor::selectRaw('CONCAT(rut, " - " , razonSocial) as nombre, id')
+                            ->get();
+       
+
+        $establecimientos = $estaRaw->pluck('nombre', 'id');
+        $subvenciones     = $subvRaw->pluck('nombre', 'id');
+        $cuentas          = $cuenRaw->pluck('nombre', 'id');
+        $tipoDocumentos   = Documento::pluck('nombre', 'id');
+        $formaPago        = forma_pago::pluck('nombre', 'id');
+        $proveedores      = $provRaw->pluck('nombre', 'id');
+        
+        
+        $funcionarios     = Funcionario::getFuncionarios($imputacion->idEstablecimiento);
+        return view('gastos.imputaciones.edit', compact(
+                          'editar'
+                        , 'establecimientos'
+                        , 'subvenciones'
+                        , 'cuentas'
+                        , 'tipoDocumentos'
+                        , 'proveedores'
+                        , 'funcionarios'
+                        , 'imputacion'
+                        , 'formaPago'
+                    ));
     }
 
     /**
@@ -184,9 +221,83 @@ class ImputacionController extends Controller
      * @param  \App\Imputacion  $imputacion
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Imputacion $imputacion)
+    public function update(Request $request, $id)
     {
-        //
+        // Validaciones
+        if (empty($request->reembolsable)) {
+            Request()->validate([
+                'establecimiento' => 'required',            
+                'subvencion'      => 'required',            
+                'cuenta'          => 'required',            
+                'tipoDocumento'   => 'required',
+                'formaPago'       => 'required',
+                'numDocumento'    => 'required|Integer|min:0|max:99999999999',
+                'fechaDocumento'  => 'required',
+                'fechaPago'       => 'required',
+                'descripcion'     => 'required',
+                'proveedor'       => 'required',
+                'montoGasto'      => 'required|Integer|min:0|max:999999',
+                'montoDocumento'  => 'required|Integer|min:0|max:999999',           
+                'estado'          => 'required'
+
+            ]);   
+        }  else {
+            Request()->validate([
+                'establecimiento' => 'required',            
+                'funcionario'     => 'required',
+                'subvencion'      => 'required',            
+                'cuenta'          => 'required',            
+                'tipoDocumento'   => 'required',
+                'formaPago'       => 'required',
+                'numDocumento'    => 'required|Integer|min:0|max:99999999999',
+                'fechaDocumento'  => 'required',
+                'fechaPago'       => 'required',
+                'descripcion'     => 'required',
+                'proveedor'       => 'required',
+                'montoGasto'      => 'required|Integer|min:0|max:999999',
+                'montoDocumento'  => 'required|Integer|min:0|max:999999',           
+                'estado'          => 'required'
+
+            ]);   
+        }     
+
+        
+        // Formateamos Fechas             
+        $fechaDocu = date("Y-m-d", strtotime($request->fechaDocumento));
+        $fechaPago = date("Y-m-d", strtotime($request->fechaPago));
+       
+        $funcionario = $request->funcionario == 0 ? null : $request->funcionario;
+
+        $imputacion = Imputacion::findOrFail($id);        
+        $imputacion->idEstablecimiento = $request->establecimiento;
+        $imputacion->reembolsable      = $request->reembolsable;
+        $imputacion->idFuncionario     = $funcionario;
+        $imputacion->idSubvencion      = $request->subvencion;
+        $imputacion->idCuenta          = $request->cuenta;
+        $imputacion->idTipoDocumento   = $request->tipoDocumento;
+        $imputacion->idFormaPago       = $request->formaPago;
+        $imputacion->numDocumento      = $request->numDocumento;
+        $imputacion->fechaDocumento    = $fechaDocu;
+        $imputacion->fechaPago         = $fechaPago;
+        $imputacion->descripcion       = $request->descripcion;
+        $imputacion->idProveedor       = $request->proveedor;
+        $imputacion->montoGasto        = $request->montoGasto;
+        $imputacion->montoDocumento    = $request->montoDocumento;
+        $imputacion->estado            = $request->estado;
+            
+        $establecimiento = Establecimiento::findOrFail($request->establecimiento);
+
+        //MENSAJE
+        $mensaje = 'El Gasto <b>'.$request['numDocumento'].' - '.$establecimiento['nombre'].'</b> 
+                    ha sido editado correctamente';
+
+        if ($request->ajax()) {
+            $imputacion->save();
+            return response()->json([
+                "message" => $mensaje
+            ]);
+        }
+                
     }
 
     /**
@@ -195,9 +306,22 @@ class ImputacionController extends Controller
      * @param  \App\Imputacion  $imputacion
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Imputacion $imputacion)
+    public function destroy(Request $request, $id)
     {
-        //
+        $estado       = DB::table('imputacions')->where('id', $id)->value('estado');
+        $descripcion  = DB::table('imputacions')->where('id', $id)->value('descripcion');        
+               
+        DB::table('imputacions')->where('id', $id)->delete();
+        
+        $registro   = $descripcion.' <b style="font-weight:normal">con estado</b> '.$estado.'';
+        $message = Helper::msgEliminado('M', 'Gasto', $registro);        
+        
+        if ($request->ajax()) {
+            return response()->json([
+               'id'        => $id,
+               'message'   => $message
+            ]);
+        }
     }
 
 
@@ -211,14 +335,45 @@ class ImputacionController extends Controller
         }        
     }
 
-    public function getFuncionarios(Request $request, $idEstablecimiento)
+    public function getDocumentos(Request $request, $idCuenta)
     {    
-        if ($request->ajax()) {            
+        if ($request->ajax()) {
+
+            $documentos = Cuenta::getCuentasDocumento($idCuenta);
             
-            $funcionarios = Funcionario::getFuncionarios($idEstablecimiento);
-            
-            return response()->json($funcionarios);
+            return response()->json($documentos);
         }        
     }
+
+    public function getFuncionarios(Request $request, $idEstablecimiento, $id = null)
+    {            
+        if ($request->ajax()) {            
+
+            if ($id == null) {
+                $funcionarios = Funcionario::getFuncionarios($idEstablecimiento);    
+            }
+            else {
+                $funcionarios = Funcionario::getFuncionarios($id);
+            }
+                                
+            return response()->json($funcionarios);
+        }
+    }
+
+
+    public function modificarEstado(Request $request, $idImputacion, $estado) 
+    {
+       
+        $imputacion = Imputacion::modificarEstado($idImputacion , $estado);
+            
+
+        if ($request->ajax()) {
+            $imputacion->save();
+            return response()->json([
+                "message" => 'ok'
+            ]);
+        }
+    }
+
 
 }

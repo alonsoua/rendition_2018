@@ -27,7 +27,7 @@ class EstablecimientoRequest extends FormRequest
             'rbd'             => 'required|unique:establecimientos',
             'nombre'          => 'required|max:200',
             'razonSocial'     => 'required|max:150',
-            'rut'             => 'required|numeric|unique:establecimientos',
+            'rut'             => 'required|unique:establecimientos',
             'tipoDependencia' => 'required',
             'sostenedor'      => 'required',
             'comuna'          => 'required',

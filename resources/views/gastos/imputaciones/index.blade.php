@@ -27,15 +27,21 @@
             <table id="dataTable-imputaciones" class="table table-striped table-bordered table-sm">
                <thead>
                   <tr>
-                     <th scope="col" width="15%">Establecimiento</th>
+                     <th scope="col" width="20%">Establecimiento</th>
+                     <th scope="col" width="5%">Rbd</th>
                      <th scope="col" width="10%">Subvenci&oacute;n</th>
-                     <th scope="col" width="12%">Tipo Documento</th>
-                     <th scope="col" width="15%">Desripci&oacute;n</th>
-                     <th scope="col" width="15%">Proveedor</th>
+                     <th scope="col" width="10%">C&oacute;digo Cuenta</th>
+                     <th scope="col" width="10%">Tipo Documento</th>
+                     <th scope="col" width="5%">N° Documento</th>
+                     <th scope="col" width="5%">Fecha Documento</th>
+                     <th scope="col" width="5%">Fecha Pago</th>
+                     <th scope="col" width="15%">Descripci&oacute;n Gasto</th>
+                     <th scope="col" width="20%">Rut Proveedor</th>
+                     <th scope="col" width="20%">Nombre Proveedor</th>
                      <th scope="col" width="10%">Monto Gasto</th>
-                     <th scope="col" width="10%">Monto Doc.</th>
+                     <th scope="col" width="10%">Monto Documento</th>
                      <th scope="col" width="10%">Estado</th>
-                     <th scope="col" width="15%" class="text-center">opciones</th>
+                     <th scope="col" width="15%" class="text-center opciones">opciones</th>
                   </tr>
                </thead>
             </table>
@@ -47,8 +53,11 @@
 </div>
 </main>
 
-{!! Form::open(['route' => ['imputaciones.destroy', ':ESTABLECIMIENTO_ID'], 'method' => 'DELETE', 'id' => 'form-delete']) !!}
+{!! Form::open(['route' => ['imputaciones.destroy', ':IMPUTACION_ID'], 'method' => 'DELETE', 'id' => 'form-delete']) !!}
 {!! Form::close() !!}
+
+{{-- {!! Form::open(['route' => ['imputaciones.modificarEstado', ':IMPUTACIONMODIFICADA_ID'], 'method' => 'DELETE', 'id' => 'form-modificarEstado']) !!}
+{!! Form::close() !!} --}}
 
 @endsection
 

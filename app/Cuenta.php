@@ -23,6 +23,11 @@ class Cuenta extends Model
     {
     	return $this->belongsToMany(Subvencion::class, 'idSubvencion');
     }
+
+    public function documento() 
+    {
+      return $this->belongsToMany(Documento::class, 'idSubvencion');
+    }
     // FIN RELACIONES
     
 
@@ -31,6 +36,14 @@ class Cuenta extends Model
         return Cuenta::join('cuenta_subvencion', 'cuenta_subvencion.idCuenta', '=', 'cuentas.id')             
                         ->selectRaw(' CONCAT(cuentas.codigo, " - " , cuentas.nombre) as nombre, cuentas.id as id')
                         ->where('cuenta_subvencion.idSubvencion', $idSubvencion)
+                        ->get();
+    }
+
+    public static function getCuentasDocumento($idCuenta) {
+        
+        return Documento::join('cuenta_documento', 'cuenta_documento.idDocumento', '=', 'documentos.id')             
+                        ->selectRaw(' CONCAT(documentos.codigo, " - " , documentos.nombre) as nombre, documentos.id as id')
+                        ->where('cuenta_documento.idCuenta', $idCuenta)
                         ->get();
     }
 }

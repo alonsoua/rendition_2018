@@ -1,8 +1,8 @@
 @extends('main')
 
-@section('title', 'Softinnova')
+@section('title', 'Rendiciones')
 
-@section('breadcrumb', ' ')
+@section('breadcrumb', 'Inicio')
 
 @section('content')
 
@@ -16,8 +16,10 @@
         </div> --}}
     <div class="card-body">
         <h5 class="card-title">{{ Auth::user()->name }} {{ Auth::user()->apellidoPaterno }} {{ Auth::user()->apellidoMaterno }}</h5>
-        <p class="card-text">Bienvenido a Rendiciones</p>
-        {{-- <a href="#" class="btn btn-primary">Go somewhere</a> --}}
+        <p class="card-text">Bienvenido al Sistema Rendiciones</p>
+        
+        {{-- <a href="#" class="">Manual de Usuario</a> | <a href="#" class="">Soporte Técnico</a> --}}
+        
     </div>
     {{-- <div class="card-footer text-muted">
        2 days ago

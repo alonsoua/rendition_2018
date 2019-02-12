@@ -13,13 +13,9 @@
          </tr>
       </thead>
       <tbody>
-         {{-- @php
-            var_dump($subvencion['leyes']['idLey']);
-         @endphp --}}
+         
          @foreach( $subvencion['leyes'] as $ley)  
-         {{--    @php
-            var_dump($ley['idLey']);
-         @endphp --}}
+         
             <tr>
                <td>{{ $ley['codigoLey'] }}</td>
                <td>{{ $ley['nombreLey'] }}</td>                  
@@ -29,9 +25,10 @@
 
                   <div class="input-group input-group-sm">                       
                      {!! Form::number('horas['.$ley['idLey'].']', $editar == 0 ? $horas : $ley['horas'],
-                        ['id'              => 'txtHoras',
+                        ['id'              => 'txtHoras'.$ley['idLey'].'',
                         'class'            => 'form-control text-center',
-                        'maxlength'        => 50,                        
+                        'onKeyup'          => 'return maxLenght(txtHoras'.$ley['idLey'].', 50)', 
+                        'max'              => 50,                        
                         'placeholder'      => '',
                         'aria-describedby' => 'inputGroup-sizing-sm'])
                      !!}  

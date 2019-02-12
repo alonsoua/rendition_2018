@@ -91,7 +91,7 @@ $(document).ready(function(){
    */
    $.fn.dataTable.ext.classes.sPagination = 'pagination pagination-sm';
    $('#dataTable-imputaciones').DataTable({
-
+      "processing": true,
       "oLanguage" : {
          "sProcessing"        : "Procesando...",
          "sLengthMenu"        : "Mostrar _MENU_ registros por página",
@@ -116,20 +116,146 @@ $(document).ready(function(){
       "ajax"      : "{{ url('imputacionesTable') }}",
       "columns"   : [
 
-         {data: 'establecimiento.nombre', name: 'establecimiento.nombre'},
-         {data: 'subvencion.nombre',      name: 'subvencion.nombre'},
-         {data: 'documento.nombre',       name: 'documento.nombre'},
-         {data: 'descripcion',            name: 'imputacions.descripcion'},
-         {data: 'proveedor.razonSocial',  name: 'proveedor.razonSocial'},
-         {data: 'montoGasto',             name: 'imputacions.montoGasto'},
-         {data: 'montoDocumento',         name: 'imputacions.montoDocumento'},
-         {data: 'estado',                 name: 'imputacions.estado'},
-         {data: 'opciones'},
+         {
+            data: 'establecimiento.nombre', 
+            name: 'establecimiento.nombre'
+         },
+         
+         {
+            data: 'establecimiento.rbd', 
+            name: 'establecimiento.rbd'
+         },
+
+         {
+            data: 'subvencion.nombre',      
+            name: 'subvencion.nombre'
+         },
+
+         {
+            data: 'cuenta.codigo', 
+            name: 'cuenta.codigo'
+         },
+
+
+         {
+            data: 'documento.nombre',       
+            name: 'documento.nombre'
+         },      
+
+         {
+            data: 'numDocumento',            
+            name: 'imputacions.numDocumento'
+         },
+         {
+            data: 'fechaDocumento',            
+            name: 'imputacions.fechaDocumento',
+            render: function formatoFecha (data) {
+               var fecha = data;
+               return fecha.replace(/^(\d{4})-(\d{2})-(\d{2})$/g,'$3/$2/$1');
+            }
+         },
+         {
+            data: 'fechaPago',            
+            name: 'imputacions.fechaPago' ,
+            render: function formatoFecha (data) {
+               var fecha = data;
+               return fecha.replace(/^(\d{4})-(\d{2})-(\d{2})$/g,'$3/$2/$1');
+            }
+         },
+
+         {
+            data: 'descripcion',            
+            name: 'imputacions.descripcion'
+         },
+
+         { 
+            data: 'proveedor.rut',  
+            name: 'proveedor.rut',
+            render: function formateaRut(data) {
+               var rut = data;
+               var actual = rut.replace(/^0+/, "");
+               if (actual != '' && actual.length > 1) {
+                  var sinPuntos = actual.replace(/\./g, "");
+                  var actualLimpio = sinPuntos.replace(/-/g, "");
+                  var inicio = actualLimpio.substring(0, actualLimpio.length - 1);
+                  var rutPuntos = "";
+                  var i = 0;
+                  var j = 1;
+                  for (i = inicio.length - 1; i >= 0; i--) {
+                     var letra = inicio.charAt(i);
+                     rutPuntos = letra + rutPuntos;
+                     if (j % 3 == 0 && j <= inicio.length - 1) {
+                        rutPuntos = "." + rutPuntos;
+                     }
+                     j++;
+                  }
+                  var dv = actualLimpio.substring(actualLimpio.length - 1);
+                  rutPuntos = rutPuntos + "-" + dv;
+               }                
+               return rutPuntos;
+            }
+         },
+         { 
+            data: 'proveedor.razonSocial',  
+            name: 'proveedor.razonSocial'
+         },
+         {
+            data: 'montoGasto',             
+            name: 'imputacions.montoGasto',
+            render: $.fn.dataTable.render.number( '.', '.', 0, '$' )
+         },
+         {  
+            data: 'montoDocumento',         
+            name: 'imputacions.montoDocumento' ,
+            render: $.fn.dataTable.render.number( '.', '.', 0, '$' )
+         },
+         {
+            data: 'estado',
+            className:'estado',
+            name: 'imputacions.estado'
+         },
+         {
+            data: 'opciones'
+         },
 
       ],
+       "columnDefs": [ 
+            { 
+               "visible": false, "targets": [1,3,5,6,7,9] 
+            } 
+        ], 
+        dom: 'Bfrtip',
+        buttons: [ 
+            // {
+            //     extend: 'print',
+            //     text: 'Imprimir',
+            //     className: 'btn btn-primary btn-sm mr-1 float-left',
+            //     exportOptions: {
+            //         columns: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+            //     }
+            // },
+            {
+               extend: 'pdfHtml5',
+               className: 'btn btn-primary btn-sm mr-1 float-left',
+               exportOptions: { 
+                  orthogonal: 'export', 
+                  columns: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+               },
+            },
+            {
+               extend: 'csv',
+               className: 'btn btn-primary btn-sm mr-1 float-left',
+               exportOptions: { 
+                  orthogonal: 'export', 
+                  columns: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ]
+               },
+            },
+               
+        ],
+
       "drawCallback": function () {
          $('.dataTables_paginate > .pagination').addClass('pagination-sm');
-      }
+      },      
    });
 
    if ($("#form-agregar").length) {
@@ -153,10 +279,10 @@ $(document).ready(function(){
 
 function MensajeEliminar(e, i) {
    e.preventDefault();
-   var rbd     = $(i).attr('data-rbd');
-   var nombre  = $(i).attr('data-nombre');
+   // var rbd     = $(i).attr('data-rbd');
+   var descripcion  = $(i).attr('data-descripcion');
 
-   var texto = '¿Está seguro de eliminar el establecimiento <b>'+nombre+'</b> con RBD <b>'+rbd+'</b>?';
+   var texto = '¿Está seguro que desea eliminar el gasto <b>'+descripcion+'</b>?';
 
    $.alertable.confirm('<p class="text-center">'+texto+'</p>', {
       html: true
@@ -172,7 +298,7 @@ function Eliminar(i) {
    var row  = $(i).parents('tr');
    var id   = $(i).attr('id');
    var form = $('#form-delete');
-   var url  = form.attr('action').replace(':ESTABLECIMIENTO_ID', id);
+   var url  = form.attr('action').replace(':IMPUTACION_ID', id);
    var data = form.serialize();
 
    $.post(
@@ -188,45 +314,29 @@ function Eliminar(i) {
    });
 }
 
+function ModificarEstado (e, i) {
 
+   var idImputacion = $(i).attr('id');
+   var estado = $(i).attr('data-estado');
 
-$('#lstSubvencion').on('change', function(e){
-   var idSubvencion = e.target.value;   
-   $('#idSubvencion').val(idSubvencion);
-
-
-   $.get('getCuentas/'+idSubvencion+'', function(data) {
-
-      $('#lstCuenta').empty();
-      
-      //Carga lstCuenta en select
-      $('#lstCuenta').append('<option value="0" disable="false" selected="true">Seleccione Cuenta</option>');
-
-      $.each(data, function(index, cuenta){        
-         $('#lstCuenta').append('<option value="'+cuenta.id+'">'+cuenta.nombre+'</option>');
-         $('#lstCuenta').removeAttr('disabled');
-      });      
-      
-      //Actualiza Select
-      $("#lstCuenta").trigger("chosen:updated");
-
+   $.get('modificarEstado/'+idImputacion+'/'+estado+'', function(data) {
+      location.reload();
    });
-});
 
-
+}
 
 $('#lstEstablecimiento').on('change', function(e){
    var idEstablecimiento = e.target.value;   
    $('#idEstablecimiento').val(idEstablecimiento);
 
-
-   $.get('getFuncionarios/'+idEstablecimiento+'', function(data) {
-
+   // debugger;
+   $.get('getFuncionarios/' +idEstablecimiento, function(data) {
+      // console.log(data);
+      // debugger;
       $('#lstFuncionario').empty();
       
       //Carga lstFuncionario en select
       $('#lstFuncionario').append('<option value="0" disable="false" selected="true">Seleccione Funcionario</option>');
-      
       if ($.isEmptyObject(data)) {
             
          $('#lstFuncionario').addClass('is-invalid');
@@ -253,6 +363,53 @@ $('#lstEstablecimiento').on('change', function(e){
    });
 });
 
+$('#lstSubvencion').on('change', function(e){
+   var idSubvencion = e.target.value;   
+   $('#idSubvencion').val(idSubvencion);
+
+
+   $.get('getCuentas/'+idSubvencion+'', function(data) {
+
+      $('#lstCuenta').empty();
+      
+      //Carga lstCuenta en select
+      $('#lstCuenta').append('<option value="0" disable="false" selected="true">Seleccione Cuenta</option>');
+
+      $.each(data, function(index, cuenta){        
+         $('#lstCuenta').append('<option value="'+cuenta.id+'">'+cuenta.nombre+'</option>');
+         $('#lstCuenta').removeAttr('disabled');
+      });      
+      
+      //Actualiza Select
+      $("#lstCuenta").trigger("chosen:updated");
+
+   });
+});
+
+$('#lstCuenta').on('change', function(e){
+   var idCuenta = e.target.value;   
+   // $('#idCuenta').val(idCuenta);
+
+
+   $.get('getDocumentos/'+idCuenta+'', function(data) {
+
+      // console.log(data);
+      // debugger;
+      $('#lstTipoDocumento').empty();
+      
+      //Carga lstTipoDocumento en select
+      $('#lstTipoDocumento').append('<option value="0" disable="false" selected="true">Seleccione Tipo Documento</option>');
+
+      $.each(data, function(index, documento){        
+         $('#lstTipoDocumento').append('<option value="'+documento.id+'">'+documento.nombre+'</option>');
+         $('#lstTipoDocumento').removeAttr('disabled');
+      });      
+      
+      //Actualiza Select
+      $("#lstTipoDocumento").trigger("chosen:updated");
+
+   });
+});
 
 $('[name=reembolsable]').on('click', function(e){
    
@@ -279,6 +436,8 @@ $('#guardar').click(function(){
    var form = $('#'+idFm);
    var url  = form.attr('action');
    var dataArray = form.serializeArray();
+   $(".cargando").css('visibility', 'visible');
+   $('#lstEstado').removeAttr('disabled');
 
    $.ajax({
       url: url,
@@ -289,14 +448,18 @@ $('#guardar').click(function(){
       dataType: 'json',
       data: dataArray,
       success: function(result){      
-         console.log(1, result);
+
 
          $.alertable.alert('<p class="text-center">'+result.message+'</p>', {html : true}).always(function(){
+            $(".cargando").css('visibility', 'visible');
             location.reload();
          });
       
+      }, complete: function(data) {
+         $(".cargando").css('visibility', 'hidden');
       }, error: function(data) {
-      
+         $(".cargando").css('visibility', 'hidden');
+         $('#lstEstado').addAttr('disabled');
          console.log(data);
          /* VALIDACIONES */
          //establecimiento      

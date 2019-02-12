@@ -48,7 +48,7 @@ function formatoMiles(n) {
 }
 
 function formatoDecimales(n) {
-  	var RE = /^\d*(\.\d{1})?\d{0,1}$/;
+  var RE = /^\d*(\.\d{1})?\d{0,1}$/;
 	if (RE.test(valor)) {
 	    return true;
 	} else {
@@ -57,6 +57,8 @@ function formatoDecimales(n) {
   //return n === '' ? n : Number(n).toLocaleString();
 }
 
+
+/* MENSAJES */
 function msgEliminarRegistroUtilizado (gramatica, texto) {
   if (gramatica == 'F') {
     return 'La '+ texto +' que intenta eliminar, está siendo utilizada en el sistema.';
@@ -71,4 +73,17 @@ function msgEliminadoCorrectamente (gramatica, texto) {
   } else if (gramatica == 'M') {
     return 'El '+ texto +' fue eliminado correctamente.';
   }
+}
+
+
+function maxLenght(id, max) {
+
+  if (id.value > max) {
+    id.value = max;
+    return false;
+  } else {    
+    return id.value;
+  }
+  
+  
 }

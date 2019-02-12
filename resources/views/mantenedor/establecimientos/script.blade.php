@@ -40,7 +40,7 @@ $(document).ready(function(){
    */
    $.fn.dataTable.ext.classes.sPagination = 'pagination pagination-sm';
    $('#dataTable-establecimientos').DataTable({
-
+      "processing": true,
       "oLanguage" : {
          "sProcessing"        : "Procesando...",
          "sLengthMenu"        : "Mostrar _MENU_ registros por página",
@@ -71,6 +71,41 @@ $(document).ready(function(){
          {data: 'fono', name: 'establecimientos.fono'},
          {data: 'opciones'},
       ],
+        dom: 'Bfrtip',
+        buttons: [ 
+            // {
+            //     extend: 'print',
+            //     text: 'Imprimir',
+            //     className: 'btn btn-primary btn-sm mr-1 float-left',
+            //     exportOptions: {
+            //         columns: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+            //     }
+            // },
+            {
+               extend: 'pdfHtml5',
+               className: 'btn btn-primary btn-sm mr-1 float-left',
+               exportOptions: { 
+                  orthogonal: 'export', 
+                  columns: [ 0, 1, 2, 3, 4]
+               },
+            },
+            {
+               extend: 'csv',
+               className: 'btn btn-primary btn-sm mr-1 float-left',
+               exportOptions: { 
+                  orthogonal: 'export', 
+                  columns: [ 0, 1, 2, 3, 4]
+               },
+            },
+            {
+               extend: 'excelHtml5',
+               className: 'btn btn-primary btn-sm mr-1 float-left',
+               exportOptions: { 
+                  orthogonal: 'export', 
+                  columns: [ 0, 1, 2, 3, 4]
+               },
+            }    
+        ],
       "drawCallback": function () {
          $('.dataTables_paginate > .pagination').addClass('pagination-sm');
       }
@@ -109,7 +144,7 @@ function Eliminar(i) {
    $.post(
       url,
       data,
-      function (result) {         
+      function (result) {        
          //Quitamos la fila
          row.fadeOut(); 
          //Mostramos alert
@@ -140,7 +175,7 @@ $('#guardar').click(function(){
    var form = $('#'+idFm);
    var url  = form.attr('action');
    var dataArray = form.serializeArray();
-
+   $(".cargando").css('visibility', 'visible');
    $.ajax({
       url: url,
       method: 'POST',
@@ -152,12 +187,15 @@ $('#guardar').click(function(){
       success: function(result){      
          //console.log(1, result);
          $.alertable.alert('<p class="text-center">'+result.message+'</p>', {html : true}).always(function(){
+            $(".cargando").css('visibility', 'visible');
             location.reload();
          });
       
+      }, complete: function(data) {
+         $(".cargando").css('visibility', 'hidden');
       }, error: function(data) {
-      
-         //console.log(data);
+         $(".cargando").css('visibility', 'hidden');
+         console.log(data);
          /* VALIDACIONES */
          //rbd      
          if (data.responseJSON.errors.rbd != undefined) {
