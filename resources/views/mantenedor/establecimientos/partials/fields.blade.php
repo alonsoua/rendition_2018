@@ -67,13 +67,13 @@
 
 {{-- lst TIPO DEPENDENCIA --}}
 <div class="form-group row">
-   {!! Form::label('Tipo Dependencia', 'Tipo Dependencia', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
+   {!! Form::label('Tipo Establecimiento', 'Tipo Establecimiento', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
 
    <div class="col-sm-9">
       {{ Form::select('tipoDependencia', $tipoDependencias , $editar == 0 ? null : $establecimiento->idTipoDependencia,
          [
             'id'           => 'lstTipoDependencia',
-            'placeholder'  => 'Seleccione Tipo Dependencia',         
+            'placeholder'  => 'Seleccione Tipo Establecimiento',         
             'class'        => 'form-control select-tipoDependencias'
          ])
       }}

@@ -31,47 +31,16 @@ $(document).ready(function(){
 
    });
 
-    $('.select-funcionarios').chosen({         
-         no_results_text: 'No se encontró el Funcionario',
-         width : '100%'       
-      });
+   $('.select-funcionarios').chosen({         
+      no_results_text: 'No se encontró el Funcionario',
+      width : '100%'       
+   });
    
-
    $('.select-periodos').chosen({
       // no_results_text: 'No se encontró ',
       width : '100%',
       disable_search: true
    });
-
-   // $('.select-cuenta').chosen({
-   //    no_results_text: 'No se encontró la Cuenta',
-   //    width : '100%'
-
-   // });
-
-   // $('.select-tipoDocumento').chosen({
-   //    no_results_text: 'No se encontró el Tipo Documento',
-   //    width : '100%'
-
-   // });
-
-   // $('.select-formaPagos').chosen({
-   //    no_results_text: 'No se encontró el Tipo Documento',
-   //    width : '100%'
-
-   // });
-
-   // $('.select-proveedor').chosen({
-   //    no_results_text: 'No se encontró el Proveedor',
-   //    width : '100%'
-
-   // });
-
-   // $('.select-estado').chosen({
-   //    disable_search: true,
-   //    width : '100%'
-
-   // });
 
   /*
    |--------------------------------------------------------------------------
@@ -109,10 +78,38 @@ $(document).ready(function(){
       "ajax"      : "{{ url('liquidacionesTable') }}",
       "columns"   : [
 
-         {data: 'establecimiento.nombre', name: 'establecimiento.nombre'},
-         {data: 'funcionario.nombre',     name: 'funcionario.nombre'},
-         {data: 'periodo.periodo',        name: 'periodo.periodo'},
-         {data: 'diasTrabajados',         name: 'liquidacions.diasTrabajados'},
+      
+         {data: 'funcionario.rut',              name: 'funcionario.rut',
+         render: function formateaRut(data) {
+               var rut = data;
+               var actual = rut.replace(/^0+/, "");
+               if (actual != '' && actual.length > 1) {
+                  var sinPuntos = actual.replace(/\./g, "");
+                  var actualLimpio = sinPuntos.replace(/-/g, "");
+                  var inicio = actualLimpio.substring(0, actualLimpio.length - 1);
+                  var rutPuntos = "";
+                  var i = 0;
+                  var j = 1;
+                  for (i = inicio.length - 1; i >= 0; i--) {
+                     var letra = inicio.charAt(i);
+                     rutPuntos = letra + rutPuntos;
+                     if (j % 3 == 0 && j <= inicio.length - 1) {
+                        rutPuntos = "." + rutPuntos;
+                     }
+                     j++;
+                  }
+                  var dv = actualLimpio.substring(actualLimpio.length - 1);
+                  rutPuntos = rutPuntos + "-" + dv;
+               }                
+               return rutPuntos;
+            }
+         },
+
+         {data: 'funcionario.nombre',           name: 'funcionario.nombre'},
+         {data: 'funcionario.apellidoPaterno',  name: 'funcionario.apellidoPaterno'},
+         {data: 'periodo.periodo',              name: 'periodo.periodo'},
+         {data: 'diasTrabajados',               name: 'liquidacions.diasTrabajados'},
+         {data: 'establecimiento.nombre',       name: 'establecimiento.nombre'},
          {data: 'opciones'},
       ],
       "drawCallback": function () {
@@ -229,10 +226,110 @@ $('#lstSubvencion').on('change', function(e){
 
 
 
+
+
+$('#lstPeriodo').on('change', function(e){
+   // Elimina Navs   
+   var idPeriodo = $("#lstPeriodo").val();
+   var idEstablecimiento = $("#lstEstablecimiento").val();
+   var idFuncionario = $("#lstFuncionario").val();
+
+   if (idFuncionario == 0) {
+      $("#navSubvenciones").css('display', 'none');
+      $("#navDescuentos").css('display', 'none');
+
+   }   
+
+   $.get('horasContrato/'+idFuncionario+'/'+idEstablecimiento+'/'+idPeriodo,function(data) {
+      
+      $.each(data, function(index, detalleLey){
+      
+         $("#txtHoras"+detalleLey.idLey).val(detalleLey.horas);      
+         
+         // VALOR SUELDO
+         var valorSueldo = parseInt(detalleLey.horas) * parseInt(detalleLey.valorHora);        
+         
+         $("#txtValor"+detalleLey.idLey).val(formatoMiles(valorSueldo));   
+
+         $("#txtValor"+detalleLey.idLey).attr('data-valorHora', detalleLey.valorHora);   
+
+         if (idFuncionario != 0) {
+            $("#navSubvenciones").css('display', 'block');
+            $("#navDescuentos").css('display', 'block');                     
+         }         
+      });
+    
+   });
+});
+
+function calcularValorSueldo(idLey) {
+
+   
+   var horas = $("#txtHoras"+idLey).val();   
+   var valorHora = $("#txtValor"+idLey).attr('data-valorHora');   
+
+   // VALOR SUELDO
+   var valorSueldo = horas * valorHora; 
+
+   if (horas <= 44) {
+      $("#txtValor"+idLey).val(formatoMiles(valorSueldo));      
+   }
+}
+
+
+$('#lstFuncionario').on('change', function(e){
+
+   // ELIMINA NAVS
+   $("#navSubvenciones").css('display', 'none');   
+   $("#navDescuentos").css('display', 'none'); 
+
+   var idEstablecimiento = $("#lstEstablecimiento").val();
+   var idFuncionario = $("#lstFuncionario").val();
+    
+   $(".cargando").css('visibility', 'visible'); 
+   
+   var idAno = 1;
+   $.get('getPeriodos/' +idAno, function(data) {
+      
+      $('#lstPeriodo').empty();
+      
+      //Carga lstPeriodo en select
+      $('#lstPeriodo').append('<option value="0" disable="false" selected="true">Seleccione Periodo</option>');
+      if ($.isEmptyObject(data)) {
+            
+         $('#lstPeriodo').addClass('is-invalid');
+         $('#vPeriodo').css('display', 'block');
+         $('#vPeriodo').addClass('invalid-feedback');
+         $('#msgPeriodo').html('El establecimiento seleccionado, no tiene Periodos agregados.');
+                  
+      }else {
+         $('#lstPeriodo').removeClass('is-invalid');
+         $('#lstPeriodo').addClass('is-valid');
+         $('#vPeriodo').css('display', 'none');
+      }
+
+      $.each(data, function(id, Periodo){                 
+         $('#lstPeriodo').append('<option value="'+id+'">'+Periodo+'</option>');
+         $('#lstPeriodo').removeAttr('disabled');      
+      });      
+      
+      //Actualiza Select
+      $("#lstPeriodo").trigger("chosen:updated");
+
+   });
+
+});
+
 $('#lstEstablecimiento').on('change', function(e){
+
+   // Elimina Navs
+   $("#navSubvenciones").css('display', 'none');   
+   $("#navDescuentos").css('display', 'none');     
+
+
    var idEstablecimiento = e.target.value;   
    $('#idEstablecimiento').val(idEstablecimiento);
-   var idAno = 1;
+   
    
    $.get('getFuncionarios/' +idEstablecimiento, function(data) {
       
@@ -264,37 +361,7 @@ $('#lstEstablecimiento').on('change', function(e){
       $("#lstFuncionario").trigger("chosen:updated");
 
    });
-
-   $.get('getPeriodos/' +idAno, function(data) {
-      
-      $('#lstPeriodo').empty();
-      
-      //Carga lstPeriodo en select
-      $('#lstPeriodo').append('<option value="0" disable="false" selected="true">Seleccione Periodo</option>');
-      if ($.isEmptyObject(data)) {
-            
-         $('#lstPeriodo').addClass('is-invalid');
-         $('#vPeriodo').css('display', 'block');
-         $('#vPeriodo').addClass('invalid-feedback');
-         $('#msgPeriodo').html('El establecimiento seleccionado, no tiene Periodos agregados.');
-                  
-      }else {
-         $('#lstPeriodo').removeClass('is-invalid');
-         $('#lstPeriodo').addClass('is-valid');
-         $('#vPeriodo').css('display', 'none');
-      }
-
-
-
-      $.each(data, function(id, Periodo){                 
-         $('#lstPeriodo').append('<option value="'+id+'">'+Periodo+'</option>');
-         $('#lstPeriodo').removeAttr('disabled');      
-      });      
-      
-      //Actualiza Select
-      $("#lstPeriodo").trigger("chosen:updated");
-
-   });
+   
 });
 
 
@@ -324,24 +391,24 @@ $('#guardar').click(function(){
    var url  = form.attr('action');
    var dataArray = form.serializeArray();
 
-   $.ajax({
-      url: url,
-      method: 'POST',
-      headers: {
-         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      },
-      dataType: 'json',
-      data: dataArray,
-      success: function(result){      
-         console.log(1, result);
+   // console.log(dataArray);
+   // debugger;
 
-         $.alertable.alert('<p class="text-center">'+result.message+'</p>', {html : true}).always(function(){
+   $.post(
+      url,
+      dataArray,
+      function (result) {
+
+         console.log(result);
+         debugger;
+         $.alertable.alert(result.message, {html : true}).always(function(){
+            $(".cargando").css('visibility', 'visible');
             location.reload();
          });
+   }).fail(function(data){
       
-      }, error: function(data) {
-      
-         console.log(data);
+         console.log(data.responseJSON);
+         debugger;
          /* VALIDACIONES */
          //establecimiento      
          if (data.responseJSON.errors.establecimiento != undefined) {
@@ -497,6 +564,6 @@ $('#guardar').click(function(){
             $('#vEstado').css('display', 'none');
          }
 
-      }
+      
    });
 });

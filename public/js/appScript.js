@@ -84,6 +84,5 @@ function maxLenght(id, max) {
   } else {    
     return id.value;
   }
-  
-  
+
 }

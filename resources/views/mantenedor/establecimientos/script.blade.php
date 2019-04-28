@@ -117,6 +117,7 @@ $(document).ready(function(){
 
 });
 
+
 function MensajeEliminar(e, i) {
    e.preventDefault();
    var rbd     = $(i).attr('data-rbd');

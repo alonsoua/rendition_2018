@@ -30,10 +30,10 @@
       </h4>
       <ul class="nav nav-tabs card-header-tabs">
          <li class="nav-item" style="cursor:pointer;">
-            <a class="nav-link active" id="navPersonal" style="color:#495057;" href="#">Personal</a>
+            <a class="nav-link active" id="navPersonal" style="color:#495057;" href="#">Información Personal</a>
          </li>               
          <li class="nav-item" style="cursor:pointer;">
-            <a class="nav-link" id="navSubvenciones" style="color:#495057;" href="#">Subvenciones</a>
+            <a class="nav-link" id="navSubvenciones" style="color:#495057;" href="#">Horas Contrato</a>
          </li>
       </ul>   
    </div>

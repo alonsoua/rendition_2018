@@ -8,7 +8,6 @@
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 | 
-| // Route::get('/home', 'HomeController@index')->name('home');
 |
 */
 
@@ -76,6 +75,11 @@ Route::middleware(['auth'])->group( function () {
           Route::get('lst-periodos', 'CalculoHoraController@periodos');
           //cargaLeyes en CalculoHoras
           Route::get('lst-cargaLeyes', 'CalculoHoraController@cargaLeyes');
+          //getDetalleMarzo
+          Route::get('getDetalleMarzo', 'CalculoHoraController@detalleMarzo');
+          //getAnteriorRegistro
+          Route::get('getAnteriorRegistro', 'CalculoHoraController@getAnteriorRegistro');
+          
 
         /* Gastos */
         //Cuentas
@@ -126,7 +130,11 @@ Route::middleware(['auth'])->group( function () {
 
           Route::get('liquidaciones/getPeriodos/{id}', 'LiquidacionController@getPeriodos');
 
+          //horasContrato          
+          Route::get('liquidaciones/horasContrato/{idFuncionario}/{idEstablecimiento}/{idPeriodo}', 'LiquidacionController@horasContrato');
 
+
+        
         //ReportesRRHH
         Route::resource('reportesrrhh', 'ReporteRrhhController');       
 
@@ -314,14 +322,12 @@ Route::middleware(['auth'])->group( function () {
       Route::get('liquidacionesTable', function(){
 
         $liquidaciones = Liquidacion::select('liquidacions.*')
-                              ->with('establecimiento', 'funcionario', 'periodo')
-                              ;
+                              ->with('funcionario', 'establecimiento', 'periodo');
 
         return datatables()
         ->eloquent($liquidaciones)             
         ->addColumn('opciones', 'RRHH.liquidaciones.partials.opciones')
         ->rawColumns(['opciones'])
         ->toJson();
-
       });
 /* FIN RRHH */

@@ -79,6 +79,7 @@ class FuncionarioController extends Controller
                                               subvencions.id as idSubvencion
                                             , subvencions.nombre as nombreSubvencion')
                                 ->where('subvencions.id', '>', 0)
+                                ->where('leys.tipo', 'Haber')
                                 ->orderBy('subvencions.nombre')
                                 ->get();
 
@@ -87,13 +88,38 @@ class FuncionarioController extends Controller
         $funcionarioLey = array();
         foreach ($arraySubvenciones as $key => $subvencion) {
             
-            // Consulta las leyes según subvención
-            $arrayLeyes =   Ley::selectRaw('  id as idLey
-                                            , codigo as codigoLey
-                                            , nombre as nombreLey ')
+            $topeHora = Ley::selectRaw('tope as topeHora ')
                             ->where('idSubvencion', $subvencion->idSubvencion)
+                            ->get();       
+
+            // Consulta las leyes según subvención
+            $leyes =   Ley::selectRaw('  id as idLey
+                                            , codigo as codigoLey
+                                            , nombre as nombreLey 
+                                            , tope as topeHora ')
+                            ->where('idSubvencion', $subvencion->idSubvencion)
+                            ->where('tipo', 'Haber')
                             ->get();                            
+            $arrayLeyes = array();
+            foreach ($leyes as $idLey => $ley) {
+
+
+                $horasFuncionarios = Funcionario_Ley::selectRaw('sum(horas) as horas')
+                            ->where('idLey', $ley->idLey)
+                            ->get(); 
             
+                $topeHora = $ley->topeHora - $horasFuncionarios[0]['horas'];
+
+                $arrayLeyes[$ley->idLey] = [   
+                            'idLey'     => $ley->idLey,
+                            'codigoLey' => $ley->codigoLey,
+                            'nombreLey' => $ley->nombreLey,
+                            'topeHora'  => $topeHora,
+                            ];
+                
+            }
+
+            // dd($arrayLeyes);
             $funcionarioLey[$key] = [   'idSubvencion' => $subvencion->idSubvencion,
                                         'subvencion'   => $subvencion->nombreSubvencion,
                                         'leyes'        => $arrayLeyes 
@@ -129,51 +155,104 @@ class FuncionarioController extends Controller
             
             // Validaciones
             if ($request->salud == 6) {
-                Request()->validate([
+
+                if ($request->tipoContrato == 1) {
+                    Request()->validate([
+                            'establecimiento'       => 'required',
+                            'rut'                   => 'required|numeric|unique:funcionarios',
+                            'nombre'                => 'required|max:100',
+                            'apellidoPaterno'       => 'required|max:50',
+                            'apellidoMaterno'       => 'required|max:50',
+                            'afp'                   => 'required',
+                            'salud'                 => 'required',                                
+                            'tipoContrato'          => 'required',
+                            'horasCtoSemanal'       => 'required|numeric|max:44',
+                            'fechaInicioContrato'   => 'required',                            
+                            'funcion'               => 'required'
+                        ]);   
+                } else {
+                    Request()->validate([
+                            'establecimiento'       => 'required',
+                            'rut'                   => 'required|numeric|unique:funcionarios',
+                            'nombre'                => 'required|max:100',
+                            'apellidoPaterno'       => 'required|max:50',
+                            'apellidoMaterno'       => 'required|max:50',
+                            'afp'                   => 'required',
+                            'salud'                 => 'required',                                
+                            'tipoContrato'          => 'required',
+                            'horasCtoSemanal'       => 'required|numeric|max:44',
+                            'fechaInicioContrato'   => 'required',
+                            'fechaTerminoContrato'  => 'required',
+                            'funcion'               => 'required'
+                        ]);   
+                    
+                }
+            }  elseif  (empty($request->salud)) {       
+                if ($request->tipoContrato == 1) {
+                    Request()->validate([
                         'establecimiento'       => 'required',
                         'rut'                   => 'required|numeric|unique:funcionarios',
                         'nombre'                => 'required|max:100',
-                        'apellidoPaterno'       => 'required|max:100',
-                        'apellidoMaterno'       => 'required|max:100',
+                        'apellidoPaterno'       => 'required|max:50',
+                        'apellidoMaterno'       => 'required|max:50',
                         'afp'                   => 'required',
                         'salud'                 => 'required',                                
                         'tipoContrato'          => 'required',
-                        'horasCtoSemanal'       => 'required|numeric|max:10',
+                        'horasCtoSemanal'       => 'required|numeric|max:44',
+                        'fechaInicioContrato'   => 'required',                        
+                        'funcion'               => 'required'
+                    ]);   
+                } else {
+                    Request()->validate([
+                        'establecimiento'       => 'required',
+                        'rut'                   => 'required|numeric|unique:funcionarios',
+                        'nombre'                => 'required|max:100',
+                        'apellidoPaterno'       => 'required|max:50',
+                        'apellidoMaterno'       => 'required|max:50',
+                        'afp'                   => 'required',
+                        'salud'                 => 'required',                                
+                        'tipoContrato'          => 'required',
+                        'horasCtoSemanal'       => 'required|numeric|max:44',
                         'fechaInicioContrato'   => 'required',
                         'fechaTerminoContrato'  => 'required',
                         'funcion'               => 'required'
                     ]);   
-            }  elseif  (empty($request->salud)) {                  
-                Request()->validate([
-                        'establecimiento'       => 'required',
-                        'rut'                   => 'required|numeric|unique:funcionarios',
-                        'nombre'                => 'required|max:100',
-                        'apellidoPaterno'       => 'required|max:100',
-                        'apellidoMaterno'       => 'required|max:100',
-                        'afp'                   => 'required',
-                        'salud'                 => 'required',                                
-                        'tipoContrato'          => 'required',
-                        'horasCtoSemanal'       => 'required|numeric|max:10',
-                        'fechaInicioContrato'   => 'required',
-                        'fechaTerminoContrato'  => 'required',
-                        'funcion'               => 'required'
-                    ]);   
+                }  
+                
             } else {
-                Request()->validate([
+                if ($request->tipoContrato == 1) {
+                    Request()->validate([
                         'establecimiento'       => 'required',
                         'rut'                   => 'required|numeric|unique:funcionarios',
                         'nombre'                => 'required|max:100',
-                        'apellidoPaterno'       => 'required|max:100',
-                        'apellidoMaterno'       => 'required|max:100',
+                        'apellidoPaterno'       => 'required|max:50',
+                        'apellidoMaterno'       => 'required|max:50',
                         'afp'                   => 'required',
                         'salud'                 => 'required',            
                         'ufIsapre'              => 'required|numeric|max:6',
                         'tipoContrato'          => 'required',
-                        'horasCtoSemanal'       => 'required|numeric|max:10',
+                        'horasCtoSemanal'       => 'required|numeric|max:44',
+                        'fechaInicioContrato'   => 'required',        
+                        'funcion'               => 'required'
+                    ]);          
+
+                } else {
+                    Request()->validate([
+                        'establecimiento'       => 'required',
+                        'rut'                   => 'required|numeric|unique:funcionarios',
+                        'nombre'                => 'required|max:100',
+                        'apellidoPaterno'       => 'required|max:50',
+                        'apellidoMaterno'       => 'required|max:50',
+                        'afp'                   => 'required',
+                        'salud'                 => 'required',            
+                        'ufIsapre'              => 'required|numeric|max:6',
+                        'tipoContrato'          => 'required',
+                        'horasCtoSemanal'       => 'required|numeric|max:44',
                         'fechaInicioContrato'   => 'required',
                         'fechaTerminoContrato'  => 'required',
                         'funcion'               => 'required'
-                    ]);          
+                    ]);                              
+                }
             }
             
             // Mensajes de validación
@@ -184,12 +263,17 @@ class FuncionarioController extends Controller
 
             
             // Transaction: Si se cae en el segundo create, 
-            // no ingresa los datos del primer create
+            // no ingresa los datos del primer create                
             DB::transaction(function () use ($request){
 
+                
                 // Formateamos Fechas
                 $fechaInicioContrato = date("Y-m-d", strtotime($request->fechaInicioContrato));
-                $fechaTerminoContrato = date("Y-m-d", strtotime($request->fechaTerminoContrato));            
+                if ($request->fechaTerminoContrato == null) {
+                    $fechaTerminoContrato = $request->fechaTerminoContrato;
+                } else {
+                    $fechaTerminoContrato = date("Y-m-d", strtotime($request->fechaTerminoContrato));                                
+                }
                 
                 // Crea Funcionario            
                 $funcionario = Funcionario::Create([
@@ -217,8 +301,7 @@ class FuncionarioController extends Controller
                         'idLey' => $ley,
                         'idSubvencion' => $request->idSubvencion[$ley],
                         'horas' => $hora,
-                    ]);
-                
+                    ]);                
                 }
 
             });
@@ -288,6 +371,7 @@ class FuncionarioController extends Controller
                                               subvencions.id as idSubvencion
                                             , subvencions.nombre as nombreSubvencion')
                                 ->where('subvencions.id', '>', 0)
+                                ->where('leys.tipo', 'Haber')
                                 ->orderBy('subvencions.nombre')
                                 ->get();
 
@@ -297,25 +381,49 @@ class FuncionarioController extends Controller
                
         foreach ($arraySubvenciones as $key => $subvencion) {
             
+
+            $topeHora = Ley::selectRaw('tope as topeHora ')
+                            ->where('idSubvencion', $subvencion->idSubvencion)
+                            ->where('tipo', 'Haber')
+                            ->get();       
+
+
             // Consulta las leyes según subvención
             $arrayLeyes =   Ley::selectRaw('  id as idLey
                                             , codigo as codigoLey
-                                            , nombre as nombreLey ')
+                                            , nombre as nombreLey
+                                            , tope as topeHora ')
                             ->where('idSubvencion', $subvencion->idSubvencion)
+                            ->where('tipo', 'Haber')
                             ->get();         
 
             $leyes = array(); 
             foreach ($arrayLeyes as $keys => $ley) {
+
+                $horasFuncionarios = Funcionario_Ley::selectRaw('sum(horas) as horas')
+                            ->where('idLey', $ley->idLey)
+                            ->get(); 
+
+                $topeHora = $ley->topeHora - $horasFuncionarios[0]['horas'];
+
+
                 $hora = 0;
                 $hora = Funcionario_Ley::selectRaw('horas, idSubvencion, idLey, idFuncionario, id')
                             ->where('idFuncionario', $id)                            
                             ->where('idLey', $ley->idLey)
                             ->get();  
 
-                $leyes[$keys] = [  'idLey'     => $ley->idLey,
-                            'codigoLey' => $ley->codigoLey,
-                            'nombreLey' => $ley->nombreLey,
-                            'horas'     => $hora[0]['horas']
+                if (is_null($hora[0]['horas'])) {
+                    $hora = 0;
+                } else {
+                    $hora = $hora[0]['horas'];
+                }
+
+                $leyes[$keys] = [   'idLey'     => $ley->idLey,
+                                    'codigoLey' => $ley->codigoLey,
+                                    'nombreLey' => $ley->nombreLey,
+                                    'horas'     => $hora,
+                                    'topeHora'  => $topeHora,
                             ];
             }
 
@@ -323,6 +431,7 @@ class FuncionarioController extends Controller
                                         'subvencion'   => $subvencion->nombreSubvencion,
                                         'leyes'        => $leyes
                                     ];
+
         }   
 
         return view('mantenedor.rrhhFuncionarios.edit'
@@ -353,51 +462,100 @@ class FuncionarioController extends Controller
         
         // Validaciones
         if ($request->salud == 6) {
-            Request()->validate([
-                    'establecimiento'       => 'required',                    
-                    'rut'                   => 'required|unique:funcionarios,rut,'.$id.',id' ,
-                    'nombre'                => 'required|max:100',
-                    'apellidoPaterno'       => 'required|max:100',
-                    'apellidoMaterno'       => 'required|max:100',
-                    'afp'                   => 'required',
-                    'salud'                 => 'required',                                
-                    'tipoContrato'          => 'required',
-                    'horasCtoSemanal'       => 'required|numeric|max:10',
-                    'fechaInicioContrato'   => 'required',
-                    'fechaTerminoContrato'  => 'required',
-                    'funcion'               => 'required'
-                ]);   
-        }  elseif  (empty($request->salud)) {                  
-            Request()->validate([
-                    'establecimiento'       => 'required',                    
-                    'rut'                   => 'required|unique:funcionarios,rut,'.$id.',id' ,
-                    'nombre'                => 'required|max:100',
-                    'apellidoPaterno'       => 'required|max:100',
-                    'apellidoMaterno'       => 'required|max:100',
-                    'afp'                   => 'required',
-                    'salud'                 => 'required',                                
-                    'tipoContrato'          => 'required',
-                    'horasCtoSemanal'       => 'required|numeric|max:10',
-                    'fechaInicioContrato'   => 'required',
-                    'fechaTerminoContrato'  => 'required',
-                    'funcion'               => 'required'
-                ]);   
+            if ($request->tipoContrato == 1) {
+                Request()->validate([
+                        'establecimiento'       => 'required',                    
+                        'rut'                   => 'required|unique:funcionarios,rut,'.$id.',id' ,
+                        'nombre'                => 'required|max:100',
+                        'apellidoPaterno'       => 'required|max:50',
+                        'apellidoMaterno'       => 'required|max:50',
+                        'afp'                   => 'required',
+                        'salud'                 => 'required',                                
+                        'tipoContrato'          => 'required',
+                        'horasCtoSemanal'       => 'required|numeric|max:44',
+                        'fechaInicioContrato'   => 'required',                        
+                        'funcion'               => 'required'
+                    ]);   
+            } else {
+                Request()->validate([
+                        'establecimiento'       => 'required',                    
+                        'rut'                   => 'required|unique:funcionarios,rut,'.$id.',id' ,
+                        'nombre'                => 'required|max:100',
+                        'apellidoPaterno'       => 'required|max:50',
+                        'apellidoMaterno'       => 'required|max:50',
+                        'afp'                   => 'required',
+                        'salud'                 => 'required',                                
+                        'tipoContrato'          => 'required',
+                        'horasCtoSemanal'       => 'required|numeric|max:44',
+                        'fechaInicioContrato'   => 'required',
+                        'fechaTerminoContrato'  => 'required',
+                        'funcion'               => 'required'
+                    ]);                   
+            }
+        }  elseif  (empty($request->salud)) {  
+            if ($request->tipoContrato == 1) {
+                Request()->validate([
+                        'establecimiento'       => 'required',                    
+                        'rut'                   => 'required|unique:funcionarios,rut,'.$id.',id' ,
+                        'nombre'                => 'required|max:100',
+                        'apellidoPaterno'       => 'required|max:50',
+                        'apellidoMaterno'       => 'required|max:50',
+                        'afp'                   => 'required',
+                        'salud'                 => 'required',                                
+                        'tipoContrato'          => 'required',
+                        'horasCtoSemanal'       => 'required|numeric|max:44',
+                        'fechaInicioContrato'   => 'required',                        
+                        'funcion'               => 'required'
+                    ]);   
+            } else {
+                Request()->validate([
+                        'establecimiento'       => 'required',                    
+                        'rut'                   => 'required|unique:funcionarios,rut,'.$id.',id' ,
+                        'nombre'                => 'required|max:100',
+                        'apellidoPaterno'       => 'required|max:50',
+                        'apellidoMaterno'       => 'required|max:50',
+                        'afp'                   => 'required',
+                        'salud'                 => 'required',                                
+                        'tipoContrato'          => 'required',
+                        'horasCtoSemanal'       => 'required|numeric|max:44',
+                        'fechaInicioContrato'   => 'required',
+                        'fechaTerminoContrato'  => 'required',
+                        'funcion'               => 'required'
+                    ]);                   
+            }
         } else {
-            Request()->validate([
-                    'establecimiento'       => 'required',                    
-                    'rut'                   => 'required|unique:funcionarios,rut,'.$id.',id' ,
-                    'nombre'                => 'required|max:100',
-                    'apellidoPaterno'       => 'required|max:100',
-                    'apellidoMaterno'       => 'required|max:100',
-                    'afp'                   => 'required',
-                    'salud'                 => 'required',            
-                    'ufIsapre'              => 'required|numeric|max:6',
-                    'tipoContrato'          => 'required',
-                    'horasCtoSemanal'       => 'required|numeric|max:10',
-                    'fechaInicioContrato'   => 'required',
-                    'fechaTerminoContrato'  => 'required',
-                    'funcion'               => 'required'
-                ]);          
+            if ($request->tipoContrato == 1) {
+                Request()->validate([
+                        'establecimiento'       => 'required',                    
+                        'rut'                   => 'required|unique:funcionarios,rut,'.$id.',id' ,
+                        'nombre'                => 'required|max:100',
+                        'apellidoPaterno'       => 'required|max:50',
+                        'apellidoMaterno'       => 'required|max:50',
+                        'afp'                   => 'required',
+                        'salud'                 => 'required',            
+                        'ufIsapre'              => 'required|numeric|max:6',
+                        'tipoContrato'          => 'required',
+                        'horasCtoSemanal'       => 'required|numeric|max:44',
+                        'fechaInicioContrato'   => 'required',                        
+                        'funcion'               => 'required'
+                    ]);          
+            } else {                
+                Request()->validate([
+                        'establecimiento'       => 'required',                    
+                        'rut'                   => 'required|unique:funcionarios,rut,'.$id.',id' ,
+                        'nombre'                => 'required|max:100',
+                        'apellidoPaterno'       => 'required|max:50',
+                        'apellidoMaterno'       => 'required|max:50',
+                        'afp'                   => 'required',
+                        'salud'                 => 'required',            
+                        'ufIsapre'              => 'required|numeric|max:6',
+                        'tipoContrato'          => 'required',
+                        'horasCtoSemanal'       => 'required|numeric|max:44',
+                        'fechaInicioContrato'   => 'required',
+                        'fechaTerminoContrato'  => 'required',
+                        'funcion'               => 'required'
+                    ]);          
+            }
         }
         
         // Mensajes de validación
@@ -410,7 +568,12 @@ class FuncionarioController extends Controller
         
             // Formateamos Fechas
             $fechaInicioContrato = date("Y-m-d", strtotime($request->fechaInicioContrato));
-            $fechaTerminoContrato = date("Y-m-d", strtotime($request->fechaTerminoContrato));   
+
+            if ($request->fechaTerminoContrato == null) {
+                $fechaTerminoContrato = $request->fechaTerminoContrato;
+            } else {
+                $fechaTerminoContrato = date("Y-m-d", strtotime($request->fechaTerminoContrato));                                               
+            }
                 
             $funcionario = Funcionario::findOrFail($id);        
             $funcionario->idEstablecimiento     = $request->establecimiento;
@@ -465,6 +628,7 @@ class FuncionarioController extends Controller
         $nombre = DB::table('funcionarios')->where('id', $id)->value('nombre');
         $rut = DB::table('funcionarios')->where('id', $id)->value('rut');
 
+        DB::table('funcionario_ley')->where('idFuncionario', $id)->delete();   
         DB::table('funcionarios')->where('id', $id)->delete();   
 
         $texto   = Helper::rut($rut).' - '.$nombre;     

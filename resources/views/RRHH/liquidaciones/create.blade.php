@@ -19,10 +19,10 @@
          <a class="nav-link active" id="navLiquidacion" style="color: #495057;" href="#">Liquidación</a>
       </li>               
       <li class="nav-item" style="cursor:pointer;">
-         <a class="nav-link" id="navSubvenciones" style="color: #495057;" href="#">Subvenciones</a>
+         <a class="nav-link" id="navSubvenciones" style="color: #495057; display: none;" href="#">Subvenciones</a>
       </li>
       <li class="nav-item" style="cursor:pointer;">
-         <a class="nav-link" id="navDescuentos" style="color: #495057;" href="#">Descuentos</a>
+         <a class="nav-link" id="navDescuentos" style="color: #495057; display: none;" href="#">Descuentos</a>
       </li>
    </ul>
 </div>

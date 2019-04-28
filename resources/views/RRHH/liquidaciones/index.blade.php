@@ -27,11 +27,13 @@
             <table id="dataTable-liquidaciones" class="table table-striped table-bordered table-sm">
                <thead>
                   <tr>
-                     <th scope="col" width="15%">Establecimiento</th>
-                     <th scope="col" width="10%">Funcionario</th>
+                     <th scope="col" width="15%">Rut</th>
+                     <th scope="col" width="10%">Nombre</th>
+                     <th scope="col" width="10%">Apellido</th>
                      <th scope="col" width="12%">Mes</th>
-                     {{-- <th scope="col" width="15%">Desripci&oacute;n</th>--}}
                      <th scope="col" width="15%">D&iacute;as Trabajados</th> 
+                     <th scope="col" width="15%">Establecimiento</th>
+                     {{-- <th scope="col" width="15%">Desripci&oacute;n</th>--}}
                      <th scope="col" width="15%" class="text-center">opciones</th>
                   </tr>
                </thead>

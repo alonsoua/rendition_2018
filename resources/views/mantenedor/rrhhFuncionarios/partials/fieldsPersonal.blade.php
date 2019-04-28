@@ -192,8 +192,10 @@
 
 {{-- FECHA TÉRMINO CONTRATO --}}
 <div class="form-group row ">
-   {!! Form::label('Fecha Término Contrato', 'Fecha Término Contrato', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
-
+   {!! Form::label('Fecha Término Contrato', 'Fecha Término Contrato', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left',
+                                              'id'    => 'lblFechaTerminoContrato',
+                                              'style' => 'display:none;',]) !!}
+   
    <div class="col-sm-9">
       <div class="input-group">
         
@@ -201,10 +203,11 @@
                , $editar == 0 ? null : date("d-m-Y", strtotime($funcionario->fechaTerminoContrato)),
             ['id'          => 'txtFechaTerminoContrato',
             'class'        => 'form-control fecha-termino',
-            'placeholder'  => 'dd-mm-yyyy'])
+            'placeholder'  => 'dd-mm-yyyy',
+            'style'        => 'display:none;',])
          !!}
             
-         <div class="input-group-prepend">
+         <div class="input-group-prepend" id="calFechaTerminoContrato" style="display:none;">
             <span class="input-group-text" id="basic-addon-calendar2">
                <i class="fa fa-calendar-alt form-control-feedback"></i> 
             </span>

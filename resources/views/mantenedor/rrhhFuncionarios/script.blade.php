@@ -186,6 +186,37 @@ $(document).ready(function(){
 
 });
 
+
+$('#lstTipoContrato').on('change', function(e){
+   var idTipoContrato = e.target.value;   
+   
+   if (idTipoContrato != 1) {
+      $("#txtFechaTerminoContrato").css('display', 'block');
+      $("#calFechaTerminoContrato").css('display', 'block');      
+      $('#lblFechaTerminoContrato').css('display', 'block');
+      $('#txtFechaTerminoContrato').val(null);
+      $('#vFechaTerminoContrato').css('display', 'block'); 
+      
+   } else {
+      $("#txtFechaTerminoContrato").css('display', 'none');
+      $("#calFechaTerminoContrato").css('display', 'none');
+      $('#lblFechaTerminoContrato').css('display', 'none');      
+      $('#vFechaTerminoContrato').css('display', 'none'); 
+   }
+   
+});
+
+function topeHoras(idLey, valor) {         
+   var topeHora = $("#txtTopeHoras"+idLey).attr('data-topeHora');   
+   var tope = topeHora - valor;
+   if (!isNaN(valor)) {
+      $("#txtTopeHoras"+idLey).val(tope);
+   } else {
+      $("#txtTopeHoras"+idLey).val(topeHora);
+   }
+}
+
+
 function MensajeEliminar(e, i) {
    e.preventDefault();
    var rut = $(i).attr('data-rut');
@@ -282,6 +313,12 @@ $('#guardar').click(function(){
    $('#navPersonal').css('background' , 'white');
 
    $(".cargando").css('visibility', 'visible');
+
+
+
+
+   // console.log(dataArray);
+   // debugger;
    $.post(
       url,
       dataArray,

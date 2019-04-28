@@ -105,9 +105,14 @@
       {!! Form::number('diasTrabajados', $editar == 0 ? null : $liquidacion->diasTrabajados,
                      ['id'              => 'txtDiasTrabajados',
                      'class'            => 'form-control text-left',
-                     'maxlength'        => 50,                        
+                     'max'              => 30,                            
+                     'onKeyup'          => 'return maxLenght(txtDiasTrabajados, 30)',
                      'placeholder'      => 'Días Trabajados',
-                     'aria-describedby' => 'inputGroup-sizing-sm'])
+                     'aria-describedby' => 'inputGroup-sizing-sm',
+                     'oncopy'           => 'return false',
+                     'onpaste'          => 'return false',
+                     'ondragstart'      => 'return false;', 
+                     'ondrop'           => 'return false'])
       !!}  
 
       <div id="vDiasTrabajados"><span id="msgDiasTrabajados" class="validacion"></span></div> {{-- Div de Validación --}}

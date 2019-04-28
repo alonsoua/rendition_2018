@@ -18,7 +18,7 @@
    </div>
 </div>
 
-<div  id="row-Periodo" style="display: none">
+<div  id="row-Periodo" style="display: none;">
    <div class="form-group row">
     
       {!! Form::label('Periodo', 'Periodo', ['class' => 'col-sm-3 col-form-label text-right']) !!}

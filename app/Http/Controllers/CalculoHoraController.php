@@ -76,6 +76,7 @@ class CalculoHoraController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->);
         if ($request->ajax()) {          
 
             // Si existe devuelve id
@@ -95,6 +96,7 @@ class CalculoHoraController extends Controller
                 );
 
                 $calculoHoraDetalleEdit = CalculoHoraDetalle::findOrFail($calculoHoraDetalle->id);        
+                $calculoHoraDetalleEdit->porcentaje   = $request->porcCarga[$ley];
                 $calculoHoraDetalleEdit->cargaPeriodo = str_replace(".", "", $request->cargaPeriodo[$ley]);
                 $calculoHoraDetalleEdit->cantHoras    = str_replace(".", "", $request->cantHoras[$ley]);
                 $calculoHoraDetalleEdit->valor        = str_replace(".", "", $request->valor[$ley]);         
@@ -170,6 +172,59 @@ class CalculoHoraController extends Controller
         return response()->json($periodos);
     }
 
+    public function getAnteriorRegistro(Request $request) 
+    {   
+
+        $idPeriodo = $request->idPeriodo - 1;
+        $idEstablecimiento = $request->idEstablecimiento;
+        $idCalculoHora = CalculoHora::selectRaw('id')
+            ->where('idPeriodo', $idPeriodo)
+            ->where('idEstablecimiento', $idEstablecimiento)
+            ->get();
+
+        return response()->json($idCalculoHora);
+    }
+    
+
+    public function detalleMarzo(Request $request) 
+    {
+        $periodo           = '03-'.$request->ano;
+        $idLey             = $request->idLey;
+        $idEstablecimiento = $request->idEstablecimiento;
+        $param             = $request->param;
+
+        $resultPeriodo = Periodo::select('id')
+                        ->where('periodo', $periodo)
+                        ->get();
+
+        $idPeriodo = $resultPeriodo[0]['id'];
+    
+        $resultCalculoHora = CalculoHora::select('id')
+                        ->where('idPeriodo', $idPeriodo)
+                        ->where('idEstablecimiento', $idEstablecimiento)
+                        ->get();
+
+        $idCalculoHora = $resultCalculoHora[0]['id'];
+
+        $resultCalculoHoraDetalle = CalculoHoraDetalle::selectRaw($param)
+                            ->where('idLey', $idLey)
+                            ->where('idCalculoHora', $idCalculoHora)
+                            ->get();
+        $calculoHoraDetalle = array();
+        array_push( $calculoHoraDetalle, [
+                               'porcentaje'   => $resultCalculoHoraDetalle[0],
+                               'cargaPeriodo' => $resultCalculoHoraDetalle[0]['cargaPeriodo'],                       
+                               'cantHoras'    => $resultCalculoHoraDetalle[0]['cantHoras'],         
+                               'valor'        => $resultCalculoHoraDetalle[0]['valor'],         
+                            ]);        
+
+        var_dump($resultCalculoHoraDetalle[0][$param]);
+        die();
+        return response()->json($resultCalculoHoraDetalle[0][$param]);
+
+
+    }
+
     public function cargaLeyes(Request $request)
     {
         $idPeriodo = $request->idPeriodo;
@@ -190,6 +245,7 @@ class CalculoHoraController extends Controller
                                               subvencions.id as idSubvencion
                                             , subvencions.nombre as nombreSubvencion')
                                 ->where('subvencions.id', '>', 0)
+                                ->where('leys.tipo', 'Haber')
                                 ->orderBy('subvencions.nombre')
                                 ->get();
 
@@ -202,15 +258,17 @@ class CalculoHoraController extends Controller
             $arrayLeyes =   DB::table('leys')
                             ->selectRaw('leys.id as idLey, leys.codigo as codigoLey, leys.nombre as nombreLey')
                             ->where('idSubvencion', $subvencion->idSubvencion)
+                            ->where('tipo', 'Haber')
                             ->get();
 
             $leyesValores = array();
             foreach ($arrayLeyes as $ley => $value) {
                 
                 //Por defecto
-                $cargP = 2000000;
-                $cantH = 200;
-                $valor = 9000;
+                $porce = 0;
+                $cargP = 0;
+                $cantH = 0;
+                $valor = 0;
 
                 if (!empty($calculoHora[0])) {
                     
@@ -225,6 +283,7 @@ class CalculoHoraController extends Controller
                                                         'idLey'        => $value->idLey,
                                                         'codigoLey'    => $value->codigoLey,
                                                         'nombreLey'    => $value->nombreLey,
+                                                        'porcentaje'   => $calculoHoraDetalle[0]->porcentaje,
                                                         'cargaPeriodo' => $calculoHoraDetalle[0]->cargaPeriodo,
                                                         'cantHoras'    => $calculoHoraDetalle[0]->cantHoras,
                                                         'valor'        => $calculoHoraDetalle[0]->valor
@@ -236,6 +295,7 @@ class CalculoHoraController extends Controller
                                                         'idLey'        => $value->idLey,
                                                         'codigoLey'    => $value->codigoLey,
                                                         'nombreLey'    => $value->nombreLey,
+                                                        'porcentaje'   => $porce,
                                                         'cargaPeriodo' => $cargP,
                                                         'cantHoras'    => $cantH,
                                                         'valor'        => $valor                              
@@ -247,6 +307,7 @@ class CalculoHoraController extends Controller
                                                     'idLey'        => $value->idLey,
                                                     'codigoLey'    => $value->codigoLey,
                                                     'nombreLey'    => $value->nombreLey,
+                                                    'porcentaje'   => $porce,
                                                     'cargaPeriodo' => $cargP,
                                                     'cantHoras'    => $cantH,
                                                     'valor'        => $valor                              
@@ -263,5 +324,7 @@ class CalculoHoraController extends Controller
         
         return response()->json($leyes);
     }
+
+    
 }
 
