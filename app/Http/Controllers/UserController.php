@@ -44,9 +44,9 @@ class UserController extends Controller
     public function create()
     {   
         $editar = 0;
-        $pass   = null;
+        $pass   = ' ';
         $nombre = null;
-        $correo = null;
+        $correo = ' ';
 
         $rolRaw = Role::selectRaw('CONCAT(name, " (" , description, ")" ) as nombre, id')->get();        
         $roles  = $rolRaw->pluck('nombre', 'id');

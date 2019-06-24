@@ -13,7 +13,7 @@
 <div class="card">
 
 <div class="card-header">
-	<h4 class="my-0 font-weight-light text-sm-center">Agregar Liquidación</h4>
+	<h4 class="my-0 font-weight-light text-sm-center">Nueva Liquidación</h4>
    <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item" style="cursor:pointer;">
          <a class="nav-link active" id="navLiquidacion" style="color: #495057;" href="#">Liquidación</a>

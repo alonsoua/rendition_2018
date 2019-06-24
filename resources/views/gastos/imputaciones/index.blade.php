@@ -11,7 +11,40 @@
 <div class="card">
 
    <div class="card-header">
-      <h5 class="font-weight-light mt-2 text-sm-left float-left">Listado de Gastos</h5>
+      <div class="form-group row">
+         {!! Form::label('Desde: ', 'Desde: ', ['class' => 'ml-3 mr-2 col-form-label text-md-left text-sm-left']) !!}
+         <div class="col-md-2 ">
+            <div class="input-group">
+                
+               <input type="text" name="desde" id="desde" class="form-control filter-input fecha-desde" autocomplete="off" />
+         
+               <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon-calendar">
+                     <i class="fa fa-calendar-alt form-control-feedback"></i> 
+                  </span>
+               </div>
+            </div>
+            <div id="vDesde"><span id="msgDesde" class="validacion"></span></div>
+         </div>
+         
+         {!! Form::label('Hasta: ', 'Hasta: ', ['class' => 'ml-3 mr-2 col-form-label text-md-left text-sm-left']) !!}
+         <div class="col-md-2">
+            <div class="input-group">
+
+               <input type="text" name="hasta" id="hasta" class="form-control filter-input fecha-hasta" autocomplete="off" />
+         
+               <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon-calendar">
+                     <i class="fa fa-calendar-alt form-control-feedback"></i> 
+                  </span>
+               </div>
+            </div>
+            <div id="vHasta"><span id="msgHasta" class="validacion"></span></div>
+         </div>                 
+      </div>
+      <hr>
+
+      <h5 class="font-weight-light mt-2 text-sm-left float-left">Lista de Gastos</h5>
       @can('imputaciones.create')
          {!! link_to_route('imputaciones.create', $title='Imputar Gasto', $parameters = [] ,$attributes = [
             'id'     => 'agregarGasto',
@@ -30,13 +63,13 @@
                      <th scope="col" width="20%">Establecimiento</th>
                      <th scope="col" width="5%">Rbd</th>
                      <th scope="col" width="10%">Subvenci&oacute;n</th>
-                     <th scope="col" width="10%">C&oacute;digo Cuenta</th>
+                     <th scope="col" width="5%">C&oacute;digo Cuenta</th>
                      <th scope="col" width="10%">Tipo Documento</th>
                      <th scope="col" width="5%">N° Documento</th>
                      <th scope="col" width="5%">Fecha Documento</th>
                      <th scope="col" width="5%">Fecha Pago</th>
-                     <th scope="col" width="15%">Descripci&oacute;n Gasto</th>
-                     <th scope="col" width="20%">Rut Proveedor</th>
+                     <th scope="col" width="20%">Descripci&oacute;n Gasto</th>
+                     <th scope="col" width="10%">Rut Proveedor</th>
                      <th scope="col" width="20%">Nombre Proveedor</th>
                      <th scope="col" width="10%">Monto Gasto</th>
                      <th scope="col" width="10%">Monto Documento</th>

@@ -11,7 +11,7 @@
 <div class="card">
 
    <div class="card-header">
-      <h5 class="font-weight-light mt-2 text-sm-left float-left">Listado de Establecimientos</h5>
+      <h5 class="font-weight-light mt-2 text-sm-left float-left">Lista de Establecimientos</h5>
       @can('establecimientos.create')
          {!! link_to_route('establecimientos.create', $title='Agregar Establecimientos', $parameters = [] ,$attributes = [
             'id'     => 'agregarEstablecimiento',

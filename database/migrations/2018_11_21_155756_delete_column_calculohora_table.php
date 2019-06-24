@@ -14,7 +14,7 @@ class DeleteColumnCalculohoraTable extends Migration
     public function up()
     {       
         Schema::table('calculo_horas', function (Blueprint $table) {            
-            $table->dropForeign('calculo_horas_idAno_foreign');            
+            // $table->dropForeign('calculo_horas_idAno_foreign');            
         });
     }
 
@@ -27,9 +27,9 @@ class DeleteColumnCalculohoraTable extends Migration
     {
         Schema::table('calculo_horas', function (Blueprint $table) {
 
-            $table->unsignedInteger('idAno')->after('idEstablecimiento');
+            // $table->unsignedInteger('idAno')->after('idEstablecimiento');
             
-            $table->foreign('idAno')->references('id')->on('anos');
+            // $table->foreign('idAno')->references('id')->on('anos');
         });
     }
 }

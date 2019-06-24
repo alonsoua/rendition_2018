@@ -46,22 +46,22 @@ class RolController extends Controller
         $permissions      = Permission::get();
        
         $permissionsAdmin = Permission::selectRaw('distinct description')
-                            ->where('id', '<=', 10)
+                            ->where('id', '<=', 99)
                             ->get();
 
         $permissionsMante = Permission::selectRaw('distinct description')
-                            ->where('id', '>=', 11)
-                            ->where('id', '<=', 65)
+                            ->where('id', '>=', 100)
+                            ->where('id', '<=', 199)
                             ->get();
 
         $permissionsGasto = Permission::selectRaw('distinct description')
-                            ->where('id', '>=', 66)
-                            ->where('id', '<=', 75)
+                            ->where('id', '>=', 200)
+                            ->where('id', '<=', 299)
                             ->get();
 
         $permissionsRrhh  = Permission::selectRaw('distinct description')
-                            ->where('id', '>=', 76)
-                            ->where('id', '<=', 85)
+                            ->where('id', '>=', 300)
+                            ->where('id', '<=', 399)                            
                             ->get();
 
         return view('administrador.roles.create',
@@ -137,22 +137,22 @@ class RolController extends Controller
         $permissions      = Permission::get();
        
         $permissionsAdmin = Permission::selectRaw('distinct description')
-                            ->where('id', '<=', 10)
+                            ->where('id', '<=', 99)
                             ->get();
 
         $permissionsMante = Permission::selectRaw('distinct description')
-                            ->where('id', '>=', 11)
-                            ->where('id', '<=', 65)
+                            ->where('id', '>=', 100)
+                            ->where('id', '<=', 199)
                             ->get();
 
         $permissionsGasto = Permission::selectRaw('distinct description')
-                            ->where('id', '>=', 66)
-                            ->where('id', '<=', 75)
+                            ->where('id', '>=', 200)
+                            ->where('id', '<=', 299)
                             ->get();
 
         $permissionsRrhh  = Permission::selectRaw('distinct description')
-                            ->where('id', '>=', 76)
-                            ->where('id', '<=', 85)
+                            ->where('id', '>=', 300)
+                            ->where('id', '<=', 399)
                             ->get();
 
         return view('administrador.roles.edit',

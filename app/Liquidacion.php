@@ -16,6 +16,8 @@ class Liquidacion extends Model
       , 'diasTrabajados'
       , 'horasContratoSep'
       , 'fechaInicioContratoSep'    
+      , 'asignacionFamiliar'    
+      , 'prestamos'    
       , 'estado'     
       ,
     ];

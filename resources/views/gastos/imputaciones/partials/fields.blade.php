@@ -191,7 +191,7 @@
          , $editar == 0 ? null : date("d-m-Y", strtotime($imputacion->fechaDocumento)),
          ['id'          => 'txtFechaDocumento',
          'class'        => 'form-control fecha-documento',
-         'placeholder'  => 'dd-mm-yyyy'])
+         'placeholder'  => 'Fecha Documento'])
       !!}
          
          <div class="input-group-prepend">
@@ -216,7 +216,7 @@
          , $editar == 0 ? null : date("d-m-Y", strtotime($imputacion->fechaPago)),
          ['id'          => 'txtFechaPago',
          'class'        => 'form-control fecha-pago',
-         'placeholder'  => 'dd-mm-yyyy'])
+         'placeholder'  => 'Fecha Pago'])
       !!}
          
          <div class="input-group-prepend">

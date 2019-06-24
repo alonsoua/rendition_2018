@@ -11,7 +11,7 @@
 <div class="card ">
 
    <div class="card-header">
-      <h5 class="font-weight-light mt-2 text-sm-left float-left">Listado de Usuarios</h5>
+      <h5 class="font-weight-light mt-2 text-sm-left float-left">Lista de Usuarios</h5>
       @can('users.create')
          {!! link_to_route('users.create', $title='Agregar Usuarios', $parameters = [] ,$attributes = [
             'id'     => 'agregarUsuario',

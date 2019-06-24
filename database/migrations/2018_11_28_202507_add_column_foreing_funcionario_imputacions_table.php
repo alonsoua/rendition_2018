@@ -15,9 +15,9 @@ class AddColumnForeingFuncionarioImputacionsTable extends Migration
     {
         Schema::table('imputacions', function (Blueprint $table) {
             
-            $table->boolean('reembolsable')->nullable()->after('idEstablecimiento');
-            $table->unsignedInteger('idFuncionario')->nullable()->after('idEstablecimiento');       
-            $table->foreign('idFuncionario')->references('id')->on('funcionarios');            
+            // $table->boolean('reembolsable')->nullable()->after('idEstablecimiento');
+            // $table->unsignedInteger('idFuncionario')->nullable()->after('idEstablecimiento');       
+            // $table->foreign('idFuncionario')->references('id')->on('funcionarios');            
         });
     }
 
@@ -29,8 +29,8 @@ class AddColumnForeingFuncionarioImputacionsTable extends Migration
     public function down()
     {
         Schema::table('imputacions', function (Blueprint $table) {                   
-            $table->dropColumn('reembolsabl');
-            $table->dropForeign('imputacions_idFuncionario_foreign');
+            // $table->dropColumn('reembolsable');
+            // $table->dropForeign('imputacions_idFuncionario_foreign');
         });
     }
 }

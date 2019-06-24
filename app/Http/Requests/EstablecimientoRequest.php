@@ -25,6 +25,7 @@ class EstablecimientoRequest extends FormRequest
     {
         return [
             'rbd'             => 'required|unique:establecimientos',
+            'insignia'        => '',
             'nombre'          => 'required|max:200',
             'razonSocial'     => 'required|max:150',
             'rut'             => 'required|unique:establecimientos',

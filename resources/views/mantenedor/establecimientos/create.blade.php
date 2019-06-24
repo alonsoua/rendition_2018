@@ -22,14 +22,16 @@
 
    @include('mantenedor.establecimientos.partials.validaciones')
 
-   {!!Form::open(['route' => ['establecimientos.store']
+   {!!Form::open(['route' => 'establecimientos.store'
+         
          , 'method'  => 'STORE'
+         , 'files' => true
          , 'id'      => 'form-agregar'
-         , 'files'   => true
+         , 'enctype' => 'multipart/form-data'
          
       ]) 
    !!}
-
+{{-- , 'files'   => 'true' --}}
       @include('mantenedor.establecimientos.partials.fields')
       
       <hr>

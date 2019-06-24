@@ -81,23 +81,24 @@ $(document).ready(function(){
                   orthogonal: 'export', 
                   columns: [ 0, 1, 2]
                },
-            },
-            {
-               extend: 'csv',
-               className: 'btn btn-primary btn-sm mr-1 float-left',
-               exportOptions: { 
-                  orthogonal: 'export', 
-                  columns: [ 0, 1, 2]
-               },
-            },
-            {
-               extend: 'excelHtml5',
-               className: 'btn btn-primary btn-sm mr-1 float-left',
-               exportOptions: { 
-                  orthogonal: 'export', 
-                  columns: [ 0, 1, 2]
-               },
-            }    
+            }
+            // ,
+            // {
+            //    extend: 'csv',
+            //    className: 'btn btn-primary btn-sm mr-1 float-left',
+            //    exportOptions: { 
+            //       orthogonal: 'export', 
+            //       columns: [ 0, 1, 2]
+            //    },
+            // },
+            // {
+            //    extend: 'excelHtml5',
+            //    className: 'btn btn-primary btn-sm mr-1 float-left',
+            //    exportOptions: { 
+            //       orthogonal: 'export', 
+            //       columns: [ 0, 1, 2]
+            //    },
+            // }    
         ],
       "drawCallback": function () {
          $('.dataTables_paginate > .pagination').addClass('pagination-sm');

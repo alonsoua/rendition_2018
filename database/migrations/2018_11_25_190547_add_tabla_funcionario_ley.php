@@ -39,10 +39,12 @@ class AddTablaFuncionarioLey extends Migration
      */
     public function down()
     {
-        $table->dropForeign('funcionario_ley_idFuncionario_foreign');
-        $table->dropForeign('funcionario_ley_idLey_foreign');
-        $table->dropForeign('funcionario_ley_idSubvencion_foreign');
+    //     Schema::table('funcionarios', function (Blueprint $table) {
+    //         $table->dropForeign('funcionario_ley_idFuncionario_foreign');
+    //         $table->dropForeign('funcionario_ley_idLey_foreign');
+    //         $table->dropForeign('funcionario_ley_idSubvencion_foreign');
 
-        Schema::dropIfExists('funcionario_ley');
+            Schema::dropIfExists('funcionario_ley');
+        // });
     }
 }

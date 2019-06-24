@@ -12,6 +12,7 @@ class Salud extends Model
         
         'codigo'
       , 'nombre'      
+      , 'porcentaje'
       , 'estado'
       ,
     ];

@@ -11,7 +11,7 @@
 <div class="card">
 
    <div class="card-header">
-      <h5 class="font-weight-light mt-2 text-sm-left float-left">Listado de Cuentas</h5>
+      <h5 class="font-weight-light mt-2 text-sm-left float-left">Lista de Cuentas</h5>
       @can('cuentas.create')
          {!! link_to_route('cuentas.create', $title='Agregar Cuentas', $parameters = [] ,$attributes = [
             'id'     => 'agregarCuenta',

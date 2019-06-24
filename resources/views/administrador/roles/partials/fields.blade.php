@@ -72,7 +72,7 @@
 
                         @if(
                               $permission->description == $nombrePermiso->description 
-                           && $permission->id <= 10 
+                           && $permission->id <= 99 
                            && $permission->slug != $permission->description.'.show' 
                         )
 
@@ -110,7 +110,7 @@
 
                
                {{-- MANTENEDOR --}}
-               <td rowspan="11">Mantenedor</td>                     
+               <td rowspan="15">Mantenedor</td>                     
                @foreach($permissionsMante as $nombrePermiso)
                   
                   <tr id="{{ $nombrePermiso->description }}">
@@ -118,17 +118,27 @@
                      <td>
                         @if($nombrePermiso->description == 'calculohoras')
                            {{ 'Cálculo Horas' }}
+                        @elseif($nombrePermiso->description == 'funcionarios')
+                           {{ 'Contratos' }}
+                        @elseif($nombrePermiso->description == 'sned')
+                           {{ 'Calcular Sned' }}
+                        @elseif($nombrePermiso->description == 'reajuste')
+                           {{ 'Calcular Reajuste' }}
+                        @elseif($nombrePermiso->description == 'documentos')
+                           {{ 'Tipos de Documentos' }}
                         @else
                            {{ ucfirst($nombrePermiso->description) }}
                         @endif
+
+
                      </td>
                      
                      @foreach($permissions as $permission)
                        
                         @if(
                               $permission->description == $nombrePermiso->description 
-                           && $permission->id >= 11
-                           && $permission->id <= 65 
+                           && $permission->id >= 100
+                           && $permission->id <= 199 
                            && $permission->slug != $permission->description.'.show' 
                         )
                               
@@ -183,8 +193,8 @@
                        
                         @if(
                               $permission->description == $nombrePermiso->description 
-                           && $permission->id >= 66
-                           && $permission->id <= 75 
+                           && $permission->id >= 200
+                           && $permission->id <= 299 
                            && $permission->slug != $permission->description.'.show' 
                         )
                               
@@ -222,7 +232,7 @@
 
 
                {{-- RR.HH. --}}
-               <td rowspan="3">RR.HH.</td>                     
+               <td rowspan="4">RR.HH.</td>                     
                @foreach($permissionsRrhh as $nombrePermiso)
                   
                   <tr id="{{ $nombrePermiso->description }}">
@@ -239,8 +249,8 @@
                       
                         @if(
                               $permission->description == $nombrePermiso->description 
-                           && $permission->id >= 76
-                           && $permission->id <= 85 
+                           && $permission->id >= 300
+                           && $permission->id <= 399 
                            && $permission->slug != $permission->description.'.show' 
                         )
                               

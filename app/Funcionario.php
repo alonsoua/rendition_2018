@@ -51,11 +51,19 @@ class Funcionario extends Model
     {
     	return $this->belongsTo(Funcion::class, 'idFuncion');
     }    
+    
+
+    // public function cuenta()
+    // {
+    //   return $this->belongsTo(Cuenta::class, 'idEstablecimiento');
+    // }
     /* FIN RELACIONES */
 
     public static function getFuncionarios($idEstablecimiento) {
         
         $funcionarios = Funcionario::where('idEstablecimiento', $idEstablecimiento)
+                                  ->where('idTipoContrato', '!=', 3)
+                                  ->where('estado', 1)
                                   ->selectRaw('CONCAT(rut, " - " , nombre, " ", apellidoPaterno, " ", apellidoMaterno) 
                                 as nombre, id')
                                 
@@ -63,5 +71,18 @@ class Funcionario extends Model
         
         return $funcionarios->pluck('nombre', 'id');
     }
+     
+    public static function getFuncionariosPorContrato($idEstablecimiento, $idTipoContrato) {
+        
+        $funcionarios = Funcionario::where('idEstablecimiento', $idEstablecimiento)
+                                  ->where('idTipoContrato', $idTipoContrato)
+                                  ->where('estado', 1)
+                                  ->selectRaw('CONCAT(rut, " - " , nombre, " ", apellidoPaterno, " ", apellidoMaterno) 
+                                as nombre, id')
+                                
+                                ->get();
+        
+        return $funcionarios->pluck('nombre', 'id');
+    } 
     
 }

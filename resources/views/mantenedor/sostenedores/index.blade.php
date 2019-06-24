@@ -11,7 +11,7 @@
 <div class="card">
 
    <div class="card-header">
-      <h5 class="font-weight-light mt-2 text-sm-left float-left">Listado de Sostenedores</h5>
+      <h5 class="font-weight-light mt-2 text-sm-left float-left">Lista de Sostenedores</h5>
       @can('sostenedores.create')
          {!! link_to_route('sostenedores.create', $title='Agregar Sostenedores', $parameters = [] ,$attributes = [
             'id'     => 'agregarSostenedor',

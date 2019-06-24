@@ -78,61 +78,6 @@
    </div>
 </div>
 
-
-
-{{-- lst AFP --}}
-<div class="form-group row">
-   {!! Form::label('AFP', 'AFP', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
-
-   <div class="col-sm-9">
-      {{ Form::select('afp', $afp , $editar == 0 ? null : $funcionario->idAfp,
-         [
-            'id'           => 'lstAfp',
-            'placeholder'  => 'Seleccione Afp',
-            'class'        => 'form-control select-afp'
-         ])
-      }}
-      <div id="vAfp"><span id="msgAfp" class="validacion"></span></div>
-   </div>
-</div> 
-
-
-{{-- lst SISTEMA DE SALUD --}}
-<div class="form-group row">
-   {!! Form::label('Salud', 'Salud', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
-
-   <div class="col-sm-9">
-      {{ Form::select('salud', $salud , $editar == 0 ? null : $funcionario->idSalud,
-         [
-            'id'           => 'lstSalud',
-            'placeholder'  => 'Seleccione Salud',
-            'class'        => 'form-control select-salud'
-         ])
-      }}
-      <div id="vSalud"><span id="msgSalud" class="validacion"></span></div>
-   </div>
-</div> 
-
-
-{{-- UF ISAPRE --}}
-<div class="form-group row">
-   {!! Form::label('UF Isapre', 'UF Isapre', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left',
-                                              'id'    => 'lblUfIsapre',
-                                              'style' => 'display:none;',]) !!}
-   
-   <div class="col-sm-9">            
-      {!! Form::number('ufIsapre', $editar == 0 ? null : $funcionario->ufIsapre,
-         ['id'         => 'txtUfIsapre',
-         'class'       => 'form-control decimales',
-         'maxlength'   => 10,
-         'style'       => 'display:none;',
-         'placeholder' => 'Uf Isapre'])
-      !!}      
-      <div id="vUfIsapre"><span id="msgUfIsapre" class="validacion"></span></div>
-   </div>
-</div>
-
-
 {{-- TIPO CONTRATO --}}
 <div class="form-group row">
    {!! Form::label('Tipo Contrato', 'Tipo Contrato', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
@@ -149,75 +94,153 @@
    </div>
 </div> 
 
-{{-- HORAS CONTRATO SEMANAL --}}
-<div class="form-group row">
-   {!! Form::label('Horas Contrato Semanal', 'Horas Contrato Semanal', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
+@php   
+   if ($editar == 1) {
+      if ($funcionario->idTipoContrato == 1) {
+         $divContratoDisplay  = 'block'; 
+         $fechaTerminoDisplay = 'display:none;';
+      } else if ($funcionario->idTipoContrato == 2) {
+         $divContratoDisplay  = 'block'; 
+         $fechaTerminoDisplay = 'display:block;';
+      } else if ($funcionario->idTipoContrato == 3) {            
+         $divContratoDisplay  = 'none';
+         $fechaTerminoDisplay = 'display:none;';
+      } else {
+         $divContratoDisplay  = 'block';            
+         $fechaTerminoDisplay = 'display:block;';
+      }   
+   } else {
+      $divContratoDisplay = 'block';   
+      $fechaTerminoDisplay = 'display:block;';     
+   }
+@endphp
 
-   <div class="col-sm-9">
-      {!! Form::number('horasCtoSemanal', $editar == 0 ? null : $funcionario->horasCtoSemanal,
-         ['id'          => 'txtHorasCtoSemanal',
-         'class'        => 'form-control',
-         'placeholder'  => 'Horas Contrato Semanal'])
-      !!}
-      <div id="vHorasCtoSemanal"><span id="msgHorasCtoSemanal" class="validacion"></span></div>
-   </div>
-</div>
+<div id="divContrato" style="display: {{ $divContratoDisplay }};">
+      
+   {{-- lst AFP --}}
+   <div class="form-group row">
+      {!! Form::label('AFP', 'AFP', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
 
-
-
-{{-- FECHA INICIO CONTRATO --}}
-<div class="form-group row ">
-   {!! Form::label('Fecha Inicio Contrato', 'Fecha Inicio Contrato', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
-
-   <div class="col-sm-9">
-      <div class="input-group">
-        
-      {!! Form::text('fechaInicioContrato'         
-         , $editar == 0 ? null : date("d-m-Y", strtotime($funcionario->fechaInicioContrato)),
-         ['id'          => 'txtFechaInicioContrato',
-         'class'        => 'form-control fecha-inicio',
-         'placeholder'  => 'dd-mm-yyyy'])
-      !!}
-         
-         <div class="input-group-prepend">
-            <span class="input-group-text" id="basic-addon-calendar">
-               <i class="fa fa-calendar-alt form-control-feedback"></i> 
-            </span>
-         </div>
+      <div class="col-sm-9">
+         {{ Form::select('afp', $afp , $editar == 0 ? null : $funcionario->idAfp,
+            [
+               'id'           => 'lstAfp',
+               'placeholder'  => 'Seleccione Afp',
+               'class'        => 'form-control select-afp'
+            ])
+         }}
+         <div id="vAfp"><span id="msgAfp" class="validacion"></span></div>
       </div>
-      <div id="vFechaInicioContrato"><span id="msgFechaInicioContrato" class="validacion"></span></div>
+   </div> 
+
+
+   {{-- lst SISTEMA DE SALUD --}}
+   <div class="form-group row">
+      {!! Form::label('Salud', 'Salud', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
+
+      <div class="col-sm-9">
+         {{ Form::select('salud', $salud , $editar == 0 ? null : $funcionario->idSalud,
+            [
+               'id'           => 'lstSalud',
+               'placeholder'  => 'Seleccione Salud',
+               'class'        => 'form-control select-salud'
+            ])
+         }}
+         <div id="vSalud"><span id="msgSalud" class="validacion"></span></div>
+      </div>
+   </div> 
+
+
+   {{-- UF ISAPRE --}}
+   <div class="form-group row">
+      {!! Form::label('UF Isapre', 'UF Isapre', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left',
+                                                 'id'    => 'lblUfIsapre',
+                                                 'style' => 'display:none;',]) !!}
+      
+      <div class="col-sm-9">            
+         {!! Form::number('ufIsapre', $editar == 0 ? null : $funcionario->ufIsapre,
+            ['id'         => 'txtUfIsapre',
+            'class'       => 'form-control decimales',
+            'maxlength'   => 10,
+            'style'       => 'display:none;',
+            'placeholder' => 'Uf Isapre'])
+         !!}      
+         <div id="vUfIsapre"><span id="msgUfIsapre" class="validacion"></span></div>
+      </div>
    </div>
-</div>
+
+   {{-- HORAS CONTRATO SEMANAL --}}
+   <div class="form-group row">
+      {!! Form::label('Horas Contrato Semanal', 'Horas Contrato Semanal', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
+
+      <div class="col-sm-9">
+         {!! Form::number('horasCtoSemanal', $editar == 0 ? null : $funcionario->horasCtoSemanal,
+            ['id'          => 'txtHorasCtoSemanal',
+            'class'        => 'form-control',
+            'placeholder'  => 'Horas Contrato Semanal'])
+         !!}
+         <div id="vHorasCtoSemanal"><span id="msgHorasCtoSemanal" class="validacion"></span></div>
+      </div>
+   </div>
 
 
-{{-- FECHA TÉRMINO CONTRATO --}}
-<div class="form-group row ">
-   {!! Form::label('Fecha Término Contrato', 'Fecha Término Contrato', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left',
-                                              'id'    => 'lblFechaTerminoContrato',
-                                              'style' => 'display:none;',]) !!}
-   
-   <div class="col-sm-9">
-      <div class="input-group">
-        
-         {!! Form::text('fechaTerminoContrato'
-               , $editar == 0 ? null : date("d-m-Y", strtotime($funcionario->fechaTerminoContrato)),
-            ['id'          => 'txtFechaTerminoContrato',
-            'class'        => 'form-control fecha-termino',
-            'placeholder'  => 'dd-mm-yyyy',
-            'style'        => 'display:none;',])
+
+   {{-- FECHA INICIO CONTRATO --}}
+   <div class="form-group row ">
+      {!! Form::label('Fecha Inicio Contrato', 'Fecha Inicio Contrato', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
+
+      <div class="col-sm-9">
+         <div class="input-group">
+           
+         {!! Form::text('fechaInicioContrato'         
+            , $editar == 0 ? null : date("d-m-Y", strtotime($funcionario->fechaInicioContrato)),
+            ['id'          => 'txtFechaInicioContrato',
+            'class'        => 'form-control fecha-inicio',
+            'placeholder'  => 'Fecha Inicio Contrato'])
          !!}
             
-         <div class="input-group-prepend" id="calFechaTerminoContrato" style="display:none;">
-            <span class="input-group-text" id="basic-addon-calendar2">
-               <i class="fa fa-calendar-alt form-control-feedback"></i> 
-            </span>
-        </div>
-
+            <div class="input-group-prepend">
+               <span class="input-group-text" id="basic-addon-calendar">
+                  <i class="fa fa-calendar-alt form-control-feedback"></i> 
+               </span>
+            </div>
+         </div>
+         <div id="vFechaInicioContrato"><span id="msgFechaInicioContrato" class="validacion"></span></div>
       </div>
-      <div id="vFechaTerminoContrato"><span id="msgFechaTerminoContrato" class="validacion"></span></div>
-   </div>   
-</div>
+   </div>
 
+   {{-- FECHA TÉRMINO CONTRATO --}}
+   <div id="divFechaTermino">
+      <div class="form-group row ">
+         {!! Form::label('Fecha Término Contrato', 'Fecha Término Contrato', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left',
+                                                    'id'    => 'lblFechaTerminoContrato',
+                                                    'style' => $fechaTerminoDisplay,]) !!}
+         
+         <div class="col-sm-9"  style="{{ $fechaTerminoDisplay }}">
+            <div class="input-group">
+              
+               {!! Form::text('fechaTerminoContrato'
+                     , $editar == 0 ? null : date("d-m-Y", strtotime($funcionario->fechaTerminoContrato)),
+                  ['id'          => 'txtFechaTerminoContrato',
+                  'class'        => 'form-control fecha-termino',
+                  'placeholder'  => 'Fecha Término Contrato',
+                  'style'        => $fechaTerminoDisplay,])
+               !!}
+                  
+               {{-- <div class="input-group-prepend" id="calFechaTerminoContrato" > --}}
+
+               <div class="input-group-prepend" >
+                  <span class="input-group-text" id="basic-addon-calendar">
+                     <i class="fa fa-calendar-alt form-control-feedback"></i> 
+                  </span>
+               </div>
+
+            </div>
+            <div id="vFechaTerminoContrato"><span id="msgFechaTerminoContrato" class="validacion"></span></div>
+         </div>   
+      </div>
+   </div>
+</div>
 
 {{-- lst FUNCIÓN --}}
 <div class="form-group row">
@@ -234,5 +257,59 @@
       <div id="vFuncion"><span id="msgFuncion" class="validacion"></span></div>
    </div>
 </div> 
+{{--
+{{-- lst Cuentas GENERAL
+<div class="form-group row">
+   {!! Form::label('Cuentas Sub. General ', 'Cuentas Sub. General', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
+
+   <div class="col-sm-9">
+   
+      {{ Form::select('cuentasGeneral[]', $cuentasGeneral ,  $editar == 0 ? null : $subGeneral
+         ,[
+            'id'           => 'lstCuentasGeneral',                  
+            'class'        => 'select-cuentasGeneral form-control',
+            'multiple' 
+         ])
+      }}
+
+      <div id="vCuentasGeneral"><span id="msgCuentasGeneral" class="validacion"></span></div>
+   </div>
+</div> 
+
+{{-- lst Cuentas PIE 
+<div class="form-group row">
+   {!! Form::label('Cuentas Sub. PIE', 'Cuentas Sub. PIE', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
+
+   <div class="col-sm-9">
+   
+      {{ Form::select('cuentasPie[]', $cuentasPie ,  $editar == 0 ? null : $cuentaSub
+         ,[
+            'id'           => 'lstCuentasPie',                  
+            'class'        => 'select-cuentasPie form-control',
+            'multiple' 
+         ])
+      }}
+
+      <div id="vCuentasPie"><span id="msgCuentasPie" class="validacion"></span></div>
+   </div>
+</div> 
+
+{{-- lst Cuentas SEP 
+<div class="form-group row">
+   {!! Form::label('Cuentas Sub. SEP', 'Cuentas Sub. SEP', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
+
+   <div class="col-sm-9">
+   
+      {{ Form::select('cuentasSep[]', $cuentasSep ,  $editar == 0 ? null : $cuentaSub
+         ,[
+            'id'           => 'lstCuentasSep',                  
+            'class'        => 'select-cuentasSep form-control',
+            'multiple' 
+         ])
+      }}
+
+      <div id="vCuentasSep"><span id="msgCuentasSep" class="validacion"></span></div>
+   </div>
+</div>  --}}
 
 <hr>

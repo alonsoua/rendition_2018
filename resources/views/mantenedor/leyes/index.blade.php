@@ -11,7 +11,7 @@
 <div class="card">
 
    <div class="card-header">
-      <h5 class="font-weight-light mt-2 text-sm-left float-left">Listado de Leyes</h5>
+      <h5 class="font-weight-light mt-2 text-sm-left float-left">Lista de Leyes</h5>
       @can('leyes.create')
          {!! link_to_route('leyes.create', $title='Agregar Leyes', $parameters = [] ,$attributes = [
             'id'     => 'agregarLey',

@@ -51,8 +51,7 @@
       {!! Form::password('password', 
          ['id'          => 'txtPass',
          'class'        => 'form-control',
-         'placeholder'  => 'Contraseña',
-         'autocomplete' => 'off'])
+         'placeholder'  => 'Contraseña'])
       !!}
       <div id="vPass"><span id="msgPass" class="validacion"></span></div>
       {{-- <span id="msgVacio" class="validacion" style="display:none;">Deje el campo en blanco para no cambiar la contraseña actual</span> --}}
@@ -124,11 +123,10 @@
 <div class="form-group row">
    {!! Form::label('Correo', 'Correo', ['class' => 'col-sm-3 col-form-label text-right']) !!}
    <div class="col-sm-9">         
-      {!! Form::email('correo', null, 
+      {!! Form::email('correo', $correo, 
          ['id'          => 'txtCorreo',
          'class'        => 'form-control',
-         'placeholder'  => 'ejemplo@gmail.com',
-         'autocomplete' => 'off'])
+         'placeholder'  => 'ejemplo@gmail.com'])
       !!}
       <div id="vCorreo"><span id="msgCorreo" class="validacion"></span></div>
    </div>

@@ -11,7 +11,7 @@
 <div class="card">
 
    <div class="card-header">
-      <h5 class="font-weight-light mt-2 text-sm-left float-left">Listado de Roles</h5>
+      <h5 class="font-weight-light mt-2 text-sm-left float-left">Lista de Roles</h5>
       @can('roles.create')
          {!! link_to_route('roles.create', $title='Agregar Roles', $parameters = [] ,$attributes = [
             'id'     => 'agregarRol',

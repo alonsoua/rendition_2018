@@ -50,8 +50,8 @@ class FuncionarioController extends Controller
                                     ->where('estado', '1')
                                     ->get();
 
-        $afpRaw = Afp::select()->get();
-        $salRaw = Salud::select()->get();
+        $afpRaw = Afp::select()->where('estado', 1)->get();
+        $salRaw = Salud::select()->where('estado', 1)->get();
 
         $conRaw = tipo_contrato::selectRaw('CONCAT(codigo, " - " , tipoContrato) as nombre, id')
                                   ->where('estado', '1')
@@ -150,7 +150,7 @@ class FuncionarioController extends Controller
      */
     public function store(Request $request)
     {
-        //dd($request);        
+        // dd($request);        
         if ($request->ajax()) {                        
             
             // Validaciones
@@ -170,7 +170,18 @@ class FuncionarioController extends Controller
                             'fechaInicioContrato'   => 'required',                            
                             'funcion'               => 'required'
                         ]);   
+                } else if ($request->tipoContrato == 3) {
+                    Request()->validate([
+                            'establecimiento'       => 'required',
+                            'rut'                   => 'required|numeric|unique:funcionarios',
+                            'nombre'                => 'required|max:100',
+                            'apellidoPaterno'       => 'required|max:50',
+                            'apellidoMaterno'       => 'required|max:50',                           
+                            'funcion'               => 'required'
+                        ]);   
+                    
                 } else {
+                    {
                     Request()->validate([
                             'establecimiento'       => 'required',
                             'rut'                   => 'required|numeric|unique:funcionarios',
@@ -187,6 +198,7 @@ class FuncionarioController extends Controller
                         ]);   
                     
                 }
+                }
             }  elseif  (empty($request->salud)) {       
                 if ($request->tipoContrato == 1) {
                     Request()->validate([
@@ -200,6 +212,15 @@ class FuncionarioController extends Controller
                         'tipoContrato'          => 'required',
                         'horasCtoSemanal'       => 'required|numeric|max:44',
                         'fechaInicioContrato'   => 'required',                        
+                        'funcion'               => 'required'
+                    ]);   
+                } else if ($request->tipoContrato == 3) {
+                    Request()->validate([
+                        'establecimiento'       => 'required',
+                        'rut'                   => 'required|numeric|unique:funcionarios',
+                        'nombre'                => 'required|max:100',
+                        'apellidoPaterno'       => 'required|max:50',
+                        'apellidoMaterno'       => 'required|max:50',                       
                         'funcion'               => 'required'
                     ]);   
                 } else {
@@ -236,6 +257,15 @@ class FuncionarioController extends Controller
                         'funcion'               => 'required'
                     ]);          
 
+                }  else if ($request->tipoContrato == 3) {
+                    Request()->validate([
+                        'establecimiento'       => 'required',
+                        'rut'                   => 'required|numeric|unique:funcionarios',
+                        'nombre'                => 'required|max:100',
+                        'apellidoPaterno'       => 'required|max:50',
+                        'apellidoMaterno'       => 'required|max:50',                       
+                        'funcion'               => 'required'
+                    ]);   
                 } else {
                     Request()->validate([
                         'establecimiento'       => 'required',
@@ -324,7 +354,7 @@ class FuncionarioController extends Controller
      */
     public function show(Funcionario $funcionario)
     {
-        //
+        return view('mantenedor.rrhhFuncionarios.create');
     }
 
     /**
@@ -340,8 +370,8 @@ class FuncionarioController extends Controller
         // PERSONAL 
         $funcionario = Funcionario::findOrFail($id);
 
-        $afpRaw = Afp::select()->get();
-        $salRaw = Salud::select()->get();
+        $afpRaw = Afp::select()->where('estado', 1)->get();
+        $salRaw = Salud::select()->where('estado', 1)->get();
         $estRaw = Establecimiento::selectRaw('CONCAT(rbd, " - " , nombre) as nombre, id')
                                     ->where('estado', '1')
                                     ->get();
@@ -476,6 +506,15 @@ class FuncionarioController extends Controller
                         'fechaInicioContrato'   => 'required',                        
                         'funcion'               => 'required'
                     ]);   
+            } else if ($request->tipoContrato == 3) {
+                    Request()->validate([
+                        'establecimiento'       => 'required',
+                        'rut'                   => 'required|unique:funcionarios,rut,'.$id.',id' ,
+                        'nombre'                => 'required|max:100',
+                        'apellidoPaterno'       => 'required|max:50',
+                        'apellidoMaterno'       => 'required|max:50',                       
+                        'funcion'               => 'required'
+                    ]);   
             } else {
                 Request()->validate([
                         'establecimiento'       => 'required',                    
@@ -505,6 +544,15 @@ class FuncionarioController extends Controller
                         'tipoContrato'          => 'required',
                         'horasCtoSemanal'       => 'required|numeric|max:44',
                         'fechaInicioContrato'   => 'required',                        
+                        'funcion'               => 'required'
+                    ]);   
+            } else if ($request->tipoContrato == 3) {
+                    Request()->validate([
+                        'establecimiento'       => 'required',
+                        'rut'                   => 'required|unique:funcionarios,rut,'.$id.',id' ,
+                        'nombre'                => 'required|max:100',
+                        'apellidoPaterno'       => 'required|max:50',
+                        'apellidoMaterno'       => 'required|max:50',                       
                         'funcion'               => 'required'
                     ]);   
             } else {
@@ -539,6 +587,15 @@ class FuncionarioController extends Controller
                         'fechaInicioContrato'   => 'required',                        
                         'funcion'               => 'required'
                     ]);          
+            } else if ($request->tipoContrato == 3) {
+                    Request()->validate([
+                        'establecimiento'       => 'required',
+                        'rut'                   => 'required|unique:funcionarios,rut,'.$id.',id' ,
+                        'nombre'                => 'required|max:100',
+                        'apellidoPaterno'       => 'required|max:50',
+                        'apellidoMaterno'       => 'required|max:50',                       
+                        'funcion'               => 'required'
+                    ]);   
             } else {                
                 Request()->validate([
                         'establecimiento'       => 'required',                    

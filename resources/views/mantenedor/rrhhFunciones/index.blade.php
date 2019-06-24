@@ -11,7 +11,7 @@
 <div class="card">
 
    <div class="card-header">
-      <h5 class="font-weight-light mt-2 text-sm-left float-left">Listado de Funciones</h5>
+      <h5 class="font-weight-light mt-2 text-sm-left float-left">Lista de Funciones</h5>
       @can('funciones.create')
          {!! link_to_route('funciones.create', $title='Agregar Funciones', $parameters = [] ,$attributes = [
             'id'     => 'agregarFuncion',

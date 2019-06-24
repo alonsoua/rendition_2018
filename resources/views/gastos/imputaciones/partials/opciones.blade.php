@@ -9,14 +9,27 @@
             </button>
             <div class="dropdown-menu dropdown-menu-right">                              
 
-               <a href="#!" class="dropdown-item small-button"
-               id="{{ $id }}" data-estado ="Aprobar" onclick=" ModificarEstado(event, this) ">
-                  Aprobar
-               </a>
-               <a href="#!" class="dropdown-item small-button"
-               id="{{ $id }}" data-estado ="Rechazar" onclick=" ModificarEstado(event, this) ">
-                  Rechazar
-               </a>              
+               @if ( $estado != 'Aprobado' )
+                  <a href="#!" class="dropdown-item small-button"
+                  id="{{ $id }}" data-estado ="Aprobar" onclick=" ModificarEstado(event, this) ">
+                     Aprobar
+                  </a>                                    
+               @endif
+
+               @if ( $estado != 'Rechazado' )
+                  <a href="#!" class="dropdown-item small-button"
+                  id="{{ $id }}" data-estado ="Rechazar" onclick=" ModificarEstado(event, this) ">
+                     Rechazar
+                  </a>              
+               @endif
+
+               @if ( $estado != 'Por Aprobar' )
+                  <a href="#!" class="dropdown-item small-button"
+                  id="{{ $id }}" data-estado ="Rechazar" onclick=" ModificarEstado(event, this) ">
+                     Por Aprobar
+                  </a>  
+               @endif
+                       
             </div>     
          </div>
       </td>

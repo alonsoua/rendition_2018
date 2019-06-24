@@ -15,7 +15,6 @@
    </div>
 </div>
 
-
 {{-- RUT --}}
 <div class="form-group row">
    {!! Form::label('Rut', 'Rut', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
@@ -165,7 +164,25 @@
    </div>
 </div>
 
+{{-- INSIGNIA --}}
+<div class="form-group row">
 
+   {!! Form::label('Insignia', 'Insignia', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
+
+<div class="col-sm-9">
+      <div class="input-group mb-3">
+      
+      {!! Form::File('image')
+         !!}
+       {{-- {!! Form::File('insignia', null,
+         [  'id'           => 'insignia',
+            'class'        => 'form-control'])
+         !!} --}}
+
+      </div>
+      <div id="vInsignia"><span id="msgInsignia" class="validacion"></span></div> {{-- Div de Validación --}}
+   </div>
+</div>
 
 {{-- INSIGNIA --}}
 {{-- <div class="form-group row">

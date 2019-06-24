@@ -11,7 +11,7 @@
 <div class="card">
 
    <div class="card-header">
-      <h5 class="font-weight-light mt-2 text-sm-left float-left">Listado de Subvenciones</h5>
+      <h5 class="font-weight-light mt-2 text-sm-left float-left">Lista de Subvenciones</h5>
       @can('subvenciones.create')
          {!! link_to_route('subvenciones.create', $title='Agregar Subvenciones', $parameters = [] ,$attributes = [
             'id'     => 'agregarSubvencion',

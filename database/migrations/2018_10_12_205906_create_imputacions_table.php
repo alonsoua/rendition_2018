@@ -33,7 +33,11 @@ class CreateImputacionsTable extends Migration
             
             $table->text('documento')->nullable();            
 
-            $table->boolean('estado')->default(1)->comment('0 .- Inactivo - 1 .- Activo');
+            // $table->boolean('estado')->default(1)->comment('0 .- Inactivo - 1 .- Activo');
+             $table->enum('estado', ['Por Aprobar', 'Aprobado', 'Rechazado'])
+                    ->nullable()
+                    ->comment('Por Aprobar - Aprobado - Rechazado')
+                    ->after('documento');
             $table->timestamps();
 
             //$table->foreign('idEstablecimiento')->references('id')->on('establecimientos');

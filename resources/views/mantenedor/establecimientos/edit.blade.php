@@ -25,9 +25,8 @@
    {!! Form::model($establecimiento,
       [    'route'   => ['establecimientos.update', $establecimiento]
          , 'method'  => 'PUT'
+         , 'files'   => 'true'
          , 'id'      => 'form-editar'
-         , 'files'   => true
-         , 'enctype' => 'multipart/form-data'
       ])
    !!}         
 

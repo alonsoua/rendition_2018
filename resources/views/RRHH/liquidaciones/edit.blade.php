@@ -1,8 +1,8 @@
 @extends('main')
 
-@section('title', 'Editar Imputación de Gasto')
+@section('title', 'Editar Liquidación')
 
-@section('breadcrumb', 'Imputación de Gasto')
+@section('breadcrumb', 'Liquidación')
 
 @section('content')
 
@@ -13,40 +13,55 @@
 <div class="card">
 
 <div class="card-header">
-   <h4 class="my-0 font-weight-light text-sm-center">Editar Gasto: {{ $imputacion->numDocumento }}</h4>
+   <h4 class="my-0 font-weight-light text-sm-center">Editar Liquidación: {{ $liquidacion->numDocumento }}</h4>
 </div>
 
 <div class="card-body">
 
-   @include('gastos.imputaciones.partials.validaciones')
+   @include('RRHH.liquidaciones.partials.validaciones')
 
-   {!! Form::model($imputacion,
-      [    'route'   => ['imputaciones.update', $imputacion]
+   {!! Form::model($liquidacion,
+      [    'route'   => ['liquidaciones.update', $liquidacion]
          , 'method'  => 'PUT'
-         , 'id'      => 'form-editar'
-         , 'files'   => true
-         , 'enctype' => 'multipart/form-data'
-      ])
+         , 'id'      => 'form-editar'])
    !!}
-         {{-- , 'enctype' => 'multipart/form-data' --}}
-
-      @include('gastos.imputaciones.partials.fields')
-
+      {{-- @include('RRHH.liquidaciones.partials.fields') --}}
+      
+      <div id="liquidacion" style="display: block;">
+         @include('RRHH.liquidaciones.partials.fieldsLiquidacion')               
+      </div>
+      <div id="subvenciones" style="display: none;">
+         {{-- @include('RRHH.liquidaciones.partials.fieldsSubvenciones')                --}}
+      </div>
+      <div id="descuentos" style="display: none;">
+         @include('RRHH.liquidaciones.partials.fieldsDescuentos')
+      </div>  
       <hr>
-      {{-- Acciones Btn --}}
+      {{-- Botones --}}
       <div class="form-group row">
          <div class="col-sm-3">
-            {!! link_to_route('imputaciones.index', $title='Volver', $parameters = [] ,$attributes = [
-               'id'     => 'cancelar',
-               'class'  => 'btn btn-light float-left'
-            ]) !!}
+
+            {!! link_to_route('liquidaciones.index'
+               , $title='Volver'
+               , $parameters = []
+               , $attributes = [
+                  'id'     => 'cancelar',
+                  'class'  => 'btn btn-light float-left'
+               ]) 
+            !!}
+
          </div>
          <div class="col-sm-9">
-            {!! link_to('#!', $title='Editar', $attributes = [
-               'id'        => 'guardar',
-               'class'  => 'btn btn-primary float-right',
-               'data-form' => 'form-editar'
-            ], $secure = null) !!}
+
+            {!! link_to('#!'
+               , $title='Editar'
+               , $attributes = [
+                  'id'     => 'guardar',
+                  'class'  => 'btn btn-primary float-right',
+                  'data-form' => 'form-editar'
+               ], $secure = null) 
+            !!}
+
          </div>
       </div>
 
@@ -65,6 +80,6 @@
 
 @section('contentScript')
    <script type="text/javascript">
-      @include("gastos.imputaciones.script")
+      @include("RRHH.liquidaciones.script")
    </script>
 @endsection

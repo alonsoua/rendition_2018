@@ -11,9 +11,20 @@
     <a class="navbar-brand mb-0 font-weight-light text-dark d-lg-none" href="{{ url('/') }}" style="">
         <strong>Soft</strong>Innova
     </a>
+    
 
-	<ul class="nav nav-pills d-none d-lg-block" style="z-index:10000;">
-        
+    {{-- 
+    <a class="navbar-brand mb-0 font-weight-light text-dark d-none d-lg-block" style="float:right! important;" 
+        href="{{ url('/') }}">
+        Periodo: {{  $anoHoy->format('Y') }}        
+    </a>
+
+    
+    <a class="navbar-brand mb-0 font-weight-light text-dark d-lg-none" href="{{ url('/') }}" style="">
+        Periodo: {{  $anoHoy->format('Y') }}        
+    </a>                --}}
+    
+    <ul class="nav nav-pills d-none d-lg-block" style="z-index:10000;">
         @guest
             {{-- 
             <li class="nav-item">

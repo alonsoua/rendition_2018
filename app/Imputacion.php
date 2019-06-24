@@ -9,7 +9,8 @@ class Imputacion extends Model
     protected $table = 'imputacions';
 
     protected $fillable = [
-        'idEstablecimiento'
+        'tipo'
+      , 'idEstablecimiento'
       , 'reembolsable'
       , 'idFuncionario'
       , 'idSubvencion'
@@ -52,6 +53,11 @@ class Imputacion extends Model
     public function cuenta()
     {
         return $this->belongsTo(Cuenta::class, 'idCuenta');
+    }    
+
+    public function funcionario()
+    {
+        return $this->belongsTo(Funcionario::class, 'idFuncionario');
     }    
     /* FIN RELACIONES */
 

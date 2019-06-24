@@ -11,7 +11,7 @@
 <div class="card">
 
    <div class="card-header">
-      <h5 class="font-weight-light mt-2 text-sm-left float-left">Listado de Proveedores</h5>
+      <h5 class="font-weight-light mt-2 text-sm-left float-left">Lista de Proveedores</h5>
       @can('proveedores.create')
          {!! link_to_route('proveedores.create', $title='Agregar Proveedores', $parameters = [] ,$attributes = [
             'id'     => 'agregarProveedor',

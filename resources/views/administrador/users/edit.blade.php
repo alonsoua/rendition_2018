@@ -28,8 +28,7 @@
    {!! Form::model($usuario,
       ['route'   => ['users.update', $usuario]
       , 'method' => 'PUT'
-      , 'id'     => 'form-editar'
-      , 'autocomplete' => 'off'])
+      , 'id'     => 'form-editar'])
    !!}
 
       @include('administrador.users.partials.fields')

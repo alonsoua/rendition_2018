@@ -13,15 +13,15 @@ class EditEstadoImputacions extends Migration
      */
     public function up()
     {
-        Schema::table('imputacions', function (Blueprint $table) {
+        // Schema::table('imputacions', function (Blueprint $table) {
 
-            $table->dropColumn('estado');
-            $table->enum('estado', ['Por Aprobar', 'Aprobado', 'Rechazado'])
-                    ->nullable()
-                    ->comment('Por Aprobar - Aprobado - Rechazado')
-                    ->after('documento');
+        //     // $table->dropColumn('estado');
+        //     $table->enum('estado', ['Por Aprobar', 'Aprobado', 'Rechazado'])
+        //             ->nullable()
+        //             ->comment('Por Aprobar - Aprobado - Rechazado')
+        //             ->after('documento');
 
-        });
+        // });
     }
 
     /**
@@ -31,8 +31,8 @@ class EditEstadoImputacions extends Migration
      */
     public function down()
     {
-        Schema::table('imputacions', function (Blueprint $table) {
-            $table->dropColumn('estado');                    
-        });
+        // Schema::table('imputacions', function (Blueprint $table) {
+        //     $table->dropColumn('estado');                    
+        // });
     }
 }

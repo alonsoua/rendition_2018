@@ -1,8 +1,8 @@
 @extends('main')
 
-@section('title', 'Editar Funcionario')
+@section('title', 'Editar Contrato Funcionario')
 
-@section('breadcrumb', 'Funcionarios')
+@section('breadcrumb', 'Contrato Funcionarios')
 
 @section('content')
 
@@ -14,16 +14,31 @@
 <div class="col col-lg-11">
 <div class="card">
 
+
+@php   
+   if ($editar == 1) {
+      if ($funcionario->idTipoContrato == 3) {                     
+         $navSubvencionesDisplay = 'display:none;';
+      } else {
+         $navSubvencionesDisplay = 'display:block;';
+      }   
+   } else {
+      $navSubvencionesDisplay = 'display:block;';
+   }
+@endphp
+
+
+
    <div class="card-header">
       <h4 class="my-0 font-weight-light text-sm-center">
-         Editar Funcionario: {{ $funcionario->rut }} - {{ $funcionario->nombre }}
+         Editar Contrato Funcionario: {{ $funcionario->rut }} - {{ $funcionario->nombre }}
       </h4>
       <ul class="nav nav-tabs card-header-tabs">
          <li class="nav-item" style="cursor:pointer;">
             <a class="nav-link active" id="navPersonal">Personal</a>
          </li>               
-         <li class="nav-item" style="cursor:pointer;">
-            <a class="nav-link" id="navSubvenciones">Subvenciones</a>
+         <li class="nav-item" style="cursor:pointer;"">
+            <a class="nav-link" id="navSubvenciones" style="{{ $navSubvencionesDisplay }}">Horas Subvención</a>
          </li>
       </ul>
    </div>

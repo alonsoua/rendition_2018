@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\Helper;
+use PDF;
 
 use App\Liquidacion;
 use App\Liquidacion_Ley;
@@ -14,12 +15,26 @@ use App\Establecimiento;
 use App\Funcionario;
 use App\Periodo;
 use App\Ley;
+use App\Comuna;
 use App\Funcionario_Ley;
+use App\Funcion;
 use App\CalculoHora;
+use App\tipo_contrato;
 use App\CalculoHoraDetalle;
+
+use App\Afp;
+use App\salud;
 
 class LiquidacionController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:liquidaciones.create')->only(['create', 'store']);
+        $this->middleware('permission:liquidaciones.index')->only(['index']);
+        $this->middleware('permission:liquidaciones.edit')->only(['edit', 'update']);
+        $this->middleware('permission:liquidaciones.show')->only(['show']);
+        $this->middleware('permission:liquidaciones.destroy')->only(['destroy']);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -160,6 +175,11 @@ class LiquidacionController extends Controller
                                         'leyes'        => $arrayLeyes, 
                                     ];
         }     
+        
+
+        //FUNCIONARIOS
+       
+
 
 
         return view('RRHH.liquidaciones.create', compact(
@@ -171,6 +191,9 @@ class LiquidacionController extends Controller
                         , 'horas'    
                         , 'funcionarioDscto'              
                         , 'horasDscto'
+
+                        // FUNCIONARIO
+                      
                     ));
     }
 
@@ -186,11 +209,11 @@ class LiquidacionController extends Controller
 
             // Validaciones           
             Request()->validate([
-                    'establecimiento'       => 'required',
-                    'funcionario'           => 'required',
-                    'periodo'               => 'required',
-                    'fechaLiquidacion'      => 'required',
-                    'diasTrabajados'        => 'required',                    
+                    'establecimiento'  => 'required',
+                    'funcionario'      => 'required',
+                    'periodo'          => 'required',
+                    'fechaLiquidacion' => 'required',
+                    'diasTrabajados'   => 'required|integer',                                                
                 ]);   
                    
             // Transaction: Si se cae en el segundo create, 
@@ -207,6 +230,8 @@ class LiquidacionController extends Controller
                     'idPeriodo'         => $request->periodo,
                     'fechaLiquidacion'  => $fechaLiquidacionContrato,
                     'diasTrabajados'    => $request->diasTrabajados,                    
+                    'asignacionFamiliar'=> $request->asignacion,
+                    'prestamos'         => $request->prestamos,
                 ]);
 
                 $ley            = $request->ley;                
@@ -242,9 +267,10 @@ class LiquidacionController extends Controller
 
             //MENSAJE
             $mensaje = 'La Liquidación del Funcionario <b>'.$request->funcionario.' - '.$request->periodo.'</b> ha sido agregada correctamente';
-
+            $reload = 'ok';
             return response()->json([
-                "message" => $mensaje
+                "message" => $mensaje,
+                "reload" => $reload
             ]);
         }
     }
@@ -255,10 +281,103 @@ class LiquidacionController extends Controller
      * @param  \App\Liquidacion  $liquidacion
      * @return \Illuminate\Http\Response
      */
-    public function show(Liquidacion $liquidacion)
+    public function show($id)
     {
+        $liquidacion     = Liquidacion::findOrFail($id);
+        $establecimiento = Establecimiento::findOrFail($liquidacion->idEstablecimiento);
+        $comuna          = Comuna::findOrFail($establecimiento->idComuna);
+        $funcionario     = Funcionario::findOrFail($liquidacion->idFuncionario);
+        $prevision       = Salud::findOrFail($funcionario->idSalud);
+        $afp             = Afp::findOrFail($funcionario->idAfp);
+        $funcion         = Funcion::findOrFail($funcionario->idFuncion);
+        $tipoContrato    = tipo_contrato::findOrFail($funcionario->idTipoContrato);        
+
+        $liquidacion_ley = Funcionario_Ley::where('idFuncionario', $funcionario->id)->get();   
+            
+        $horasSubvGeneral = 0;
+        $horasSubvPie     = 0;
+        $horasSubvSep     = 0;
+        foreach ($liquidacion_ley as $key => $value) {
+            if ($value->idSubvencion == 1) {                //GENERAL
+                $horasSubvGeneral += $value->horas;
+            } elseif ($value->idSubvencion == 3) {          //PIE
+                $horasSubvPie += $value->horas;
+            } elseif ($value->idSubvencion == 5) {          //SEP
+                $horasSubvSep += $value->horas;
+            }
+        }
+        $horas = array();        
+        $horas = [
+                    'horasSubvGeneral' => $horasSubvGeneral,
+                    'horasSubvPie'     => $horasSubvPie,
+                    'horasSubvSep'     => $horasSubvSep
+            ];
+
+
+        //Llena con datos el PDF
         //
+        // $pdf = PDF::loadView('PDF.pdfLiquidacion', 
+        //              compact( 'liquidacion'
+        //                     , 'establecimiento'
+        //                     , 'funcionario'
+        //                     , 'prevision'
+        //                     , 'afp'
+        //                     , 'funcion'
+        //                     , 'tipoContrato'
+        //                     , 'comuna'));
+
+
+        return View('PDF.pdfLiquidacion', 
+                     compact( 'liquidacion'
+                            , 'establecimiento'
+                            , 'funcionario'
+                            , 'prevision'
+                            , 'afp'
+                            , 'funcion'
+                            , 'tipoContrato'
+                            , 'comuna'
+                            , 'horas'));
+
+        // return view('PDF.pdfLiquidacion');
+
+        //Exporta PDF
+        // return $pdf->download($liquidacion->fechaLiquidacion.'/'.$funcionario->nombre.''.$funcionario->apellidoPaterno.''.$funcionario->apellidoMaterno.'.pdf');
     }
+
+    public function imprimirLiquidaciones ($desde, $hasta) {
+        
+
+        $liquidaciones = Liquidacion::select('liquidacions.*')->whereBetween('fechaLiquidacion', [$desde, $hasta])->get();        
+
+        foreach ($liquidaciones as $key => $value) {            
+            $establecimiento = Establecimiento::findOrFail($value->idEstablecimiento);
+            $comuna          = Comuna::findOrFail($establecimiento->idComuna);
+            $funcionario     = Funcionario::findOrFail($value->idFuncionario);
+            $funcion         = Funcion::findOrFail($funcionario->idFuncion);
+            $tipoContrato    = tipo_contrato::findOrFail($funcionario->idTipoContrato);   
+
+
+            $imprimir[$key] = [ 
+                            'liquidacion' => $value,
+                            'establecimiento' => $establecimiento,
+                            'comuna' => $comuna,
+                            'funcionario' => $funcionario,
+                            'funcion' => $funcion,
+                            'tipoContrato' => $tipoContrato,
+            ];            
+        }
+
+        //Llena con datos el PDF
+        $pdf = PDF::loadView('PDF.pdfLiquidacionesRangoFecha', 
+                     compact( 'imprimir'
+                            , 'desde'
+                            , 'hasta'));
+
+        //Exporta PDF
+        return $pdf->download('liquidaciones'.$desde.'-'.$hasta.'.pdf');
+        
+    } 
+
 
     /**
      * Show the form for editing the specified resource.
@@ -266,9 +385,154 @@ class LiquidacionController extends Controller
      * @param  \App\Liquidacion  $liquidacion
      * @return \Illuminate\Http\Response
      */
-    public function edit(Liquidacion $liquidacion)
-    {
-        //
+    public function edit($id)
+    {        
+        $editar = 1;
+
+        $liquidacion = Liquidacion::findOrFail($id);
+    
+        $estaRaw = Establecimiento::selectRaw('CONCAT(rbd, " - " , nombre) as nombre, id')->get();
+        
+        $establecimientos = $estaRaw->pluck('nombre', 'id');
+               
+        $funcionarios = Funcionario::getFuncionarios($liquidacion->idEstablecimiento);
+        $periodos     = Periodo::getPeriodos(1);
+        
+
+        // Subvenciones
+        $horas = 0;
+
+        // Consulta Subvenciones
+        $arraySubvenciones =    DB::table('leys')
+                                ->join('subvencions', 'subvencions.id', '=', 'leys.idSubvencion')             
+                                ->selectRaw(' distinct 
+                                              subvencions.id as idSubvencion
+                                            , subvencions.nombre as nombreSubvencion')
+                                ->where('subvencions.id', '>', 0)
+                                ->where('leys.tipo', 'Haber')
+                                ->orderBy('subvencions.nombre')
+                                ->get();
+
+        // Recorre subvenciones ya que por cada subvencion 
+        // hay que mostrar sus leyes respectivas
+        $funcionarioLey = array();
+        foreach ($arraySubvenciones as $key => $subvencion) {
+            
+            $topeHora = Ley::selectRaw('tope as topeHora ')
+                            ->where('idSubvencion', $subvencion->idSubvencion)
+                            ->where('tipo', 'Haber')
+                            ->get();       
+
+            // Consulta las leyes según subvención
+            $leyes =   Ley::selectRaw('  id as idLey
+                                            , codigo as codigoLey
+                                            , nombre as nombreLey 
+                                            , tope as topeHora ')
+                            ->where('idSubvencion', $subvencion->idSubvencion)
+                            ->where('tipo', 'Haber')
+                            ->get();                            
+            $arrayLeyes = array();
+            foreach ($leyes as $idLey => $ley) {
+
+
+                $horasFuncionarios = Funcionario_Ley::selectRaw('sum(horas) as horas')
+                            ->where('idLey', $ley->idLey)
+                            ->get(); 
+            
+                $topeHora = $ley->topeHora - $horasFuncionarios[0]['horas'];
+
+                $arrayLeyes[$ley->idLey] = [   
+                            'idLey'     => $ley->idLey,
+                            'codigoLey' => $ley->codigoLey,
+                            'nombreLey' => $ley->nombreLey,
+                            'topeHora'  => $topeHora,
+                            ];
+                
+            }
+
+            // dd($arrayLeyes);
+            $funcionarioLey[$key] = [   'idSubvencion' => $subvencion->idSubvencion,
+                                        'subvencion'   => $subvencion->nombreSubvencion,
+                                        'leyes'        => $arrayLeyes, 
+                                    ];
+        }     
+
+
+        // Subvenciones Descuento
+        $horasDscto = 0;
+
+        // Consulta Subvenciones
+        $arraySubvencionesDscto =    DB::table('leys')
+                                ->join('subvencions', 'subvencions.id', '=', 'leys.idSubvencion')             
+                                ->selectRaw(' distinct 
+                                              subvencions.id as idSubvencion
+                                            , subvencions.nombre as nombreSubvencion')                                
+                                ->where('leys.tipo', 'Descuento')
+                                ->orderBy('subvencions.nombre')
+                                ->get();
+
+        // Recorre subvenciones ya que por cada subvencion 
+        // hay que mostrar sus leyes respectivas
+        $funcionarioDscto= array();
+        foreach ($arraySubvencionesDscto as $key => $subvencion) {
+            
+            $topeHora = Ley::selectRaw('tope as topeHora ')
+                            ->where('idSubvencion', $subvencion->idSubvencion)
+                            ->where('tipo', 'Descuento')
+                            ->get();       
+
+            // Consulta las leyes según subvención
+            $leyes =   Ley::selectRaw('  id as idLey
+                                            , codigo as codigoLey
+                                            , nombre as nombreLey 
+                                            , tope as topeHora ')
+                            ->where('idSubvencion', $subvencion->idSubvencion)
+                            ->where('tipo', 'Descuento')
+                            ->get(); 
+
+            $arrayLeyes = array();
+            foreach ($leyes as $idLey => $ley) {
+
+                $horasFuncionarios = Funcionario_Ley::selectRaw('sum(horas) as horas')
+                            ->where('idLey', $ley->idLey)
+                            ->get(); 
+            
+                $topeHora = $ley->topeHora - $horasFuncionarios[0]['horas'];
+
+                $arrayLeyes[$ley->idLey] = [   
+                            'idLey'     => $ley->idLey,
+                            'codigoLey' => $ley->codigoLey,
+                            'nombreLey' => $ley->nombreLey,
+                            'topeHora'  => $topeHora,
+                            ];                
+            }
+            
+            $funcionarioDscto[$key] = [   'idSubvencion' => $subvencion->idSubvencion,
+                                        'subvencion'   => $subvencion->nombreSubvencion,
+                                        'leyes'        => $arrayLeyes, 
+                                    ];
+        }     
+        
+
+        //FUNCIONARIOS
+       
+
+
+
+        return view('RRHH.liquidaciones.edit', compact(
+                          'editar'
+                        , 'liquidacion'
+                        , 'establecimientos'
+                        , 'funcionarios'
+                        , 'periodos'  
+                        , 'funcionarioLey'  
+                        , 'horas'    
+                        , 'funcionarioDscto'              
+                        , 'horasDscto'
+
+                        // FUNCIONARIO
+                      
+                    ));
     }
 
     /**
@@ -278,9 +542,64 @@ class LiquidacionController extends Controller
      * @param  \App\Liquidacion  $liquidacion
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Liquidacion $liquidacion)
-    {
-        //
+    public function update(Request $request, $id)
+    {                                   
+        // Validaciones           
+                                    // dd($request);
+        Request()->validate([
+                'establecimiento'  => 'required',
+                'funcionario'      => 'required',
+                'periodo'          => 'required',
+                'fechaLiquidacion' => 'required',
+                'diasTrabajados'   => 'required|integer',                                                
+            ]);   
+
+
+        $docExistente = Liquidacion::where('idFuncionario', $request->funcionario)
+                                    ->where('idPeriodo', $request->periodo)
+                                    ->get();
+
+        // dd($docExistente);
+        if (count($docExistente) > 1) {
+            //MENSAJE
+            $mensaje = 'La suma total <b>Monto Gasto</b> para las imputaciones del documento número  
+                        <b>"'.$request->numDocumento.'"</b>, no puede exceder el <b>Monto 
+                        Documento</b> ingresado.';
+
+            $reload = 'no';
+        } else {
+            
+            // Formateamos Fechas
+            $fechaLiquidacionContrato = date("Y-m-d", strtotime($request->fechaLiquidacion));       
+            // dd($request->asignacion);
+
+            $liquidacion = Liquidacion::findOrFail($id);                    
+            $liquidacion->idEstablecimiento = $request->establecimiento;            
+            $liquidacion->idFuncionario     = $request->funcionario;        
+            $liquidacion->idPeriodo         = $request->periodo;     
+            $liquidacion->fechaLiquidacion  = $fechaLiquidacionContrato;            
+            $liquidacion->diasTrabajados    = $request->diasTrabajados;
+            $liquidacion->asignacionFamiliar = $request->asignacion;
+            $liquidacion->prestamos         = $request->prestamos;            
+                                              
+            //MENSAJE
+            $mensaje = 'La Liquidación del Funcionario <b>'.$request->funcionario.' - '.$request->periodo.'</b> ha sido editada correctamente';
+
+            $reload = 'ok';
+            
+            if ($request->ajax()) {
+                $liquidacion->save();
+            }                        
+            
+        }
+
+        if ($request->ajax()) {            
+            return response()->json([
+                "message" => $mensaje,
+                "reload" => $reload
+            ]);
+        }
+        
     }
 
     /**
@@ -296,12 +615,18 @@ class LiquidacionController extends Controller
 
 
 
-    public function getFuncionarios(Request $request, $idEstablecimiento)
-    {    
+    public function getFuncionarios(Request $request, $idEstablecimiento, $id = null)
+    {            
+        if ($request->ajax()) {       
 
-        if ($request->ajax()) {            
+            if ($id == null) {
+                $funcionarios = Funcionario::getFuncionarios($idEstablecimiento);
+            }
+            else {
+                $funcionarios = Funcionario::getFuncionarios($id);
+            }     
             
-            $funcionarios = Funcionario::getFuncionarios($idEstablecimiento);
+            
             
             return response()->json($funcionarios);
         }        
@@ -352,4 +677,22 @@ class LiquidacionController extends Controller
             return response()->json($valorContrato);
         }
     }
+
+    public function getRangoFecha ($desde, $hasta) {
+        $liquidaciones = Liquidacion::select('liquidacions.*')->with('funcionario', 'establecimiento', 'periodo')->whereBetween('liquidacions.fechaLiquidacion', [$desde, $hasta]);
+
+        return datatables()
+        ->eloquent($liquidaciones)             
+        ->addColumn('opciones', 'RRHH.liquidaciones.partials.opciones')
+        ->rawColumns(['opciones'])
+        ->toJson();
+    }
+
+    // public function pdf($id)
+    // {    
+    //     $pdf = PDF::loadView('PDF.pdfLiquidacion');
+    //     return $pdf->download('myPdf.pdf');
+    // }
+
+      
 }

@@ -1,3 +1,4 @@
+
 $(document).ready(function(){
 
    /*
@@ -11,6 +12,23 @@ $(document).ready(function(){
    
    $('.fecha-liquidacion').datepicker({
       format: 'dd-mm-yyyy',
+      todayBtn: 'linked',      
+      daysOfWeekDisabled: "0",
+      autoclose: true,
+      language: "es"
+   });
+
+   $('.fecha-desde').datepicker({
+      format: 'yyyy-mm-dd',
+      todayBtn: 'linked',
+      daysOfWeekDisabled: "0",
+      autoclose: true,
+      language: "es"
+   });
+
+   $('.fecha-hasta').datepicker({
+      format: 'yyyy-mm-dd',
+      todayBtn: 'linked',
       daysOfWeekDisabled: "0",
       autoclose: true,
       language: "es"
@@ -27,7 +45,7 @@ $(document).ready(function(){
 
    $('.select-establecimientos').chosen({         
       no_results_text: 'No se encontró el Establecimiento',
-      width : '100%'
+      width : '100%',
 
    });
 
@@ -51,77 +69,126 @@ $(document).ready(function(){
    | drawCallback function: Agrega class "pagination-sm" para que se vea pequeña.
    |
    */
-   $.fn.dataTable.ext.classes.sPagination = 'pagination pagination-sm';
-   $('#dataTable-liquidaciones').DataTable({
+   
 
-      "oLanguage" : {
-         "sProcessing"        : "Procesando...",
-         "sLengthMenu"        : "Mostrar _MENU_ registros por página",
-         "sZeroRecords"       : "<h5 class='font-weight-light mt-5 mb-5'>No encontramos ninguna liquidación con esas características</h5>",
-         "sEmptyTable"        : "<h5 class='font-weight-light mt-5 mb-5'>No existen liquidaciones registrados</h5>",
-         "sLoadingRecords"    : "Cargando...",
-         "sInfo"              : "Mostrando _START_ a _END_ de _TOTAL_ registros",
-         "sInfoEmpty"         : "Mostrando 0 a 0 de 0 liquidaciones",
-         "sInfoFiltered"      : "<br>(filtro aplicado en _MAX_ liquidaciones)",
-         "sInfoPostFix"       : "",
-         "sInfoThousands"     : ".",
-         "sSearch"            : "Buscar:",
-         "sUrl"               : "",
-            "oPaginate"       : {
-                  "sFirst"       : "Primera",
-                  "sPrevious"    : "Anterior",
-                  "sNext"        : "Siguiente",
-                  "sLast"        : "Última",
-            },
-      },
-      "serverSide": true,
-      "ajax"      : "{{ url('liquidacionesTable') }}",
-      "columns"   : [
-
+   fetch_data('no');
+   
+   function fetch_data (info, desde = '', hasta = '') {
       
-         {data: 'funcionario.rut',              name: 'funcionario.rut',
-         render: function formateaRut(data) {
-               var rut = data;
-               var actual = rut.replace(/^0+/, "");
-               if (actual != '' && actual.length > 1) {
-                  var sinPuntos = actual.replace(/\./g, "");
-                  var actualLimpio = sinPuntos.replace(/-/g, "");
-                  var inicio = actualLimpio.substring(0, actualLimpio.length - 1);
-                  var rutPuntos = "";
-                  var i = 0;
-                  var j = 1;
-                  for (i = inicio.length - 1; i >= 0; i--) {
-                     var letra = inicio.charAt(i);
-                     rutPuntos = letra + rutPuntos;
-                     if (j % 3 == 0 && j <= inicio.length - 1) {
-                        rutPuntos = "." + rutPuntos;
-                     }
-                     j++;
-                  }
-                  var dv = actualLimpio.substring(actualLimpio.length - 1);
-                  rutPuntos = rutPuntos + "-" + dv;
-               }                
-               return rutPuntos;
-            }
-         },
+      if (info === 'no') {
+         var url = "../liquidacionesTable";
+      } else {
+         var url = 'liquidaciones/getRangoFecha/'+desde+'/'+hasta+'';
+      }
 
-         {data: 'funcionario.nombre',           name: 'funcionario.nombre'},
-         {data: 'funcionario.apellidoPaterno',  name: 'funcionario.apellidoPaterno'},
-         {data: 'periodo.periodo',              name: 'periodo.periodo'},
-         {data: 'diasTrabajados',               name: 'liquidacions.diasTrabajados'},
-         {data: 'establecimiento.nombre',       name: 'establecimiento.nombre'},
-         {data: 'opciones'},
-      ],
-      "drawCallback": function () {
-         $('.dataTables_paginate > .pagination').addClass('pagination-sm');
+      $.fn.dataTable.ext.classes.sPagination = 'pagination pagination-sm';      
+      var dataTable = $('#dataTable-liquidaciones').DataTable({
+         "processing" : true,
+         "serverSide" : true,
+         "order" : [],
+         "oLanguage" : {
+            "sProcessing"        : "Procesando...",
+            "sLengthMenu"        : "Mostrar _MENU_ registros por página",
+            "sZeroRecords"       : "<h5 class='font-weight-light mt-5 mb-5'>No encontramos ninguna liquidación con esas características</h5>",
+            "sEmptyTable"        : "<h5 class='font-weight-light mt-5 mb-5'>No existen liquidaciones registrados</h5>",
+            "sLoadingRecords"    : "Cargando...",
+            "sInfo"              : "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            "sInfoEmpty"         : "Mostrando 0 a 0 de 0 liquidaciones",
+            "sInfoFiltered"      : "<br>(filtro aplicado en _MAX_ liquidaciones)",
+            "sInfoPostFix"       : "",
+            "sInfoThousands"     : ".",
+            "sSearch"            : "Buscar:",
+            "sUrl"               : "",
+               "oPaginate"       : {
+                     "sFirst"       : "Primera",
+                     "sPrevious"    : "Anterior",
+                     "sNext"        : "Siguiente",
+                     "sLast"        : "Última",
+               },
+         },      
+         "ajax"      : url, 
+         "columns"   : [
+
+         
+            {data: 'funcionario.rut', name: 'funcionario.rut',
+            render: function formateaRut(data) {
+                  var rut = data;
+                  var actual = rut.replace(/^0+/, "");
+                  if (actual != '' && actual.length > 1) {
+                     var sinPuntos = actual.replace(/\./g, "");
+                     var actualLimpio = sinPuntos.replace(/-/g, "");
+                     var inicio = actualLimpio.substring(0, actualLimpio.length - 1);
+                     var rutPuntos = "";
+                     var i = 0;
+                     var j = 1;
+                     for (i = inicio.length - 1; i >= 0; i--) {
+                        var letra = inicio.charAt(i);
+                        rutPuntos = letra + rutPuntos;
+                        if (j % 3 == 0 && j <= inicio.length - 1) {
+                           rutPuntos = "." + rutPuntos;
+                        }
+                        j++;
+                     }
+                     var dv = actualLimpio.substring(actualLimpio.length - 1);
+                     rutPuntos = rutPuntos + "-" + dv;
+                  }                
+                  return rutPuntos;
+               }
+            },
+
+            {data: 'funcionario.nombre',           name: 'funcionario.nombre'},
+            {data: 'funcionario.apellidoPaterno',  name: 'funcionario.apellidoPaterno'},
+            {  
+               data: 'fechaLiquidacion',             
+               name: 'fechaLiquidacion',
+               render: function formatoFecha (data) {
+                  var fecha = data;
+                  return fecha.replace(/^(\d{4})-(\d{2})-(\d{2})$/g,'$3/$2/$1');
+               }
+            },
+            {data: 'diasTrabajados',               name: 'liquidacions.diasTrabajados'},
+            {data: 'establecimiento.nombre',       name: 'establecimiento.nombre'},
+            {data: 'opciones'},
+
+         ],
+
+         "drawCallback": function () {
+            $('.dataTables_paginate > .pagination').addClass('pagination-sm');
+         }
+
+      });
+   }
+
+   $("#desde").change(function(){
+      var desde = $("#desde").val();
+      var hasta = $("#hasta").val();      
+      if (desde != '' & hasta != '') {
+         $("#dataTable-liquidaciones").DataTable().destroy();
+         fetch_data('yes', desde, hasta);
       }
    });
+
+   $("#hasta").change(function(){
+      var desde = $("#desde").val();
+      var hasta = $("#hasta").val();      
+      if (desde != '' & hasta != '') {
+         $("#dataTable-liquidaciones").DataTable().destroy();
+         fetch_data('yes', desde, hasta);
+      }
+   });
+
 
    if ($("#form-agregar").length) {
       $('#msgVacio').remove();
    }
 
 });
+
+
+// $('#nuevoFuncionario').click(function(){
+      
+// });
+
 
 $('#navLiquidacion').click(function(){
    $('#subvenciones').css('display', 'none');
@@ -199,6 +266,22 @@ function Eliminar(i) {
    });
 }
 
+
+$('#btnImprimir').on('click', function(e){
+   
+   var desde = $("#desde").val();
+   var hasta = $("#hasta").val();      
+
+   if (desde != '' & hasta != '') {
+
+      $.get('liquidaciones/imprimirLiquidaciones/'+desde+'/'+hasta+'', function() {            
+      });
+   }
+   
+
+
+   
+});
 
 
 $('#lstSubvencion').on('change', function(e){
@@ -322,6 +405,7 @@ $('#lstFuncionario').on('change', function(e){
 
 $('#lstEstablecimiento').on('change', function(e){
 
+   
    // Elimina Navs
    $("#navSubvenciones").css('display', 'none');   
    $("#navDescuentos").css('display', 'none');     
@@ -332,7 +416,7 @@ $('#lstEstablecimiento').on('change', function(e){
    
    
    $.get('getFuncionarios/' +idEstablecimiento, function(data) {
-      
+         
       $('#lstFuncionario').empty();
       
       //Carga lstFuncionario en select
@@ -389,26 +473,27 @@ $('#guardar').click(function(){
    var idFm = $(this).attr('data-form');
    var form = $('#'+idFm);
    var url  = form.attr('action');
-   var dataArray = form.serializeArray();
+   console.log(url);
 
-   // console.log(dataArray);
-   // debugger;
+   var dataArray = form.serializeArray();
 
    $.post(
       url,
       dataArray,
       function (result) {
 
-         console.log(result);
-         debugger;
          $.alertable.alert(result.message, {html : true}).always(function(){
             $(".cargando").css('visibility', 'visible');
-            location.reload();
+            if (result.reload == 'ok') {
+               location.reload();
+            } else {               
+               $(".cargando").css('visibility', 'hidden');               
+            }
          });
    }).fail(function(data){
       
          console.log(data.responseJSON);
-         debugger;
+         // debugger;
          /* VALIDACIONES */
          //establecimiento      
          if (data.responseJSON.errors.establecimiento != undefined) {
@@ -432,138 +517,40 @@ $('#guardar').click(function(){
             $('#vFuncionario').css('display', 'none');
          }
 
-         //subvencion      
-         if (data.responseJSON.errors.subvencion != undefined) {
-            $('#lstSubvencion').addClass('is-invalid');
-            $('#vSubvencion').addClass('invalid-feedback');
-            $('#msgSubvencion').html(data.responseJSON.errors.subvencion);
+         //periodo      
+         if (data.responseJSON.errors.periodo != undefined) {
+            $('#lstPeriodo').addClass('is-invalid');
+            $('#vPeriodo').addClass('invalid-feedback');
+            $('#msgPeriodo').html(data.responseJSON.errors.periodo);
          } else {
-            $('#lstSubvencion').removeClass('is-invalid');
-            $('#lstSubvencion').addClass('is-valid');
-            $('#vSubvencion').css('display', 'none');
+            $('#lstPeriodo').removeClass('is-invalid');
+            $('#lstPeriodo').addClass('is-valid');
+            $('#vPeriodo').css('display', 'none');
          }
 
-         //cuenta      
-         if (data.responseJSON.errors.cuenta != undefined) {
-            $('#lstCuenta').addClass('is-invalid');
-            $('#vCuenta').addClass('invalid-feedback');
-            $('#msgCuenta').html(data.responseJSON.errors.cuenta);
+         //fechaLiquidacion
+         debugger;
+         if (data.responseJSON.errors.fechaLiquidacion != undefined) {
+            $('#txtFechaLiquidacion').addClass('is-invalid');
+            $('#vFechaLiquidacion').addClass('invalid-feedback');
+            $('#msgFechaLiquidacion').html(data.responseJSON.errors.fechaLiquidacion);
          } else {
-            $('#lstCuenta').removeClass('is-invalid');
-            $('#lstCuenta').addClass('is-valid');
-            $('#vCuenta').css('display', 'none');
+            $('#txtFechaLiquidacion').removeClass('is-invalid');
+            $('#txtFechaLiquidacion').addClass('is-valid');
+            $('#vFechaLiquidacion').css('display', 'none');
          }
 
-         //tipoDocumento      
-         if (data.responseJSON.errors.tipoDocumento != undefined) {
-            $('#lstTipoDocumento').addClass('is-invalid');
-            $('#vTipoDocumento').addClass('invalid-feedback');
-            $('#msgTipoDocumento').html(data.responseJSON.errors.tipoDocumento);
+         //diasTrabajados
+         if (data.responseJSON.errors.diasTrabajados != undefined) {
+            $('#txtDiasTrabajados').addClass('is-invalid');
+            $('#txtDiasTrabajados').removeClass('is-valid');
+            $('#vDiasTrabajados').addClass('invalid-feedback');
+            $('#msgDiasTrabajados').html(data.responseJSON.errors.diasTrabajados);
          } else {
-            $('#lstTipoDocumento').removeClass('is-invalid');
-            $('#lstTipoDocumento').addClass('is-valid');
-            $('#vTipoDocumento').css('display', 'none');
+            $('#txtDiasTrabajados').removeClass('is-invalid');
+            $('#txtDiasTrabajados').addClass('is-valid');
+            $('#vDiasTrabajados').css('display', 'none');
          }
 
-         //formaPago      
-         if (data.responseJSON.errors.formaPago != undefined) {
-            $('#lstFormaPago').addClass('is-invalid');
-            $('#vFormaPago').addClass('invalid-feedback');
-            $('#msgFormaPago').html(data.responseJSON.errors.formaPago);
-         } else {
-            $('#lstFormaPago').removeClass('is-invalid');
-            $('#lstFormaPago').addClass('is-valid');
-            $('#vFormaPago').css('display', 'none');
-         }
-
-         //numDocumento
-         if (data.responseJSON.errors.numDocumento != undefined) {
-            $('#txtNumDocumento').addClass('is-invalid');
-            $('#vNumDocumento').addClass('invalid-feedback');
-            $('#msgNumDocumento').html(data.responseJSON.errors.numDocumento);
-         } else {
-            $('#txtNumDocumento').removeClass('is-invalid');
-            $('#txtNumDocumento').addClass('is-valid');
-            $('#vNumDocumento').css('display', 'none');
-         }
-
-         //fechaDocumento
-         if (data.responseJSON.errors.fechaDocumento != undefined) {
-            $('#txtFechaDocumento').addClass('is-invalid');
-            $('#vFechaDocumento').addClass('invalid-feedback');
-            $('#msgFechaDocumento').html(data.responseJSON.errors.fechaDocumento);
-         } else {
-            $('#txtFechaDocumento').removeClass('is-invalid');
-            $('#txtFechaDocumento').addClass('is-valid');
-            $('#vFechaDocumento').css('display', 'none');
-         }
-
-         //fechaPago
-         if (data.responseJSON.errors.fechaPago != undefined) {
-            $('#txtFechaPago').addClass('is-invalid');
-            $('#vFechaPago').addClass('invalid-feedback');
-            $('#msgFechaPago').html(data.responseJSON.errors.fechaPago);
-         } else {
-            $('#txtFechaPago').removeClass('is-invalid');
-            $('#txtFechaPago').addClass('is-valid');
-            $('#vFechaPago').css('display', 'none');
-         }
-
-         //descripcion
-         if (data.responseJSON.errors.descripcion != undefined) {
-            $('#txtDescripcion').addClass('is-invalid');
-            $('#vDescripcion').addClass('invalid-feedback');
-            $('#msgDescripcion').html(data.responseJSON.errors.descripcion);
-         } else {
-            $('#txtDescripcion').removeClass('is-invalid');
-            $('#txtDescripcion').addClass('is-valid');
-            $('#vDescripcion').css('display', 'none');
-         }
-
-         //proveedor      
-         if (data.responseJSON.errors.proveedor != undefined) {
-            $('#lstProveedor').addClass('is-invalid');
-            $('#vProveedor').addClass('invalid-feedback');
-            $('#msgProveedor').html(data.responseJSON.errors.proveedor);
-         } else {
-            $('#lstProveedor').removeClass('is-invalid');
-            $('#lstProveedor').addClass('is-valid');
-            $('#vProveedor').css('display', 'none');
-         }
-
-         //montoGasto      
-         if (data.responseJSON.errors.montoGasto != undefined) {
-            $('#txtMontoGasto').addClass('is-invalid');
-            $('#vMontoGasto').addClass('invalid-feedback');
-            $('#msgMontoGasto').html(data.responseJSON.errors.montoGasto);
-         } else {
-            $('#txtMontoGasto').removeClass('is-invalid');
-            $('#txtMontoGasto').addClass('is-valid');
-            $('#vMontoGasto').css('display', 'none');
-         }
-
-         //montoDocumento      
-         if (data.responseJSON.errors.montoDocumento != undefined) {
-            $('#txtMontoDocumento').addClass('is-invalid');
-            $('#vMontoDocumento').addClass('invalid-feedback');
-            $('#msgMontoDocumento').html(data.responseJSON.errors.montoDocumento);
-         } else {
-            $('#txtMontoDocumento').removeClass('is-invalid');
-            $('#txtMontoDocumento').addClass('is-valid');
-            $('#vMontoDocumento').css('display', 'none');
-         }
-
-         //estado      
-         if (data.responseJSON.errors.estado != undefined) {
-            $('#lstEstado').addClass('is-invalid');
-            $('#vEstado').addClass('invalid-feedback');
-            $('#msgEstado').html(data.responseJSON.errors.estado);
-         } else {
-            $('#lstEstado').removeClass('is-invalid');
-            $('#lstEstado').addClass('is-valid');
-            $('#vEstado').css('display', 'none');
-         }
-
-      
    });
 });

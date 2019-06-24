@@ -9,9 +9,9 @@ $(document).ready(function(){
    | columns: Agrega data a mostrar en tabla.
    | drawCallback function: Agrega class "pagination-sm" para que se vea pequeña.
    |
-   */
-  
-   
+   */   
+
+
    $.fn.dataTable.ext.classes.sPagination = 'pagination pagination-sm';
    $('#dataTable-users').DataTable({
       "processing": true,

@@ -1,8 +1,8 @@
 @extends('main')
 
-@section('title', 'Agregar Funcionario')
+@section('title', 'Nuevo Contrato')
 
-@section('breadcrumb', 'Funcionarios')
+@section('breadcrumb', 'Contrato Funcionarios')
 
 @section('content')
 
@@ -26,14 +26,14 @@
 
    <div class="card-header">
       <h4 class="my-0 font-weight-light text-sm-center">
-         Agregar Funcionario
+         Nuevo Contrato
       </h4>
       <ul class="nav nav-tabs card-header-tabs">
          <li class="nav-item" style="cursor:pointer;">
-            <a class="nav-link active" id="navPersonal" style="color:#495057;" href="#">Información Personal</a>
+            <a class="nav-link active" id="navPersonal" style="color:#495057;" href="#">Personal</a>
          </li>               
          <li class="nav-item" style="cursor:pointer;">
-            <a class="nav-link" id="navSubvenciones" style="color:#495057;" href="#">Horas Contrato</a>
+            <a class="nav-link" id="navSubvenciones" style="color:#495057;" href="#">Horas Subvención</a>
          </li>
       </ul>   
    </div>

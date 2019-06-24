@@ -15,11 +15,11 @@ class AddColumnsFuncionariosTable extends Migration
     {
          Schema::table('funcionarios', function (Blueprint $table) {
 
-            $table->unsignedInteger('idAfp')->after('apellidoMaterno');
-            $table->unsignedInteger('idSalud')->after('idAfp');            
+            // $table->unsignedInteger('idAfp')->after('apellidoMaterno');
+            // $table->unsignedInteger('idSalud')->after('idAfp');            
 
-            $table->foreign('idAfp')->references('id')->on('afp');
-            $table->foreign('idSalud')->references('id')->on('salud');
+            // $table->foreign('idAfp')->references('id')->on('afp');
+            // $table->foreign('idSalud')->references('id')->on('salud');
 
         });
     }
@@ -32,8 +32,8 @@ class AddColumnsFuncionariosTable extends Migration
     public function down()
     {
         Schema::table('funcionarios', function (Blueprint $table) {
-            $table->dropForeign('funcionarios_idAfp_foreign');
-            $table->dropForeign('funcionarios_idSalud_foreign');    
+            // $table->dropForeign('funcionarios_idAfp_foreign');
+            // $table->dropForeign('funcionarios_idSalud_foreign');    
         });
     }
 }

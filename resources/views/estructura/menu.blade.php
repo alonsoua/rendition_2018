@@ -30,8 +30,48 @@
 
 
 {{-- Mantenedores --}}
+    
+    {{-- AFP --}}
+        @can('afp.index')
+            @php    $afpIndex = 'true';     @endphp
+        @else
+            @php    $afpIndex = 'false';    @endphp
+        @endcan
+        @can('afp.create')
+            @php    $afpCreate = 'true';     @endphp
+        @else
+            @php    $afpCreate = 'false';    @endphp
+        @endcan
 
-    {{-- sostenedores --}}
+    {{-- Prevision --}}
+        @can('previsiones.index')
+            @php    $previsionesIndex = 'true';     @endphp
+        @else
+            @php    $previsionesIndex = 'false';    @endphp
+        @endcan
+        @can('previsiones.create')
+            @php    $previsionesCreate = 'true';     @endphp
+        @else
+            @php    $previsionesCreate = 'false';    @endphp
+        @endcan
+
+
+    {{-- Reajuste --}}
+        @can('reajuste.index')
+            @php    $reajusteIndex = 'true';     @endphp
+        @else
+            @php    $reajusteIndex = 'false';    @endphp
+        @endcan
+    
+    {{-- Sned --}}
+
+        @can('send.index')
+            @php    $snedIndex = 'true';     @endphp
+        @else
+            @php    $snedIndex = 'false';    @endphp
+        @endcan
+    
+    {{-- Sostenedores --}}
         @can('sostenedores.index')
             @php    $sostenedoresIndex = 'true';     @endphp
         @else
@@ -171,6 +211,18 @@
             @php    $calculohorasIndex = 'false';    @endphp
         @endcan        
 
+    {{-- Honorarios --}}
+        @can('honorarios.index')
+            @php    $honorariosIndex = 'true';     @endphp
+        @else
+            @php    $honorariosIndex = 'false';    @endphp
+        @endcan
+        @can('honorarios.create')
+            @php    $honorariosCreate = 'true';     @endphp
+        @else
+            @php    $honorariosCreate = 'false';    @endphp
+        @endcan
+
     {{-- liquidaciones --}}
         @can('liquidaciones.index')
             @php    $liquidacionesIndex = 'true';     @endphp
@@ -258,6 +310,12 @@
         {{-- MANTENEDORES  --}}
 
         @if (
+            $afpIndex               === 'true' ||
+            $afpCreate              === 'true' ||
+            $previsionesIndex       === 'true' ||
+            $previsionesCreate      === 'true' ||
+            $reajusteIndex          === 'true' ||
+            $snedIndex              === 'true' ||
             $sostenedoresIndex      === 'true' ||
             $sostenedoresCreate     === 'true' ||
             $establecimientosIndex  === 'true' ||
@@ -272,7 +330,7 @@
             $documentosCreate       === 'true' ||
             $leyesIndex             === 'true' ||
             $leyesCreate            === 'true' ||
-            $calculohorasIndex      === 'true' ||
+            $calculohorasIndex      === 'true' ||            
             $funcionesIndex         === 'true' ||
             $funcionesCreate        === 'true' ||
             $funcionariosIndex      === 'true' ||
@@ -285,15 +343,46 @@
                     Mantenedores
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">                    
+                   
+                    @can('afp.index')
+                        <a class="dropdown-item {{ Request::is('mantenedores/afp*') ? 'active' : '' }}" 
+                        href="{{ route('afp.index') }}">AFP</a>
+                    @else
+                        @can('afp.create')
+                            <a class="dropdown-item {{ Request::is('mantenedores/afp*') ? 'active' : '' }}" 
+                        href="{{ route('afp.create') }}">Agregar AFP</a>                        
+                        @endcan
+                    @endcan
+
+                    @can('previsiones.index')                        
+                        <a class="dropdown-item {{ Request::is('mantenedores/previsiones*') ? 'active' : '' }}"
+                        href="{{ route('previsiones.index') }}">Previsiones</a>
+                    @else
+                        @can('previsiones.create')
+                            <a class="dropdown-item {{ Request::is('mantenedores/previsiones*') ? 'active' : '' }}" 
+                        href="{{ route('previsiones.create') }}">Agregar Previsión</a>                        
+                        @endcan
+                    @endcan
+                    
+                    @can('reajuste.create')
+                        <a class="dropdown-item {{ Request::is('mantenedores/reajustes*') ? 'active' : '' }}" 
+                        href="{{ route('reajustes.index') }}">Calcular Reajuste</a>                    
+                    @endcan
+                    
+                    @can('sned.create')
+                        <a class="dropdown-item {{ Request::is('mantenedores/sneds*') ? 'active' : '' }}" 
+                        href="{{ route('sned.index') }}">Calcular Sned</a>                    
+                    @endcan
+
                     
                     @can('sostenedores.index')
-                        <a class="dropdown-item {{ Request::is('mantenedores/sostenedores*') ? 'active' : '' }}" 
+                        <a class="dropdown-item {{ Request::is('mantenedores/sostenedores*') ? 'active' : '' }}"
                         href="{{ route('sostenedores.index') }}">Sostenedores</a>
                     @else
                         @can('sostenedores.create')
                             <a class="dropdown-item {{ Request::is('mantenedores/sostenedores*') ? 'active' : '' }}" 
-                        href="{{ route('sostenedores.create') }}">Agregar Sostenedor</a>                        
-                        @endcan
+                        href="{{ route('sostenedores.create') }}">Agregar Sostenedor</a>
+                        @endcan    
                     @endcan
 
                     @can('establecimientos.index')
@@ -387,7 +476,7 @@
                         href="{{ route('funciones.create') }}">Agregar Función</a>
                         @endcan  
                     @endcan
-
+                    
                     @can('leyes.index')
                         <a class="dropdown-item {{ Request::is('mantenedores/leyes*') ? 'active' : '' }}"
                         href="{{ route('leyes.index') }}">Leyes</a>
@@ -405,11 +494,11 @@
 
                     @can('funcionarios.index')
                         <a class="dropdown-item {{ Request::is('mantenedores/funcionarios*') ? 'active' : '' }}"
-                        href="{{ route('funcionarios.index') }}">Funcionarios</a>
+                        href="{{ route('funcionarios.index') }}">Contratos</a>
                     @else
                         @can('funcionarios.create')
                             <a class="dropdown-item {{ Request::is('mantenedores/funcionarios*') ? 'active' : '' }}" 
-                        href="{{ route('funcionarios.create') }}">Agregar Funcionario</a>
+                        href="{{ route('funcionarios.create') }}">Nuevo Contrato</a>
                         @endcan  
                     @endcan
 
@@ -422,8 +511,7 @@
         <!-- Gastos -->
         @if(  
             $imputacionesIndex      === 'true' ||
-            $imputacionesCreate     === 'true' ||
-            $reportesGastosIndex    === 'true' 
+            $imputacionesCreate     === 'true' 
         )
 
             <li class="nav-item dropdown {{ Request::is('gastos/*') ? 'active' : '' }}">
@@ -435,18 +523,18 @@
 
                     @can('imputaciones.index')
                         <a class="dropdown-item {{ Request::is('gastos/imputaciones*') ? 'active' : '' }}"
-                        href="{{ route('imputaciones.index') }}">Imputaci&oacute;n</a>
+                        href="{{ route('imputaciones.index') }}">Imputaciones</a>
                     @else
                         @can('imputaciones.create')
                             <a class="dropdown-item {{ Request::is('mantenedores/imputaciones*') ? 'active' : '' }}" 
-                        href="{{ route('imputaciones.create') }}">Agregar Imputaci&oacute;n</a>
+                        href="{{ route('imputaciones.create') }}">Imputar Gasto</a>
                         @endcan  
                     @endcan
 
-                    @can('reportesgastos.index')
+               {{--      @can('reportesgastos.index')
                         <a class="dropdown-item {{ Request::is('gastos/reportesgastos*') ? 'active' : '' }}"
                         href="{{ route('reportesgastos.index') }}">Reporte</a>
-                    @endcan
+                    @endcan --}}
 
                 </div>
             </li>
@@ -454,9 +542,10 @@
 
         <!-- RR.HH. -->
         @if( 
+            $honorariosIndex        === 'true' ||
+            $honorariosCreate       === 'true' ||
             $liquidacionesIndex     === 'true' ||
-            $liquidacionesCreate    === 'true' ||
-            $reportesRrhhIndex      === 'true' 
+            $liquidacionesCreate    === 'true' 
         )
 
             <li class="nav-item dropdown {{ Request::is('rrhh/*') ? 'active' : '' }}">
@@ -472,14 +561,24 @@
                     @else
                         @can('liquidaciones.create')
                             <a class="dropdown-item {{ Request::is('mantenedores/liquidaciones*') ? 'active' : '' }}" 
-                        href="{{ route('liquidaciones.create') }}">Agregar Liquidaci&oacute;n</a>
+                        href="{{ route('liquidaciones.create') }}">Nueva Liquidaci&oacute;n</a>
                         @endcan  
                     @endcan
 
-                    @can('reportesrrhh.index')
+                    @can('honorarios.index')
+                        <a class="dropdown-item {{ Request::is('rrhh/honorarios*') ? 'active' : '' }}"
+                        href="{{ route('honorarios.index') }}">Boleta Honorario</a>
+                    @else
+                        @can('honorarios.create')
+                            <a class="dropdown-item {{ Request::is('mantenedores/honorarios*') ? 'active' : '' }}" 
+                        href="{{ route('honorarios.create') }}">Nueva Boleta Honorario</a>
+                        @endcan  
+                    @endcan                    
+
+                 {{--    @can('reportesrrhh.index')
                         <a class="dropdown-item {{ Request::is('rrgg/reportesrrhh*') ? 'active' : '' }}"
                         href="{{ route('reportesrrhh.index') }}">Reporte</a>
-                    @endcan
+                    @endcan --}}
 
                 </div>
             </li>        

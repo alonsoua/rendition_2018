@@ -12,6 +12,7 @@ $(document).ready(function(){
    $('.fecha-documento').datepicker({
       format: 'dd-mm-yyyy',
       daysOfWeekDisabled: "0",
+      todayBtn: 'linked',
       autoclose: true,
       language: "es"
    });
@@ -19,10 +20,26 @@ $(document).ready(function(){
    $('.fecha-pago').datepicker({
       format: 'dd-mm-yyyy',
       daysOfWeekDisabled: "0",
+      todayBtn: 'linked',
       autoclose: true,
       language: "es"
    });
 
+   $('.fecha-desde').datepicker({
+      format: 'yyyy-mm-dd',
+      todayBtn: 'linked',
+      daysOfWeekDisabled: "0",
+      autoclose: true,
+      language: "es"
+   });
+
+   $('.fecha-hasta').datepicker({
+      format: 'yyyy-mm-dd',
+      todayBtn: 'linked',
+      daysOfWeekDisabled: "0",
+      autoclose: true,
+      language: "es"
+   });
 
    /*
    |--------------------------------------------------------------------------
@@ -45,6 +62,10 @@ $(document).ready(function(){
    });
 
    $('.select-subvencion').chosen({
+      enable_split_word_search: true,
+      search_contains: true,
+      group_search: true,
+      case_sensitive_search: false,
       no_results_text: 'No se encontró la Subvención',
       width : '100%'
 
@@ -89,173 +110,187 @@ $(document).ready(function(){
    | drawCallback function: Agrega class "pagination-sm" para que se vea pequeña.
    |
    */
-   $.fn.dataTable.ext.classes.sPagination = 'pagination pagination-sm';
-   $('#dataTable-imputaciones').DataTable({
-      "processing": true,
-      "oLanguage" : {
-         "sProcessing"        : "Procesando...",
-         "sLengthMenu"        : "Mostrar _MENU_ registros por página",
-         "sZeroRecords"       : "<h5 class='font-weight-light mt-5 mb-5'>No encontramos ninguna imputación con esas características</h5>",
-         "sEmptyTable"        : "<h5 class='font-weight-light mt-5 mb-5'>No existen imputaciones registrados</h5>",
-         "sLoadingRecords"    : "Cargando...",
-         "sInfo"              : "Mostrando _START_ a _END_ de _TOTAL_ registros",
-         "sInfoEmpty"         : "Mostrando 0 a 0 de 0 imputaciones",
-         "sInfoFiltered"      : "<br>(filtro aplicado en _MAX_ imputaciones)",
-         "sInfoPostFix"       : "",
-         "sInfoThousands"     : ".",
-         "sSearch"            : "Buscar:",
-         "sUrl"               : "",
-            "oPaginate"       : {
-                  "sFirst"       : "Primera",
-                  "sPrevious"    : "Anterior",
-                  "sNext"        : "Siguiente",
-                  "sLast"        : "Última",
+  
+   fetch_data('no');
+   
+   function fetch_data (info, desde = '', hasta = '') {
+      
+      if (info === 'no') {
+         var url = "../imputacionesTable";
+      } else {
+         var url = 'imputaciones/getRangoFecha/'+desde+'/'+hasta+'';
+      }
+
+      $.fn.dataTable.ext.classes.sPagination = 'pagination pagination-sm';
+      $('#dataTable-imputaciones').DataTable({
+         "processing": true,
+         "oLanguage" : {
+            "sProcessing"        : "Procesando...",
+            "sLengthMenu"        : "Mostrar _MENU_ registros por página",
+            "sZeroRecords"       : "<h5 class='font-weight-light mt-5 mb-5'>No encontramos ninguna imputación con esas características</h5>",
+            "sEmptyTable"        : "<h5 class='font-weight-light mt-5 mb-5'>No existen imputaciones registrados</h5>",
+            "sLoadingRecords"    : "Cargando...",
+            "sInfo"              : "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            "sInfoEmpty"         : "Mostrando 0 a 0 de 0 imputaciones",
+            "sInfoFiltered"      : "<br>(filtro aplicado en _MAX_ imputaciones)",
+            "sInfoPostFix"       : "",
+            "sInfoThousands"     : ".",
+            "sSearch"            : "Buscar:",
+            "sUrl"               : "",
+               "oPaginate"       : {
+                     "sFirst"       : "Primera",
+                     "sPrevious"    : "Anterior",
+                     "sNext"        : "Siguiente",
+                     "sLast"        : "Última",
+               },
+         },
+         "serverSide": true,
+         "ajax"      : url, 
+         "columns"   : [
+
+            {
+               data: 'establecimiento.nombre', 
+               name: 'establecimiento.nombre'
             },
-      },
-      "serverSide": true,
-      "ajax"      : "{{ url('imputacionesTable') }}",
-      "columns"   : [
+            
+            {
+               data: 'establecimiento.rbd', 
+               name: 'establecimiento.rbd'
+            },
 
-         {
-            data: 'establecimiento.nombre', 
-            name: 'establecimiento.nombre'
-         },
-         
-         {
-            data: 'establecimiento.rbd', 
-            name: 'establecimiento.rbd'
-         },
+            {
+               data: 'subvencion.nombre',      
+               name: 'subvencion.nombre'
+            },
 
-         {
-            data: 'subvencion.nombre',      
-            name: 'subvencion.nombre'
-         },
-
-         {
-            data: 'cuenta.codigo', 
-            name: 'cuenta.codigo'
-         },
+            {
+               data: 'cuenta.codigo', 
+               name: 'cuenta.codigo'
+            },
 
 
-         {
-            data: 'documento.nombre',       
-            name: 'documento.nombre'
-         },      
+            {
+               data: 'documento.nombre',       
+               name: 'documento.nombre'
+            },      
 
-         {
-            data: 'numDocumento',            
-            name: 'imputacions.numDocumento'
-         },
-         {
-            data: 'fechaDocumento',            
-            name: 'imputacions.fechaDocumento',
-            render: function formatoFecha (data) {
-               var fecha = data;
-               return fecha.replace(/^(\d{4})-(\d{2})-(\d{2})$/g,'$3/$2/$1');
-            }
-         },
-         {
-            data: 'fechaPago',            
-            name: 'imputacions.fechaPago' ,
-            render: function formatoFecha (data) {
-               var fecha = data;
-               return fecha.replace(/^(\d{4})-(\d{2})-(\d{2})$/g,'$3/$2/$1');
-            }
-         },
+            {
+               data: 'numDocumento',            
+               name: 'imputacions.numDocumento'
+            },
+            {
+               data: 'fechaDocumento',            
+               name: 'imputacions.fechaDocumento',
+               render: function formatoFecha (data) {
+                  var fecha = data;
+                  return fecha.replace(/^(\d{4})-(\d{2})-(\d{2})$/g,'$3/$2/$1');
+               }
+            },
+            {
+               data: 'fechaPago',            
+               name: 'imputacions.fechaPago' ,
+               render: function formatoFecha (data) {
+                  var fecha = data;
+                  return fecha.replace(/^(\d{4})-(\d{2})-(\d{2})$/g,'$3/$2/$1');
+               }
+            },
 
-         {
-            data: 'descripcion',            
-            name: 'imputacions.descripcion'
-         },
+            {
+               data: 'descripcion',            
+               name: 'imputacions.descripcion'
+            },
 
-         { 
-            data: 'proveedor.rut',  
-            name: 'proveedor.rut',
-            render: function formateaRut(data) {
-               var rut = data;
-               var actual = rut.replace(/^0+/, "");
-               if (actual != '' && actual.length > 1) {
-                  var sinPuntos = actual.replace(/\./g, "");
-                  var actualLimpio = sinPuntos.replace(/-/g, "");
-                  var inicio = actualLimpio.substring(0, actualLimpio.length - 1);
-                  var rutPuntos = "";
-                  var i = 0;
-                  var j = 1;
-                  for (i = inicio.length - 1; i >= 0; i--) {
-                     var letra = inicio.charAt(i);
-                     rutPuntos = letra + rutPuntos;
-                     if (j % 3 == 0 && j <= inicio.length - 1) {
-                        rutPuntos = "." + rutPuntos;
-                     }
-                     j++;
-                  }
-                  var dv = actualLimpio.substring(actualLimpio.length - 1);
-                  rutPuntos = rutPuntos + "-" + dv;
-               }                
-               return rutPuntos;
-            }
-         },
-         { 
-            data: 'proveedor.razonSocial',  
-            name: 'proveedor.razonSocial'
-         },
-         {
-            data: 'montoGasto',             
-            name: 'imputacions.montoGasto',
-            render: $.fn.dataTable.render.number( '.', '.', 0, '$' )
-         },
-         {  
-            data: 'montoDocumento',         
-            name: 'imputacions.montoDocumento' ,
-            render: $.fn.dataTable.render.number( '.', '.', 0, '$' )
-         },
-         {
-            data: 'estado',
-            className:'estado',
-            name: 'imputacions.estado'
-         },
-         {
-            data: 'opciones'
-         },
-
-      ],
-       "columnDefs": [ 
             { 
-               "visible": false, "targets": [1,3,5,6,7,9] 
-            } 
-        ], 
-        dom: 'Bfrtip',
-        buttons: [ 
-            // {
-            //     extend: 'print',
-            //     text: 'Imprimir',
-            //     className: 'btn btn-primary btn-sm mr-1 float-left',
-            //     exportOptions: {
-            //         columns: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
-            //     }
-            // },
-            {
-               extend: 'pdfHtml5',
-               className: 'btn btn-primary btn-sm mr-1 float-left',
-               exportOptions: { 
-                  orthogonal: 'export', 
-                  columns: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-               },
+               data: 'proveedor.rut',  
+               name: 'proveedor.rut',
+               render: function formateaRut(data) {
+                  var rut = data;
+                  var actual = rut.replace(/^0+/, "");
+                  if (actual != '' && actual.length > 1) {
+                     var sinPuntos = actual.replace(/\./g, "");
+                     var actualLimpio = sinPuntos.replace(/-/g, "");
+                     var inicio = actualLimpio.substring(0, actualLimpio.length - 1);
+                     var rutPuntos = "";
+                     var i = 0;
+                     var j = 1;
+                     for (i = inicio.length - 1; i >= 0; i--) {
+                        var letra = inicio.charAt(i);
+                        rutPuntos = letra + rutPuntos;
+                        if (j % 3 == 0 && j <= inicio.length - 1) {
+                           rutPuntos = "." + rutPuntos;
+                        }
+                        j++;
+                     }
+                     var dv = actualLimpio.substring(actualLimpio.length - 1);
+                     rutPuntos = rutPuntos + "-" + dv;
+                  }                
+                  return rutPuntos;
+               }
+            },
+            { 
+               data: 'proveedor.razonSocial',  
+               name: 'proveedor.razonSocial'
             },
             {
-               extend: 'csv',
-               className: 'btn btn-primary btn-sm mr-1 float-left',
-               exportOptions: { 
-                  orthogonal: 'export', 
-                  columns: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ]
-               },
+               data: 'montoGasto',             
+               name: 'imputacions.montoGasto',
+               render: $.fn.dataTable.render.number( '.', '.', 0, '$' )
             },
-               
-        ],
+            {  
+               data: 'montoDocumento',         
+               name: 'imputacions.montoDocumento' ,
+               render: $.fn.dataTable.render.number( '.', '.', 0, '$' )
+            },
+            {
+               data: 'estado',
+               className:'estado',
+               name: 'imputacions.estado'
+            },
+            {
+               data: 'opciones'
+            },
 
-      "drawCallback": function () {
-         $('.dataTables_paginate > .pagination').addClass('pagination-sm');
-      },      
+         ],
+          "columnDefs": [ 
+               { 
+                  "visible": false, "targets": [0,1,7,9] 
+               } 
+           ], 
+           dom: 'Bfrtip',
+           buttons: [           
+               {
+                  extend: 'csv',
+                  className: 'btn btn-primary btn-sm mr-1 float-left',
+                  exportOptions: { 
+                     orthogonal: 'export', 
+                     columns: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ]
+                  },
+               },
+                  
+           ],
+
+         "drawCallback": function () {
+            $('.dataTables_paginate > .pagination').addClass('pagination-sm');
+         },      
+      });
+   }
+
+   $("#desde").change(function(){
+      var desde = $("#desde").val();
+      var hasta = $("#hasta").val();      
+      if (desde != '' & hasta != '') {
+         $("#dataTable-imputaciones").DataTable().destroy();
+         fetch_data('yes', desde, hasta);
+      }
+   });
+
+   $("#hasta").change(function(){
+      var desde = $("#desde").val();
+      var hasta = $("#hasta").val();      
+      if (desde != '' & hasta != '') {
+         $("#dataTable-imputaciones").DataTable().destroy();
+         fetch_data('yes', desde, hasta);
+      }
    });
 
    if ($("#form-agregar").length) {
@@ -448,11 +483,16 @@ $('#guardar').click(function(){
       dataType: 'json',
       data: dataArray,
       success: function(result){      
-
-
+     
          $.alertable.alert('<p class="text-center">'+result.message+'</p>', {html : true}).always(function(){
             $(".cargando").css('visibility', 'visible');
-            location.reload();
+
+            if (result.reload == 'ok') {
+               location.reload();
+            } else {               
+               $(".cargando").css('visibility', 'hidden');               
+            }
+
          });
       
       }, complete: function(data) {

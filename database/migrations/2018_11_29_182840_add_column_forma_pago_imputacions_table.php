@@ -15,9 +15,9 @@ class AddColumnFormaPagoImputacionsTable extends Migration
     {
          Schema::table('imputacions', function (Blueprint $table) {
 
-            $table->unsignedInteger('idFormaPago')->after('idTipoDocumento');                    
+            // $table->unsignedInteger('idFormaPago')->after('idTipoDocumento');                    
 
-            $table->foreign('idFormaPago')->references('id')->on('forma_pago');
+            // $table->foreign('idFormaPago')->references('id')->on('forma_pago');
 
         });
     }
@@ -30,7 +30,7 @@ class AddColumnFormaPagoImputacionsTable extends Migration
     public function down()
     {
         Schema::table('imputacions', function (Blueprint $table) {
-            $table->dropForeign('imputacions_idFormaPago_foreign');            
+            // $table->dropForeign('imputacions_idFormaPago_foreign');            
         });
     }
 }

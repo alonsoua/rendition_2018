@@ -1,8 +1,8 @@
 @extends('main')
 
-@section('title', 'Funcionarios')
+@section('title', 'Funcionarios Contratados')
 
-@section('breadcrumb', 'Funcionarios')
+@section('breadcrumb', 'Funcionarios Contratados')
 
 @section('content')
 
@@ -11,9 +11,9 @@
 <div class="card">
 
    <div class="card-header">
-      <h5 class="font-weight-light mt-2 text-sm-left float-left">Listado de Funcionarios</h5>
+      <h5 class="font-weight-light mt-2 text-sm-left float-left">Lista de Funcionarios Contratados</h5>
       @can('funcionarios.create')
-         {!! link_to_route('funcionarios.create', $title='Agregar Funcionarios', $parameters = [] ,$attributes = [
+         {!! link_to_route('funcionarios.create', $title='Nuevo Contrato', $parameters = [] ,$attributes = [
             'id'     => 'agregarFuncionario',
             'class'  => 'btn btn-primary mt-1 float-right'
          ]) !!}

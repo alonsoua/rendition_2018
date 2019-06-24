@@ -54,17 +54,6 @@
    {!! Form::label('Subvenciones', 'Subvenciones', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
 
    <div class="col-sm-9">
-    {{--   <select name="subvenciones[]" id="lstSubvencion" multiple
-      tabindex="-1" class="select-subvenciones form-control">
-         
-         @foreach($subvenciones as $subvencion)
-
-             <option value="{{$subvencion->id}}">{{$subvencion->nombre}}</option>
-         @endforeach      
-      </select> --}}
-
-
-
       {{ Form::select('subvenciones[]', $subvenciones ,  $editar == 0 ? null : $cuentaSub
          ,[
             'id'           => 'lstSubvencion',                  

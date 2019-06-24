@@ -13,6 +13,7 @@ $(document).ready(function(){
    $('.fecha-inicio').datepicker({
       format: 'dd-mm-yyyy',
       daysOfWeekDisabled: "0",
+      todayBtn: 'linked',      
       autoclose: true,
       language: "es"
    });
@@ -55,6 +56,21 @@ $(document).ready(function(){
 
    $('.select-funcion').chosen({
       no_results_text: 'No se encontró la Función',
+      width : '100%'
+   });
+
+   $('.select-cuentasGeneral').chosen({
+      no_results_text: 'No se encontró la Cuenta de Subvención General',
+      width : '100%'
+   });
+
+   $('.select-cuentasPie').chosen({
+      no_results_text: 'No se encontró la Cuenta de Subvención PIE',
+      width : '100%'
+   });
+
+   $('.select-cuentasSep').chosen({
+      no_results_text: 'No se encontró la Cuenta de Subvención SEP',
       width : '100%'
    });
 
@@ -128,6 +144,11 @@ $(document).ready(function(){
          {data: 'funcion.nombre',            name: 'funcion.nombre'},
          {data: 'opciones'},
       ],
+       "columnDefs": [ 
+            { 
+               "visible": false, "targets": [0] 
+            } 
+        ], 
          dom: 'Bfrtip',
          buttons: [       
             {
@@ -138,14 +159,14 @@ $(document).ready(function(){
                   columns: [ 0, 1, 2, 3, 4]
                },
             },
-            {
-               extend: 'csv',
-               className: 'btn btn-primary btn-sm mr-1 float-left',
-               exportOptions: { 
-                  orthogonal: 'export', 
-                  columns: [ 0, 1, 2, 3, 4]
-               },
-            },
+            // {
+            //    extend: 'csv',
+            //    className: 'btn btn-primary btn-sm mr-1 float-left',
+            //    exportOptions: { 
+            //       orthogonal: 'export', 
+            //       columns: [ 0, 1, 2, 3, 4]
+            //    },
+            // },
             {
                extend: 'excelHtml5',
                className: 'btn btn-primary btn-sm mr-1 float-left',
@@ -190,18 +211,30 @@ $(document).ready(function(){
 $('#lstTipoContrato').on('change', function(e){
    var idTipoContrato = e.target.value;   
    
-   if (idTipoContrato != 1) {
-      $("#txtFechaTerminoContrato").css('display', 'block');
-      $("#calFechaTerminoContrato").css('display', 'block');      
-      $('#lblFechaTerminoContrato').css('display', 'block');
-      $('#txtFechaTerminoContrato').val(null);
-      $('#vFechaTerminoContrato').css('display', 'block'); 
-      
-   } else {
+   console.log(1, idTipoContrato);
+   // debugger;
+   if (idTipoContrato == 1) {
+      $('#divContrato').css('display', 'block');
+      $('#navSubvenciones').css('display', 'block');
       $("#txtFechaTerminoContrato").css('display', 'none');
       $("#calFechaTerminoContrato").css('display', 'none');
       $('#lblFechaTerminoContrato').css('display', 'none');      
       $('#vFechaTerminoContrato').css('display', 'none'); 
+
+      $('#divFechaTermino').css('display', 'none');
+   } else if (idTipoContrato == 2) {
+      $('#divContrato').css('display', 'block');
+      $('#navSubvenciones').css('display', 'block');
+      $("#txtFechaTerminoContrato").css('display', 'block');
+      $("#calFechaTerminoContrato").css('display', 'block');      
+      $('#lblFechaTerminoContrato').css('display', 'block');
+      $('#txtFechaTerminoContrato').val(null);
+      $('#vFechaTerminoContrato').css('display', 'block');   
+      $('#divFechaTermino').css('display', 'block');    
+   } else if (idTipoContrato == 3) {
+      $('#divContrato').css('display', 'none');
+      $('#navSubvenciones').css('display', 'none'); 
+      $('#divFechaTermino').css('display', 'none');     
    }
    
 });

@@ -5,12 +5,20 @@ namespace App\Http\Controllers;
 use App\Http\Requests\EstablecimientoRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+
 use App\Helpers\Helper;
+
+// use App\Http\Requests\ImportTypeRequest;
 
 use App\Establecimiento;
 use App\tipo_dependencia;
 use App\Sostenedor;
 use App\Comuna;
+// use Input;
+use Illuminate\Support\Facades\Input;
+// use App\Input;
 
 class EstablecimientoController extends Controller
 {
@@ -62,15 +70,36 @@ class EstablecimientoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(EstablecimientoRequest $request)
+    
+
+    function SubirImagen(){
+        $id     = Input::post('id');
+        $file   = Input::file('avatar');
+        $nombre = uniqid().".jpg";
+        \Storage::disk('public')->put($nombre,  \File::get($file));
+        $model = new preguntasModel();
+        $respuesta = $model->ActualizarFotoPerfil($id, $nombre);
+        return response()->json($respuesta);
+    }
+
+    public function store(Request $request)
     {
         
+            dd($request->all(), $request->hasFile('image'));
         if ($request->ajax()) {
 
-            if ($request->hasFile('insignia')) {
+            // $id     = Input::post('id');
+            // $foto = $request->photo->store('insignia');
+            $file = Input::file('insignia');
 
-            }
-            Establecimiento::create([
+            // $img = $request->file('insignia')->store('fields');
+            $ins = $request->file('insignia');
+            // dd($request->hasFile('insignia'));
+
+            // $insig ->all= $request->file('insig'->all);
+
+            
+            $establecimiento = Establecimiento::create([
                 'rbd'               => $request->rbd,
                 'nombre'            => $request->nombre,
                 'razonSocial'       => $request->razonSocial,
@@ -80,10 +109,16 @@ class EstablecimientoController extends Controller
                 'idComuna'          => $request->comuna,
                 'direccion'         => $request->direccion,
                 'fono'              => $request->fono,
-                'correo'            => $request->correo,
-                'insignia'          => $request->insignia
+                'correo'            => $request->correo,                
             ]);
 
+            // $path = $request->file('avatar')->store('avatars');
+            if ($request->file('insignia')) {
+                $path = Storage::disk('public')->put('image', $request->file('file'));
+                $$establecimiento->fill(['insignia' => asset($path)])->save();
+            }
+
+            // $post->tags()->sync($request->get)
             //MENSAJE
             $mensaje = 'El establecimiento <b>'.$request['nombre'].'</b> ha sido agregado correctamente';
 
@@ -143,19 +178,32 @@ class EstablecimientoController extends Controller
     public function update(Request $request, $id)
     {   
         
-        //dd($request->rbd);
+        
+        // $path = 'upload/'; //Este path es la carpeta donde se subira la imágen
+        // $file = Input::file('imagen');
+        dd($request->file('insig'));
+        dd($request->all());
         Request()->validate([
             'rbd'             => 'required|unique:establecimientos,rbd,'.$id.',id' ,
             'nombre'          => 'required|max:200',
             'razonSocial'     => 'required|max:150',
             'rut'             => 'required|unique:establecimientos,rut,'.$id.',id' ,
+            'rut'                 => 'required|unique:funcionarios,rut,'.$id.',id' ,
             'tipoDependencia' => 'required',
             'sostenedor'      => 'required',
             'comuna'          => 'required',
             'direccion'       => 'required|max:250',
             'fono'            => 'required|numeric|max:9999999999',
-            'correo'          => 'max:150|email'
+            'correo'          => 'max:150|email',
+            
           ]);
+
+        dd($request->file('insignia'));
+
+        // $establecimiento = Establecimiento::findOrFail($id);
+
+        // $establecimiento->fill($request->all())->save;
+
          $establecimiento = Establecimiento::findOrFail($id);        
          $establecimiento->rbd               = $request->rbd;
          $establecimiento->nombre            = $request->nombre;
@@ -169,6 +217,10 @@ class EstablecimientoController extends Controller
          $establecimiento->correo            = $request->correo;
         //$establecimiento->insignia          = $img;
 
+        if ($request->file('insignia')) {
+            $path = Storage::disk('public')->put('image', $request->file('insignia'));
+            $establecimiento->fill(['insignia' => asset($path)])->save();
+        }
          $mensaje = 'El Establecimiento <b>'.$establecimiento['nombre'].'</b> ha sido editado correctamente';
 
          if ($request->ajax()) {

@@ -11,7 +11,7 @@
 <div class="card">
 
    <div class="card-header">
-      <h5 class="font-weight-light mt-2 text-sm-left float-left">Listado de Tipos de Documentos</h5>
+      <h5 class="font-weight-light mt-2 text-sm-left float-left">Lista de Tipos de Documentos</h5>
       @can('documentos.create')
          {!! link_to_route('documentos.create', $title='Agregar Tipo de Documento', $parameters = [] ,$attributes = [
             'id'     => 'agregarDocumento',

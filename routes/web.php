@@ -18,6 +18,9 @@ use Illuminate\Support\Facades\DB;
 /* Modelos */
 use App\User;
 use Caffeinated\Shinobi\Models\Role;
+use App\Afp;
+use App\Prevision;
+// use App\Salud;
 use App\Sostenedor;
 use App\Establecimiento;
 use App\Subvencion;
@@ -38,10 +41,12 @@ Route::get('/', function () {
 
 Auth::routes();
 
+
 //Rutas del men?
 Route::middleware(['auth'])->group( function () {
 
-    Route::get('/', function () {
+    //PDF    
+    Route::get('/', function () {        
         return view('inicio.index');
     });
 
@@ -52,16 +57,32 @@ Route::middleware(['auth'])->group( function () {
         Route::resource('users', 'UserController');
 
         //Roles
-      	Route::resource('roles', 'RolController');
+        Route::resource('roles', 'RolController');
 
-   	});
+    });
 
     //Menu Mantenedores
-   	Route::group(['prefix' => 'mantenedores'], function () {
-    	  
+    Route::group(['prefix' => 'mantenedores'], function () {
+        
+
+        //AFP
+        Route::resource('afp', 'AfpController');    
+
+        //Previsiones
+        Route::resource('previsiones', 'PrevisionController');    
+
         //Sostenedores
-      	Route::resource('sostenedores', 'SostenedorController');        
+        Route::resource('reajustes', 'ReajusteController');        
+
+        //Sostenedores
+        Route::resource('sned', 'SnedController');        
+
+
+        //Sostenedores
+        Route::resource('sostenedores', 'SostenedorController');        
+        
         //Establecimientos
+// Route::post('fileUpload', ['as'=>'fileUpload','uses'=>'HomeController@fileUpload']);
         Route::resource('establecimientos', 'EstablecimientoController');
         //Subvenciones
         Route::resource('subvenciones', 'SubvencionController');
@@ -114,6 +135,9 @@ Route::middleware(['auth'])->group( function () {
 
           //Modifica estado de imputación
           Route::get('modificarEstado/{id}/{estado}', 'ImputacionController@modificarEstado');
+
+          // Fecha rango
+          Route::get('imputaciones/getRangoFecha/{desde}/{hasta}', 'ImputacionController@getRangoFecha');
           
         //ReportesGastos
         Route::resource('reportesgastos', 'ReporteGastoController');       
@@ -122,17 +146,45 @@ Route::middleware(['auth'])->group( function () {
 
 
     //Menu RRHH
-    Route::group(['prefix' => 'rrhh'], function () {
-        
+    Route::group(['prefix' => 'rrhh'], function () {           
+
         //Liquidaciones
         Route::resource('liquidaciones', 'LiquidacionController');
           Route::get('liquidaciones/getFuncionarios/{id}', 'LiquidacionController@getFuncionarios');
 
+          Route::get('liquidaciones/{idLiquidacion}/getFuncionarios/{id}', 'LiquidacionController@getFuncionarios');
+
           Route::get('liquidaciones/getPeriodos/{id}', 'LiquidacionController@getPeriodos');
+
+          Route::get('liquidaciones/getRangoFecha/{desde}/{hasta}', 'LiquidacionController@getRangoFecha');
+
+          Route::get('liquidaciones/imprimirLiquidaciones/{desde}/{hasta}', 'LiquidacionController@imprimirLiquidaciones');
+
 
           //horasContrato          
           Route::get('liquidaciones/horasContrato/{idFuncionario}/{idEstablecimiento}/{idPeriodo}', 'LiquidacionController@horasContrato');
 
+
+        //Honorarios
+        Route::resource('honorarios', 'HonorarioController');
+          //carga Funcionarios en Honorarios          
+          Route::get('honorarios/getFuncionariosTipoContrato/{id}/{idTipoContrato}', 'HonorarioController@getFuncionariosTipoContrato');
+                  
+          //carga Cuentas en Imputaciones          
+          Route::get('honorarios/getCuentas/{id}', 'HonorarioController@getCuentas');
+
+          //carga Documentos en honorarios          
+          Route::get('honorarios/getDocumentos/{id}', 'HonorarioController@getDocumentos');
+
+          //carga Funcionarios en honorarios          
+          Route::get('honorarios/getFuncionarios/{id}', 'HonorarioController@getFuncionarios');
+          Route::get('honorarios/{idImputacion}/getFuncionarios/{id}', 'HonorarioController@getFuncionarios');
+
+          //Modifica estado de imputación
+          Route::get('modificarEstadoHonorario/{id}/{estado}', 'HonorarioController@modificarEstadoHonorario');
+
+          //Rango Fecha
+          Route::get('honorarios/getRangoFecha/{desde}/{hasta}', 'HonorarioController@getRangoFecha');
 
         
         //ReportesRRHH
@@ -170,6 +222,30 @@ Route::middleware(['auth'])->group( function () {
 
 
 /* MANTENEDORES */
+
+    //Afp Table
+    Route::get('afpTable', function(){
+
+
+       return datatables()
+       ->eloquent(Afp::query()->where('estado', 1))
+       ->addColumn('opciones', 'mantenedor.afp.partials.opciones')
+       ->rawColumns(['opciones'])
+       ->toJson();
+
+    });
+
+    //Prevision Table
+    Route::get('previsionTable', function(){
+     
+
+       return datatables()
+       ->eloquent(Prevision::query()->where('estado', 1))
+       ->addColumn('opciones', 'mantenedor.previsiones.partials.opciones')
+       ->rawColumns(['opciones'])
+       ->toJson();
+
+    });
     
     //Sostenedores Table
     Route::get('sostenedoresTable', function(){
@@ -301,11 +377,10 @@ Route::middleware(['auth'])->group( function () {
 /* GASTOS */
 
       //Imputaciones Table
-      Route::get('imputacionesTable', function(){
-
-        $imputaciones = Imputacion::with('establecimiento', 'cuenta', 'subvencion', 'documento', 'proveedor')
-                                    ->select('imputacions.*');     
-
+      Route::get('imputacionesTable', function(){        
+        $imputaciones = Imputacion::select('imputacions.*')->with('establecimiento', 'cuenta', 'subvencion', 'documento', 'proveedor')
+                                    ->where('imputacions.tipo', 'Gasto');
+                                                                        
         return datatables()
         ->eloquent($imputaciones)             
         ->addColumn('opciones', 'gastos.imputaciones.partials.opciones')
@@ -320,6 +395,19 @@ Route::middleware(['auth'])->group( function () {
 
       //Liquidaciones Table
       Route::get('liquidacionesTable', function(){
+        $liquidaciones = Liquidacion::select('liquidacions.*')
+                              ->with('funcionario', 'establecimiento', 'periodo');
+
+        return datatables()
+        ->eloquent($liquidaciones)             
+        ->addColumn('opciones', 'RRHH.liquidaciones.partials.opciones')
+        ->rawColumns(['opciones'])
+        ->toJson();
+      });
+
+      Route::get('liquidacionesFiltroTable', function(){
+
+        // dd();
 
         $liquidaciones = Liquidacion::select('liquidacions.*')
                               ->with('funcionario', 'establecimiento', 'periodo');
@@ -327,6 +415,19 @@ Route::middleware(['auth'])->group( function () {
         return datatables()
         ->eloquent($liquidaciones)             
         ->addColumn('opciones', 'RRHH.liquidaciones.partials.opciones')
+        ->rawColumns(['opciones'])
+        ->toJson();
+      });
+
+      //Honorarios Table
+      Route::get('honorariosTable', function(){
+
+        $honorario = Imputacion::with('establecimiento', 'cuenta', 'subvencion', 'funcionario', 'documento', 'proveedor')
+                                    ->select('imputacions.*')->where('imputacions.tipo', 'Honorario');
+
+        return datatables()
+        ->eloquent($honorario)             
+        ->addColumn('opciones', 'RRHH.honorarios.partials.opciones')
         ->rawColumns(['opciones'])
         ->toJson();
       });
