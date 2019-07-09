@@ -154,7 +154,7 @@ Route::middleware(['auth'])->group( function () {
 
           Route::get('liquidaciones/{idLiquidacion}/getFuncionarios/{id}', 'LiquidacionController@getFuncionarios');
 
-          Route::get('liquidaciones/getPeriodos/{id}', 'LiquidacionController@getPeriodos');
+          Route::get('liquidaciones/getPeriodos/{id}/{idEstablecimiento}', 'LiquidacionController@getPeriodos');
 
           Route::get('liquidaciones/getRangoFecha/{desde}/{hasta}', 'LiquidacionController@getRangoFecha');
 
@@ -395,11 +395,15 @@ Route::middleware(['auth'])->group( function () {
 
       //Liquidaciones Table
       Route::get('liquidacionesTable', function(){
-        $liquidaciones = Liquidacion::select('liquidacions.*')
-                              ->with('funcionario', 'establecimiento', 'periodo');
+        
+        $liquidaciones = Liquidacion::getDataTable();
+        // $liquidaciones = Liquidacion::select('liquidacions.*')
+        //                       ->with('funcionario', 'establecimiento', 'periodo')
+        //                       ->where('liquidacions.estado', 1)
+        //                       ->orderBy('liquidacions.id', 'DESC');
 
         return datatables()
-        ->eloquent($liquidaciones)             
+        ->eloquent($liquidaciones)                     
         ->addColumn('opciones', 'RRHH.liquidaciones.partials.opciones')
         ->rawColumns(['opciones'])
         ->toJson();
@@ -407,11 +411,10 @@ Route::middleware(['auth'])->group( function () {
 
       Route::get('liquidacionesFiltroTable', function(){
 
-        // dd();
-
-        $liquidaciones = Liquidacion::select('liquidacions.*')
-                              ->with('funcionario', 'establecimiento', 'periodo');
-
+        $liquidaciones = Liquidacion::getDataTable();
+        // ('liquidacions.*')
+        //                       ->with('funcionario', 'establecimiento', 'periodo');
+        // $sueldoBase = 150000;
         return datatables()
         ->eloquent($liquidaciones)             
         ->addColumn('opciones', 'RRHH.liquidaciones.partials.opciones')

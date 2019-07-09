@@ -29,4 +29,12 @@ class Sostenedor extends Model
       return $this->belongsTo(Sostenedor::class, 'idComuna');
     }
     /* FIN RELACIONES */
+
+
+    public static function getSostenedor() {
+      $sostRaw = Sostenedor::selectRaw('CONCAT(rut, " - " , nombre, " ", apellidoPaterno, " ", apellidoMaterno) as nombre, id')
+                       ->where('estado', '1')
+                       ->get();
+      return $sostRaw->pluck('nombre',  'id');
+    }
 }

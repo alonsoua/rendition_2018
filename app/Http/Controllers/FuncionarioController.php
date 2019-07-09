@@ -73,57 +73,37 @@ class FuncionarioController extends Controller
         $horas = 0;
 
         // Consulta Subvenciones
-        $arraySubvenciones =    DB::table('leys')
-                                ->join('subvencions', 'subvencions.id', '=', 'leys.idSubvencion')             
-                                ->selectRaw(' distinct 
-                                              subvencions.id as idSubvencion
-                                            , subvencions.nombre as nombreSubvencion')
-                                ->where('subvencions.id', '>', 0)
-                                ->where('leys.tipo', 'Haber')
-                                ->orderBy('subvencions.nombre')
-                                ->get();
+        $arraySubvenciones = Ley::getSubvencionLeyHaber();
 
+        $funcionarioLey = array();
         // Recorre subvenciones ya que por cada subvencion 
         // hay que mostrar sus leyes respectivas
-        $funcionarioLey = array();
-        foreach ($arraySubvenciones as $key => $subvencion) {
-            
-            $topeHora = Ley::selectRaw('tope as topeHora ')
-                            ->where('idSubvencion', $subvencion->idSubvencion)
-                            ->get();       
+        foreach ($arraySubvenciones as $key => $subvencion) {                    
 
             // Consulta las leyes según subvención
-            $leyes =   Ley::selectRaw('  id as idLey
-                                            , codigo as codigoLey
-                                            , nombre as nombreLey 
-                                            , tope as topeHora ')
-                            ->where('idSubvencion', $subvencion->idSubvencion)
-                            ->where('tipo', 'Haber')
-                            ->get();                            
+            $leyes = Ley::getLeyesHaberImponible($subvencion->idSubvencion);
             $arrayLeyes = array();
+
             foreach ($leyes as $idLey => $ley) {
 
-
-                $horasFuncionarios = Funcionario_Ley::selectRaw('sum(horas) as horas')
-                            ->where('idLey', $ley->idLey)
-                            ->get(); 
+                $horasTotalFuncionarios = Funcionario_Ley::getHorasTotalPorLey($ley->idLey);
             
-                $topeHora = $ley->topeHora - $horasFuncionarios[0]['horas'];
+                $topeHora = $ley->topeHora - $horasTotalFuncionarios;
 
                 $arrayLeyes[$ley->idLey] = [   
-                            'idLey'     => $ley->idLey,
-                            'codigoLey' => $ley->codigoLey,
-                            'nombreLey' => $ley->nombreLey,
-                            'topeHora'  => $topeHora,
-                            ];
+                    'idLey'     => $ley->idLey,
+                    'codigoLey' => $ley->codigoLey,
+                    'nombreLey' => $ley->nombreLey,
+                    'topeHora'  => $topeHora,
+                ];
                 
             }
-
-            // dd($arrayLeyes);
-            $funcionarioLey[$key] = [   'idSubvencion' => $subvencion->idSubvencion,
-                                        'subvencion'   => $subvencion->nombreSubvencion,
-                                        'leyes'        => $arrayLeyes 
-                                    ];
+            
+            $funcionarioLey[$key] = [   
+                'idSubvencion' => $subvencion->idSubvencion,
+                'subvencion'   => $subvencion->nombreSubvencion,
+                'leyes'        => $arrayLeyes 
+            ];
         }            
         
         return view('mantenedor.rrhhFuncionarios.create'
@@ -395,72 +375,47 @@ class FuncionarioController extends Controller
         // SUBVENCIONES
 
         // Consulta Subvenciones
-        $arraySubvenciones =    DB::table('leys')
-                                ->join('subvencions', 'subvencions.id', '=', 'leys.idSubvencion')             
-                                ->selectRaw(' distinct 
-                                              subvencions.id as idSubvencion
-                                            , subvencions.nombre as nombreSubvencion')
-                                ->where('subvencions.id', '>', 0)
-                                ->where('leys.tipo', 'Haber')
-                                ->orderBy('subvencions.nombre')
-                                ->get();
+        $arraySubvenciones =    Ley::getSubvencionLeyHaber();
 
-        // Recorre subvenciones ya que por cada subvencion 
-        // hay que mostrar sus leyes respectivas
         $funcionarioLey = array();        
-               
+        // Recorre subvenciones ya que por cada subvencion 
+        // hay que mostrar sus leyes respectivas               
         foreach ($arraySubvenciones as $key => $subvencion) {
-            
-
-            $topeHora = Ley::selectRaw('tope as topeHora ')
-                            ->where('idSubvencion', $subvencion->idSubvencion)
-                            ->where('tipo', 'Haber')
-                            ->get();       
-
 
             // Consulta las leyes según subvención
-            $arrayLeyes =   Ley::selectRaw('  id as idLey
-                                            , codigo as codigoLey
-                                            , nombre as nombreLey
-                                            , tope as topeHora ')
-                            ->where('idSubvencion', $subvencion->idSubvencion)
-                            ->where('tipo', 'Haber')
-                            ->get();         
+            $arrayLeyes =   Ley::getLeyesHaberImponible($subvencion->idSubvencion);
 
             $leyes = array(); 
             foreach ($arrayLeyes as $keys => $ley) {
 
-                $horasFuncionarios = Funcionario_Ley::selectRaw('sum(horas) as horas')
-                            ->where('idLey', $ley->idLey)
-                            ->get(); 
+                $horasTotalFuncionarios = Funcionario_Ley::getHorasTotalPorLey($ley->idLey);
 
-                $topeHora = $ley->topeHora - $horasFuncionarios[0]['horas'];
-
+                $topeHora = $ley->topeHora - $horasTotalFuncionarios;
 
                 $hora = 0;
-                $hora = Funcionario_Ley::selectRaw('horas, idSubvencion, idLey, idFuncionario, id')
-                            ->where('idFuncionario', $id)                            
-                            ->where('idLey', $ley->idLey)
-                            ->get();  
 
-                if (is_null($hora[0]['horas'])) {
+                $hora = Funcionario_Ley::getFuncionario_Ley($id, $ley->idLey);
+
+                if (is_null($hora['horas'])) {
                     $hora = 0;
                 } else {
-                    $hora = $hora[0]['horas'];
+                    $hora = $hora['horas'];
                 }
 
-                $leyes[$keys] = [   'idLey'     => $ley->idLey,
-                                    'codigoLey' => $ley->codigoLey,
-                                    'nombreLey' => $ley->nombreLey,
-                                    'horas'     => $hora,
-                                    'topeHora'  => $topeHora,
-                            ];
+                $leyes[$keys] = [   
+                    'idLey'     => $ley->idLey,
+                    'codigoLey' => $ley->codigoLey,
+                    'nombreLey' => $ley->nombreLey,
+                    'horas'     => $hora,
+                    'topeHora'  => $topeHora,
+                ];
             }
 
-            $funcionarioLey[$key] = [   'idSubvencion' => $subvencion->idSubvencion,
-                                        'subvencion'   => $subvencion->nombreSubvencion,
-                                        'leyes'        => $leyes
-                                    ];
+            $funcionarioLey[$key] = [   
+                'idSubvencion' => $subvencion->idSubvencion,
+                'subvencion'   => $subvencion->nombreSubvencion,
+                'leyes'        => $leyes
+            ];
 
         }   
 

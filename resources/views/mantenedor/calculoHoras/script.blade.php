@@ -37,25 +37,26 @@ $('#lstEstablecimiento').on('change', function(e){
    
    $('#idEstablecimiento').val(idEstablecimiento);
    $(".cargando").css('visibility', 'visible');
+
    $.get('lst-periodos?idEstablecimiento='+ idEstablecimiento,function(data) {
       
-      $('#lstPeriodo').empty();
-
-      
+      $('#lstPeriodo').empty();   
 
       //Carga info en select
       $('#lstPeriodo').append('<option value="0" disable="true" selected="true">Seleccione Periodo</option>');
-      $.each(data, function(index, periodos){
 
+      $.each(data, function(index, periodos){
 
          var periodo = periodos.periodo;
 
          var mes = periodo.substr(0, 2);
-
-         console.log(mes);
+         
          if (mes == 01 || mes == 02 || mes == 03) {
-            $('#lstPeriodo').append('<option value="'+periodos.id+'">'+periodos.periodo+'</option>');
+
+            $('#lstPeriodo').append('<option value="'+periodos.id+'">'+periodos.periodo+' - '+periodos.nombrePeriodo+'</option>');
+
          } else {
+            
             var idPeriodo = periodos.id;
             var url2 = 'getAnteriorRegistro?idPeriodo='+idPeriodo+'&idEstablecimiento='+idEstablecimiento;            
 
@@ -67,10 +68,8 @@ $('#lstEstablecimiento').on('change', function(e){
             });
             
             if (idCalculoHora.responseText.length != 2) {
-               $('#lstPeriodo').append('<option value="'+periodos.id+'">'+periodos.periodo+'</option>');
-            } 
-         
-
+               $('#lstPeriodo').append('<option value="'+periodos.id+'">'+periodos.periodo+' - '+periodos.nombrePeriodo+'</option>');
+            }          
          }
       });
 
@@ -88,7 +87,7 @@ $('#lstEstablecimiento').on('change', function(e){
 $('#lstPeriodo').on('change', function(e){
 
    var periodo = $('#lstPeriodo')[0][$('#lstPeriodo').val()].innerText;
-   var año = periodo.substr(3, 6);
+   var año = periodo.substr(3, 4);
 
    var idPeriodo = e.target.value;
    $('#idPeriodo').val(idPeriodo);
@@ -192,6 +191,7 @@ $('#lstPeriodo').on('change', function(e){
                            } else {
                               cantHoras = 0;
                            }
+                           
 
                            //VALOR HORA
                            var linkv = 'getDetalleMarzo?idLey='+leyes['idLey']+'&ano='+año;
@@ -211,6 +211,10 @@ $('#lstPeriodo').on('change', function(e){
                            }
                         }                     
                      }
+
+                     // if (cantHoras > leyes['topeHoras']) {
+                     //    cantHoras = leyes['topeHoras'];
+                     // }maxLenght(txtCantHoras'+leyes['idLey']+', '+leyes['topeHoras']+');
 
                      row += '<tr>'
                         +'<td>'+leyes['codigoLey']+'</td>'
@@ -252,7 +256,7 @@ $('#lstPeriodo').on('change', function(e){
                            +'<div class="input-group input-group-sm">'
                               +'<input type="text" value="'+formatoMiles(cantHoras)+'"'
                               +'id="txtCantHoras'+leyes['idLey']+'"  name="cantHoras['+leyes['idLey']+']"'
-                              +' onkeyUp="valorHora('+leyes['idLey']+')" class="form-control miles"' 
+                              +' onkeyUp=" valorHora('+leyes['idLey']+')" class="form-control miles"' 
                               +'style="text-align:right" a-describedby="inputGroup-sizing-sm"'
                               +'maxlength="13" oncopy="return false" onpaste="return false" ondragstart="return false;"'
                               +' ondrop="return false;"'

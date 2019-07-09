@@ -16,4 +16,11 @@ class Funcion extends Model
       , 'estado'
       ,
     ];
+
+
+
+    public static function getCodigoFuncion ($idFuncion) {
+
+      return Funcion::select('codigo')->where('id', $idFuncion)->get();
+    }
 }

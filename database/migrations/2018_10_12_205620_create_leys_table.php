@@ -23,8 +23,7 @@ class CreateLeysTable extends Migration
 
             $table->text('descripcion')->nullable();
             $table->enum('tipo', ['Haber', 'Descuento'])->nullable()->comment('Haber - Descuento');
-
-            $table->boolean('imponible')->default(0)->nullable();
+            
             $table->boolean('sueldoBase')->default(0)->nullable();
             $table->boolean('afp')->default(0)->nullable();
             $table->boolean('salud')->default(0)->nullable();

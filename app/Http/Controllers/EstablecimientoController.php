@@ -48,11 +48,10 @@ class EstablecimientoController extends Controller
     public function create()
     {
         $editar  = 0;
-        $tDepRaw = tipo_dependencia::select()->where('estado', '1')->get();
-        $sostRaw = Sostenedor::selectRaw('CONCAT(rut, " - " , nombre, " ", apellidoPaterno, " ", apellidoMaterno) as nombre, id')->where('estado', '1')->get();
+        $tDepRaw      = tipo_dependencia::select()->where('estado', '1')->get();
+        $sostenedores = Sostenedor::getSostenedor();
         
-        $tipoDependencias = $tDepRaw->pluck('nombre', 'id');
-        $sostenedores     = $sostRaw->pluck('nombre',  'id');
+        $tipoDependencias = $tDepRaw->pluck('nombre', 'id');        
         $comunas          = Comuna::pluck('nombre', 'id');
 
         return view('mantenedor.establecimientos.create'
@@ -82,28 +81,33 @@ class EstablecimientoController extends Controller
         return response()->json($respuesta);
     }
 
-    public function store(Request $request)
+    public function store(EstablecimientoRequest $request)
     {
         
-            dd($request->all(), $request->hasFile('image'));
+            // dd($request->all());
         if ($request->ajax()) {
 
             // $id     = Input::post('id');
             // $foto = $request->photo->store('insignia');
-            $file = Input::file('insignia');
+            // $file = Input::file('insignia');
 
             // $img = $request->file('insignia')->store('fields');
-            $ins = $request->file('insignia');
+            // $ins = $request->file('insignia');
             // dd($request->hasFile('insignia'));
 
             // $insig ->all= $request->file('insig'->all);
 
+            //Setea Sned y reajuste
+            $sned     = ($request->sned == 'on') ? 1 : 0;
+            $reajuste = ($request->reajuste == 'on') ? 1 : 0;
             
             $establecimiento = Establecimiento::create([
                 'rbd'               => $request->rbd,
                 'nombre'            => $request->nombre,
                 'razonSocial'       => $request->razonSocial,
                 'rut'               => $request->rut,
+                'sned'              => $sned,
+                'reajuste'          => $reajuste,
                 'idTipoDependencia' => $request->tipoDependencia,
                 'idSostenedor'      => $request->sostenedor,
                 'idComuna'          => $request->comuna,
@@ -151,10 +155,9 @@ class EstablecimientoController extends Controller
         $establecimiento  = Establecimiento::findOrFail($id);
         
         $tDepRaw = tipo_dependencia::select()->where('estado', '1')->get();
-        $sostRaw = Sostenedor::selectRaw('CONCAT(rut, " - " , nombre, " ", apellidoPaterno, " ", apellidoMaterno) as nombre, id')->where('estado', '1')->get();       
-
+        $sostenedores     = Sostenedor::getSostenedor();
+        
         $tipoDependencias = $tDepRaw->pluck('nombre', 'id');
-        $sostenedores     = $sostRaw->pluck('nombre',  'id');
         $comunas          = Comuna::pluck('nombre', 'id');
 
 
@@ -181,14 +184,14 @@ class EstablecimientoController extends Controller
         
         // $path = 'upload/'; //Este path es la carpeta donde se subira la imágen
         // $file = Input::file('imagen');
-        dd($request->file('insig'));
-        dd($request->all());
+        // dd($request->file('insig'));
+        // dd($request->all());
         Request()->validate([
             'rbd'             => 'required|unique:establecimientos,rbd,'.$id.',id' ,
             'nombre'          => 'required|max:200',
             'razonSocial'     => 'required|max:150',
             'rut'             => 'required|unique:establecimientos,rut,'.$id.',id' ,
-            'rut'                 => 'required|unique:funcionarios,rut,'.$id.',id' ,
+            'rut'             => 'required|unique:funcionarios,rut,'.$id.',id' ,
             'tipoDependencia' => 'required',
             'sostenedor'      => 'required',
             'comuna'          => 'required',
@@ -197,30 +200,35 @@ class EstablecimientoController extends Controller
             'correo'          => 'max:150|email',
             
           ]);
-
-        dd($request->file('insignia'));
+        // dd($request->file('insignia'));
 
         // $establecimiento = Establecimiento::findOrFail($id);
 
         // $establecimiento->fill($request->all())->save;
 
-         $establecimiento = Establecimiento::findOrFail($id);        
-         $establecimiento->rbd               = $request->rbd;
-         $establecimiento->nombre            = $request->nombre;
-         $establecimiento->razonSocial       = $request->razonSocial;
-         $establecimiento->rut               = $request->rut;
-         $establecimiento->idTipoDependencia = $request->tipoDependencia;
-         $establecimiento->idSostenedor      = $request->sostenedor;
-         $establecimiento->idComuna          = $request->comuna;
-         $establecimiento->direccion         = $request->direccion;
-         $establecimiento->fono              = $request->fono;
-         $establecimiento->correo            = $request->correo;
+        //Setea Sned
+        $sned     = ($request->sned == 'on') ? 1 : 0;
+        $reajuste = ($request->reajuste == 'on') ? 1 : 0;
+
+        $establecimiento = Establecimiento::findOrFail($id);        
+        $establecimiento->rbd               = $request->rbd;
+        $establecimiento->nombre            = $request->nombre;
+        $establecimiento->razonSocial       = $request->razonSocial;
+        $establecimiento->rut               = $request->rut;
+        $establecimiento->sned              = $sned;
+        $establecimiento->reajuste          = $reajuste;
+        $establecimiento->idTipoDependencia = $request->tipoDependencia;
+        $establecimiento->idSostenedor      = $request->sostenedor;
+        $establecimiento->idComuna          = $request->comuna;
+        $establecimiento->direccion         = $request->direccion;
+        $establecimiento->fono              = $request->fono;
+        $establecimiento->correo            = $request->correo;
         //$establecimiento->insignia          = $img;
 
-        if ($request->file('insignia')) {
-            $path = Storage::disk('public')->put('image', $request->file('insignia'));
-            $establecimiento->fill(['insignia' => asset($path)])->save();
-        }
+        // if ($request->file('insignia')) {
+        //     $path = Storage::disk('public')->put('image', $request->file('insignia'));
+        //     $establecimiento->fill(['insignia' => asset($path)])->save();
+        // }
          $mensaje = 'El Establecimiento <b>'.$establecimiento['nombre'].'</b> ha sido editado correctamente';
 
          if ($request->ajax()) {

@@ -22,6 +22,8 @@ class Establecimiento extends Model
       , 'direccion'
       , 'fono'
       , 'correo'
+      , 'sned'
+      , 'reajuste'
       , 'insignia'
       , 'estado'
       ,
@@ -44,4 +46,26 @@ class Establecimiento extends Model
     }
     /* FIN RELACIONES */
 
+    public static function getEstablecimientos () {
+      
+      $estaRaw = Establecimiento::selectRaw('CONCAT(rbd, " - " , nombre) as nombre, id')->get();
+      
+      return $estaRaw->pluck('nombre', 'id');
+    } 
+
+    public static function getSned($idEstablecimiento) {     
+
+      $snedResult = Establecimiento::select('sned')->where('id', $idEstablecimiento)->get();
+
+      return $snedResult[0]['sned'];
+    
+    } 
+
+    public static function getReajuste($idEstablecimiento) {     
+
+      $reajusteResult = Establecimiento::select('reajuste')->where('id', $idEstablecimiento)->get();
+
+      return $reajusteResult[0]['reajuste'];
+    
+    } 
 }

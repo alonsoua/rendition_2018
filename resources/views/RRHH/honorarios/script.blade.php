@@ -254,23 +254,7 @@ $(document).ready(function(){
                } 
            ], 
            dom: 'Bfrtip',
-           buttons: [ 
-               // {
-               //     extend: 'print',
-               //     text: 'Imprimir',
-               //     className: 'btn btn-primary btn-sm mr-1 float-left',
-               //     exportOptions: {
-               //         columns: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
-               //     }
-               // },
-               // {
-               //    extend: 'pdfHtml5',
-               //    className: 'btn btn-primary btn-sm mr-1 float-left',
-               //    exportOptions: { 
-               //       orthogonal: 'export', 
-               //       columns: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-               //    },
-               // },
+           buttons: [          
                {
                   extend: 'csv',
                   className: 'btn btn-primary btn-sm mr-1 float-left',

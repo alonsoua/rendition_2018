@@ -26,7 +26,8 @@
          @can('liquidaciones.destroy')
 
             <a href="#!" class="dropdown-item small-button"
-            id="{{ $id }}" onclick=" MensajeEliminar(event, this) ">
+            id="{{ $id }}" data-nombre="{{ $funcionario['nombre'] }}" data-apellido="{{ $funcionario['apellidoPaterno'] }}"
+            data-rut="{{ $funcionario['rut'] }}" data-fecha="{{ $fechaLiquidacion }}" onclick=" MensajeEliminar(event, this) ">
                Eliminar
             </a>
 

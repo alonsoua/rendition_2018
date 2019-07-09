@@ -84,5 +84,18 @@ class Funcionario extends Model
         
         return $funcionarios->pluck('nombre', 'id');
     } 
+
+    public static function getFuncionario ($idFuncionario) {
+
+      return Funcionario::select('*')->where('id', $idFuncionario)->get();
+    }
+
+    public static function getFuncionFuncionario ($idFuncionario) {
+
+      $funcionario = Funcionario::selectRaw('*')
+                        ->with('funcion')
+                        ->where('id', $idFuncionario)->get();
+      return $funcionario[0];
+    }
     
 }

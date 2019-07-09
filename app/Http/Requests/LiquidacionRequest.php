@@ -13,7 +13,7 @@ class LiquidacionRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,11 @@ class LiquidacionRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'establecimiento'  => 'required',
+            'funcionario'      => 'required',
+            'periodo'          => 'required',
+            'fechaLiquidacion' => 'required',
+            'diasTrabajados'   => 'required|integer',  
         ];
     }
 }

@@ -38,9 +38,8 @@ class LeyController extends Controller
     public function create()
     {        
         $editar = 0;
-        $subRaw       = Subvencion::selectRaw('CONCAT(porcentajeMax, "% - " , nombre) as nombre, id')
-                        ->where('estado', '1')->get();                  
-        $subvenciones = $subRaw->pluck('nombre',  'id');    
+
+        $subvenciones = Subvencion::getSubvenciones();   
         
         $porcentajeMaximo = '';
 
@@ -56,20 +55,36 @@ class LeyController extends Controller
     public function store(LeyRequest $request)
     {
         if ($request->ajax()) {
-            Ley::create([
-                'codigo'         => $request->codigo,
-                'nombre'         => $request->nombre,
-                'idSubvencion'   => $request->subvencion,
-                'descripcion'    => $request->descripcion,
-                'tipo'           => $request->tipo,
-                'imponible'      => $request->imponible,
-                'sueldoBase'     => $request->sueldoBase,
-                'afp'            => $request->afp,
-                'salud'          => $request->salud,
-                'adicionalSalud' => $request->adicionalSalud,
-                'porcMax'        => $request->porcentajeMáximo,
-                'tope'           => $request->tope,
-            ]);
+           
+            // Validaciones           
+            Request()->validate([
+                strtolower($request->tipo)  => 'required',                    
+            ]); 
+            
+            DB::transaction(function () use ($request){
+
+                $haber     = $request->tipo == 'Haber' ? $request->haber : Null;
+                $descuento = $request->tipo == 'Descuento' ? $request->descuento : Null;
+
+                // dd($descuento);
+
+                Ley::create([
+                    'codigo'         => $request->codigo,
+                    'nombre'         => $request->nombre,
+                    'idSubvencion'   => $request->subvencion,
+                    'descripcion'    => $request->descripcion,
+                    'tipo'           => $request->tipo,
+                    'haber'          => $haber,
+                    'descuento'      => $descuento,
+                    'sueldoBase'     => $request->sueldoBase,
+                    'afp'            => $request->afp,
+                    'salud'          => $request->salud,
+                    'adicionalSalud' => $request->adicionalSalud,
+                    'porcMax'        => $request->porcentajeMáximo,
+                    'tope'           => $request->tope,
+                ]);
+
+            });
 
             //MENSAJE
             $mensaje = 'La ley <b>'.$request['codigo'].' - '.$request['nombre'].'</b> ha sido agregado correctamente';
@@ -102,9 +117,7 @@ class LeyController extends Controller
         $editar           = 1;   
         $ley              = Ley::findOrFail($id);
 
-        $subRaw       = Subvencion::selectRaw('CONCAT(porcentajeMax, "% - " , nombre) as nombre, id')
-                        ->where('estado', '1')->get();
-        $subvenciones = $subRaw->pluck('nombre',  'id'); 
+        $subvenciones = Subvencion::getSubvenciones();
 
         return view('mantenedor.leyes.edit', 
             compact(
@@ -124,41 +137,45 @@ class LeyController extends Controller
     public function update(Request $request, $id)
     {
         Request()->validate([
-            'codigo'            => 'required|max:20' ,
-            'nombre'            => 'required|max:100',
-            'tipo'              => 'required',
-            'subvencion'        => 'required',
-            'descripcion'       => 'required',
-            'porcentajeMáximo'  => 'required|Integer|min:0|max:999',
-            'tope'              => 'required|Integer|min:0|max:99999999'
+            'codigo'                    => 'required|max:20' ,
+            'nombre'                    => 'required|max:100',
+            'tipo'                      => 'required',
+            strtolower($request->tipo)  => 'required', 
+            'subvencion'                => 'required',
+            'descripcion'               => 'required',
+            'porcentajeMáximo'          => 'required|Integer|min:0|max:999',
+            'tope'                      => 'required|Integer|min:0|max:99999999'
           ]);
 
-         $ley = Ley::findOrFail($id);        
-         $ley->codigo       = $request->codigo;
-         $ley->nombre       = $request->nombre;
-         $ley->tipo         = $request->tipo;
-         $ley->idSubvencion = $request->subvencion;
-         $ley->descripcion  = $request->descripcion;
-         $ley->porcMax      = $request->porcentajeMáximo;
-         $ley->tope         = $request->tope;
-         
-         // Checkbox
-         $ley->imponible        = $request->imponible;
-         $ley->sueldoBase       = $request->sueldoBase;
-         $ley->afp              = $request->afp;
-         $ley->salud            = $request->salud;
-         $ley->adicionalSalud   = $request->adicionalSalud;
+        $haber     = ($request->tipo == 'Haber') ? $request->haber : Null;
+        $descuento = ($request->tipo == 'Descuento') ? $request->descuento : Null;
+        
+        $ley = Ley::findOrFail($id);        
+        $ley->codigo       = $request->codigo;
+        $ley->nombre       = $request->nombre;
+        $ley->tipo         = $request->tipo;
+        $ley->haber        = $haber;
+        $ley->descuento    = $descuento;
+        $ley->idSubvencion = $request->subvencion;
+        $ley->descripcion  = $request->descripcion;
+        $ley->porcMax      = $request->porcentajeMáximo;
+        $ley->tope         = $request->tope;
+
+        // Checkbox        
+        $ley->sueldoBase       = $request->sueldoBase;
+        $ley->afp              = $request->afp;
+        $ley->salud            = $request->salud;
+        $ley->adicionalSalud   = $request->adicionalSalud;
 
          
+        $mensaje = 'El ley <b>'.$ley['codigo'].' - '.$ley['nombre'].'</b> ha sido editada correctamente';
 
-         $mensaje = 'El ley <b>'.$ley['codigo'].' - '.$ley['nombre'].'</b> ha sido editada correctamente';
-
-         if ($request->ajax()) {
+        if ($request->ajax()) {
             $ley->save();
             return response()->json([
                 "message" => $mensaje
             ]);
-         }
+        }
     }
 
     /**

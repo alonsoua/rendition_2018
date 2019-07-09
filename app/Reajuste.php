@@ -26,5 +26,12 @@ class Reajuste extends Model
     }   
 
     /* FIN RELACIONES */
+    public static function getPorcentajeReajuste () {
+        $reajuste = Reajuste::select('porcentajeReajuste')
+                            ->orderby('id','DESC')
+                            ->take(1)
+                            ->get();
 
+        return $reajuste[0]['porcentajeReajuste'];
+    }
 }

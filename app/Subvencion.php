@@ -24,4 +24,10 @@ class Subvencion extends Model
     {
     	return $this->belongsToMany(Cuenta::class, 'idCuenta');
     }
+
+    public static function getSubvenciones() {
+      $subRaw       = Subvencion::selectRaw('CONCAT(porcentajeMax, "% - " , nombre) as nombre, id')
+                        ->where('estado', '1')->get();                  
+      return $subRaw->pluck('nombre',  'id'); 
+    }
 }

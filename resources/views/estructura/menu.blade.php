@@ -369,10 +369,10 @@
                         href="{{ route('reajustes.index') }}">Calcular Reajuste</a>                    
                     @endcan
                     
-                    @can('sned.create')
+                   {{--  @can('sned.create')
                         <a class="dropdown-item {{ Request::is('mantenedores/sneds*') ? 'active' : '' }}" 
                         href="{{ route('sned.index') }}">Calcular Sned</a>                    
-                    @endcan
+                    @endcan --}}
 
                     
                     @can('sostenedores.index')

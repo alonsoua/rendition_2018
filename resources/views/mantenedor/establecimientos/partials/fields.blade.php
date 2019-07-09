@@ -15,6 +15,8 @@
    </div>
 </div>
 
+
+
 {{-- RUT --}}
 <div class="form-group row">
    {!! Form::label('Rut', 'Rut', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
@@ -62,8 +64,6 @@
    </div>
 </div>
 
-
-
 {{-- lst TIPO DEPENDENCIA --}}
 <div class="form-group row">
    {!! Form::label('Tipo Establecimiento', 'Tipo Establecimiento', ['class' => 'col-sm-3 col-form-label text-md-right text-sm-left']) !!}
@@ -80,6 +80,42 @@
       <div id="vTipoDependencia"><span id="msgTipoDependencia" class="validacion"></span></div>
    </div>
 </div> 
+
+
+{{-- CHECKBOX NO IMPONIBLES --}}
+   <br>
+   <hr>   
+      <h5 class="card-title text-center">Propiedades</h5>
+   <hr>
+   <br>
+   
+   <div class="form-group row justify-content-center">
+         
+      {{-- SNED --}}      
+      {!! Form::label('Sned', 'Sned', ['class' => 'col-sm-2 col-form-label text-md-right text-sm-right']) !!}
+      <div class="col-sm-1 mt-2">            
+         {{ Form::checkbox('sned', null, $editar == 0 ? null : ($establecimiento->sned == 0 ? null : true), 
+            [
+               'class' => 'chk',
+               'title' => 'Bono de Excelencia Academica.'
+            ]
+         ) }}
+      </div>
+         
+      {{-- REAJUSTE --}}
+      {!! Form::label('Reajuste', 'Reajuste', ['class' => 'col-sm-2 col-form-label text-md-right text-sm-right']) !!}
+      <div class="col-sm-1 mt-2">                  
+         {{ Form::checkbox('reajuste', null, $editar == 0 ? null : ($establecimiento->reajuste == 0 ? null : true), 
+            [
+               'class' => 'chk',
+               'title' => 'Reajuste de Sueldo Imponible.'
+            ]
+         ) }}
+      </div>
+
+   </div>
+   
+   <hr class="justify-content-right"> 
 
 
 {{-- lst SOSTENEDOR --}}

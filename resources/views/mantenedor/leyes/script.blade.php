@@ -15,6 +15,18 @@ $(document).ready(function(){
 
    });
 
+   $('.select-haber').chosen({      
+      disable_search: true,
+      width : '100%'
+
+   });
+
+   $('.select-descuento').chosen({      
+      disable_search: true,
+      width : '100%'
+
+   });
+
    $('.select-subvencion').chosen({
       no_results_text: 'No se encontró la Subvención',
       width : '100%'
@@ -110,6 +122,20 @@ $(document).ready(function(){
 
 });
 
+
+$('#lstTipo').on('change', function(e){
+   var tipo = e.target.value;
+   if (tipo == 'Haber') {
+      $('.divLstDescuento').addClass('d-none');
+      // $('.divLstDescuento').val('d-none');
+      $('.divLstHaber').removeClass('d-none');
+   } else if (tipo == 'Descuento') {
+      $('.divLstHaber').addClass('d-none');
+      $('.divLstDescuento').removeClass('d-none');
+   }
+});
+
+
 function MensajeEliminar(e, i) {
    e.preventDefault();
    var codigo = $(i).attr('data-codigo');
@@ -187,74 +213,104 @@ $('#guardar').click(function(){
             $('#msgCodigo').html(data.responseJSON.errors.codigo);
          } else {
             $('#txtCodigo').removeClass('is-invalid');
-            $('#txtCodigo').addClass('is-valid');
-            $('#vCodigo').css('display', 'none');
+            $('#txtCodigo').addClass('is-valid');            
+            $('#vCodigo').addClass('d-none');
          }
 
          //nombre
          if (data.responseJSON.errors.nombre != undefined) {
+            $('#vNombre').removeClass('d-none');
             $('#txtNombre').addClass('is-invalid');
             $('#vNombre').addClass('invalid-feedback');
             $('#msgNombre').html(data.responseJSON.errors.nombre);
          } else {
             $('#txtNombre').removeClass('is-invalid');
-            $('#txtNombre').addClass('is-valid');
-            $('#vNombre').css('display', 'none');
+            $('#txtNombre').addClass('is-valid');            
+            $('#vNombre').addClass('d-none');
          }
 
          //tipo
          if (data.responseJSON.errors.tipo != undefined) {
+            $('#vTipo').removeClass('d-none');
             $('#lstTipo').addClass('is-invalid');
             $('#vTipo').addClass('invalid-feedback');
             $('#msgTipo').html(data.responseJSON.errors.tipo);
          } else {
             $('#lstTipo').removeClass('is-invalid');
-            $('#lstTipo').addClass('is-valid');
-            $('#vTipo').css('display', 'none');
+            $('#lstTipo').addClass('is-valid');            
+            $('#vTipo').addClass('d-none');
+         }
+
+         //haber
+         if (data.responseJSON.errors.haber != undefined) {
+            $('#vHaber').removeClass('d-none');
+            $('#lstHaber').addClass('is-invalid');
+            $('#vHaber').addClass('invalid-feedback');
+            $('#msgHaber').html(data.responseJSON.errors.haber);
+         } else {
+            $('#lstHaber').removeClass('is-invalid');
+            $('#lstHaber').addClass('is-valid');
+            $('#vHaber').addClass('d-none');
+         }
+
+         //descuento
+         if (data.responseJSON.errors.descuento != undefined) {
+            $('#vDescuento').removeClass('d-none');
+            $('#lstDescuento').addClass('is-invalid');
+            $('#vDescuento').addClass('invalid-feedback');
+            $('#msgDescuento').html(data.responseJSON.errors.descuento);
+         } else {
+            $('#lstDescuento').removeClass('is-invalid');
+            $('#lstDescuento').addClass('is-valid');
+            $('#vDescuento').addClass('d-none');
          }
 
          //subvencion
          if (data.responseJSON.errors.subvencion != undefined) {
+            $('#vSubvencion').removeClass('d-none');
             $('#lstSubvencion').addClass('is-invalid');
             $('#vSubvencion').addClass('invalid-feedback');
             $('#msgSubvencion').html(data.responseJSON.errors.subvencion);
          } else {
             $('#lstSubvencion').removeClass('is-invalid');
-            $('#lstSubvencion').addClass('is-valid');
-            $('#vSubvencion').css('display', 'none');
+            $('#lstSubvencion').addClass('is-valid');            
+            $('#vSubvencion').addClass('d-none');
          }
 
          //descripcion      
          if (data.responseJSON.errors.descripcion != undefined) {
+            $('#vDescripcion').removeClass('d-none');
             $('#txtDescripcion').addClass('is-invalid');
             $('#vDescripcion').addClass('invalid-feedback');
             $('#msgDescripcion').html(data.responseJSON.errors.descripcion);
          } else {
             $('#txtDescripcion').removeClass('is-invalid');
-            $('#txtDescripcion').addClass('is-valid');
-            $('#vDescripcion').css('display', 'none');
+            $('#txtDescripcion').addClass('is-valid');            
+            $('#vDescripcion').addClass('d-none');
          }        
 
          //porcentajeMaximo      
          if (data.responseJSON.errors.porcentajeMáximo != undefined) {
+            $('#vPorcentajeMax').removeClass('d-none');
             $('#txtPorcentajeMax').addClass('is-invalid');
             $('#vPorcentajeMax').addClass('invalid-feedback');
             $('#msgPorcentajeMax').html(data.responseJSON.errors.porcentajeMáximo);
          } else {
             $('#txtPorcentajeMax').removeClass('is-invalid');
-            $('#txtPorcentajeMax').addClass('is-valid');
-            $('#vPorcentajeMax').css('display', 'none');
+            $('#txtPorcentajeMax').addClass('is-valid');            
+            $('#vPorcentajeMax').addClass('d-none');
          }        
 
          //tope      
          if (data.responseJSON.errors.tope != undefined) {
+            $('#vTope').removeClass('d-none');
             $('#txtTope').addClass('is-invalid');
             $('#vTope').addClass('invalid-feedback');
             $('#msgTope').html(data.responseJSON.errors.tope);
          } else {
             $('#txtTope').removeClass('is-invalid');
-            $('#txtTope').addClass('is-valid');
-            $('#vTope').css('display', 'none');
+            $('#txtTope').addClass('is-valid');            
+            $('#vTope').addClass('d-none');
          }        
 
       }
